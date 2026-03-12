@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Search, Filter, Edit3, Check, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const CATEGORIES = [
   "Food & Dining", "Shopping", "Transport", "Subscriptions", "Utilities",
@@ -39,8 +39,20 @@ interface Transaction {
   description?: string;
 }
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
+}
+
 export default function TransactionsPage() {
   const queryClient = useQueryClient();
+  const isMobile = useIsMobile();
   const [month, setMonth] = useState("");
   const [category, setCategory] = useState("");
   const [search, setSearch] = useState("");
@@ -85,7 +97,7 @@ export default function TransactionsPage() {
       <h1
         style={{
           fontFamily: "var(--font-display)",
-          fontSize: "28px",
+          fontSize: "clamp(22px, 3vw, 28px)",
           fontWeight: 700,
           letterSpacing: "-1px",
           marginBottom: "8px",
@@ -93,7 +105,7 @@ export default function TransactionsPage() {
       >
         Transactions
       </h1>
-      <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "28px" }}>
+      <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
         Browse and manage your parsed transactions.
       </p>
 
@@ -102,12 +114,12 @@ export default function TransactionsPage() {
         className="animate-fade-in-up"
         style={{
           display: "flex",
-          gap: "12px",
-          marginBottom: "24px",
+          gap: "10px",
+          marginBottom: "20px",
           flexWrap: "wrap",
         }}
       >
-        <div style={{ position: "relative", flex: "1 1 200px" }}>
+        <div style={{ position: "relative", flex: "1 1 180px", minWidth: "0" }}>
           <Search
             size={16}
             style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--text-dim)" }}
@@ -124,14 +136,14 @@ export default function TransactionsPage() {
           className="input"
           value={month}
           onChange={(e) => { setMonth(e.target.value); setPage(1); }}
-          style={{ width: "180px", flex: "0 0 auto" }}
+          style={{ flex: isMobile ? "1 1 100%" : "0 0 auto", width: isMobile ? "100%" : "160px" }}
         >
           <option value="">All Months</option>
           {Array.from({ length: 12 }, (_, i) => {
             const d = new Date();
             d.setMonth(d.getMonth() - i);
             const val = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-            const label = d.toLocaleDateString("en-IN", { month: "long", year: "numeric" });
+            const label = d.toLocaleDateString("en-IN", { month: "short", year: "numeric" });
             return <option key={val} value={val}>{label}</option>;
           })}
         </select>
@@ -139,7 +151,7 @@ export default function TransactionsPage() {
           className="input"
           value={category}
           onChange={(e) => { setCategory(e.target.value); setPage(1); }}
-          style={{ width: "180px", flex: "0 0 auto" }}
+          style={{ flex: isMobile ? "1 1 100%" : "0 0 auto", width: isMobile ? "100%" : "160px" }}
         >
           <option value="">All Categories</option>
           {CATEGORIES.map((c) => (
@@ -148,20 +160,111 @@ export default function TransactionsPage() {
         </select>
       </div>
 
-      {/* Table */}
+      {/* Content */}
       <div className="glass-card animate-fade-in-up delay-100" style={{ overflow: "hidden" }}>
         {isLoading ? (
-          <div style={{ padding: "40px" }}>
+          <div style={{ padding: "20px" }}>
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="skeleton" style={{ height: "48px", marginBottom: "8px" }} />
             ))}
           </div>
         ) : !data?.transactions?.length ? (
-          <div style={{ padding: "60px", textAlign: "center" }}>
+          <div style={{ padding: "60px 20px", textAlign: "center" }}>
             <Filter size={40} color="var(--text-dim)" style={{ marginBottom: "12px" }} />
             <p style={{ color: "var(--text-secondary)", fontSize: "14px" }}>No transactions found</p>
           </div>
+        ) : isMobile ? (
+          /* ─── MOBILE: Card Layout ─── */
+          <div style={{ display: "grid", gap: "1px", background: "var(--border)" }}>
+            {data.transactions.map((tx: Transaction) => {
+              const { text, color } = formatCurrency(tx.amount);
+              const catColor = CATEGORY_COLORS[tx.category] || "var(--text-dim)";
+              const isEditing = editingId === tx.id;
+
+              return (
+                <div
+                  key={tx.id}
+                  style={{
+                    padding: "14px 16px",
+                    background: "var(--bg-card)",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ fontWeight: 500, fontSize: "14px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{tx.merchant}</div>
+                      <div style={{ fontSize: "12px", color: "var(--text-dim)", marginTop: "2px" }}>
+                        {new Date(tx.date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                      </div>
+                    </div>
+                    <span style={{ fontWeight: 600, fontFamily: "var(--font-display)", color, fontSize: "15px", whiteSpace: "nowrap", marginLeft: "12px" }}>
+                      {text}
+                    </span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    {isEditing ? (
+                      <div style={{ display: "flex", gap: "6px", alignItems: "center", flex: 1 }}>
+                        <select
+                          className="input"
+                          value={editCategory}
+                          onChange={(e) => setEditCategory(e.target.value)}
+                          style={{ padding: "6px 10px", fontSize: "12px", flex: 1 }}
+                        >
+                          {CATEGORIES.map((c) => (
+                            <option key={c} value={c}>{c}</option>
+                          ))}
+                        </select>
+                        <button
+                          style={{ background: "none", border: "none", cursor: "pointer", color: "var(--mint-primary)", padding: "4px" }}
+                          onClick={() => updateCategory.mutate({ id: tx.id, newCategory: editCategory })}
+                        >
+                          <Check size={16} />
+                        </button>
+                        <button
+                          style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", padding: "4px" }}
+                          onClick={() => setEditingId(null)}
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <span
+                          className="badge"
+                          style={{
+                            background: `${catColor}15`,
+                            color: catColor,
+                            fontSize: "11px",
+                          }}
+                        >
+                          {tx.category}
+                        </span>
+                        <button
+                          style={{
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            color: "var(--text-dim)",
+                            padding: "4px",
+                          }}
+                          onClick={() => {
+                            setEditingId(tx.id);
+                            setEditCategory(tx.category);
+                          }}
+                        >
+                          <Edit3 size={14} />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         ) : (
+          /* ─── DESKTOP: Table Layout ─── */
           <>
             {/* Header */}
             <div
@@ -293,7 +396,7 @@ export default function TransactionsPage() {
             display: "flex",
             justifyContent: "center",
             gap: "8px",
-            marginTop: "24px",
+            marginTop: "20px",
           }}
         >
           <button

@@ -7,9 +7,9 @@ import {
   Brain,
   Shield,
   Upload,
-  Sparkles,
   TrendingUp,
 } from "lucide-react";
+import Logo from "@/components/Logo";
 
 const features = [
   {
@@ -64,8 +64,8 @@ export default function LandingPage() {
           position: "fixed",
           top: "-20%",
           right: "-10%",
-          width: "600px",
-          height: "600px",
+          width: "min(600px, 80vw)",
+          height: "min(600px, 80vw)",
           borderRadius: "50%",
           background: "radial-gradient(circle, var(--mint-glow) 0%, transparent 70%)",
           filter: "blur(80px)",
@@ -77,8 +77,8 @@ export default function LandingPage() {
           position: "fixed",
           bottom: "-20%",
           left: "-10%",
-          width: "500px",
-          height: "500px",
+          width: "min(500px, 70vw)",
+          height: "min(500px, 70vw)",
           borderRadius: "50%",
           background: "radial-gradient(circle, var(--purple-dim) 0%, transparent 70%)",
           filter: "blur(80px)",
@@ -94,26 +94,14 @@ export default function LandingPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "24px 48px",
+          padding: "16px clamp(16px, 4vw, 48px)",
           borderBottom: "1px solid var(--border)",
           backdropFilter: "blur(12px)",
           background: "rgba(10, 12, 16, 0.8)",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div
-            style={{
-              width: "36px",
-              height: "36px",
-              borderRadius: "10px",
-              background: "linear-gradient(135deg, var(--mint-primary), var(--emerald))",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Sparkles size={20} color="var(--bg-primary)" />
-          </div>
+          <Logo size="md" />
           <span
             style={{
               fontFamily: "var(--font-display)",
@@ -139,7 +127,7 @@ export default function LandingPage() {
           flexDirection: "column",
           alignItems: "center",
           textAlign: "center",
-          padding: "120px 24px 80px",
+          padding: "clamp(60px, 10vw, 120px) 20px clamp(40px, 6vw, 80px)",
           maxWidth: "900px",
           margin: "0 auto",
         }}
@@ -154,7 +142,7 @@ export default function LandingPage() {
             borderRadius: "100px",
             background: "var(--mint-dim)",
             border: "1px solid var(--mint-primary)",
-            marginBottom: "32px",
+            marginBottom: "clamp(20px, 3vw, 32px)",
             fontSize: "13px",
             fontWeight: 500,
             color: "var(--mint-primary)",
@@ -169,11 +157,11 @@ export default function LandingPage() {
           className="animate-fade-in-up delay-100"
           style={{
             fontFamily: "var(--font-display)",
-            fontSize: "clamp(40px, 6vw, 72px)",
+            fontSize: "clamp(36px, 6vw, 72px)",
             fontWeight: 800,
             lineHeight: 1.05,
             letterSpacing: "-2px",
-            marginBottom: "24px",
+            marginBottom: "clamp(16px, 2vw, 24px)",
           }}
         >
           Your money,{" "}
@@ -191,11 +179,11 @@ export default function LandingPage() {
         <p
           className="animate-fade-in-up delay-200"
           style={{
-            fontSize: "18px",
+            fontSize: "clamp(15px, 2vw, 18px)",
             color: "var(--text-secondary)",
             maxWidth: "560px",
             lineHeight: 1.7,
-            marginBottom: "48px",
+            marginBottom: "clamp(28px, 4vw, 48px)",
           }}
         >
           Upload your bank statements. Get instant spending breakdowns,
@@ -205,12 +193,20 @@ export default function LandingPage() {
 
         <div
           className="animate-fade-in-up delay-300"
-          style={{ display: "flex", gap: "16px", flexWrap: "wrap", justifyContent: "center" }}
+          style={{ display: "flex", gap: "12px", flexWrap: "wrap", justifyContent: "center" }}
         >
-          <Link href="/login" className="btn btn-primary" style={{ padding: "16px 32px", fontSize: "16px" }}>
+          <Link
+            href="/login"
+            className="btn btn-primary"
+            style={{ padding: "clamp(12px, 2vw, 16px) clamp(24px, 3vw, 32px)", fontSize: "clamp(14px, 1.5vw, 16px)" }}
+          >
             Start for Free <ArrowRight size={18} />
           </Link>
-          <a href="#features" className="btn btn-secondary" style={{ padding: "16px 32px", fontSize: "16px" }}>
+          <a
+            href="#features"
+            className="btn btn-secondary"
+            style={{ padding: "clamp(12px, 2vw, 16px) clamp(24px, 3vw, 32px)", fontSize: "clamp(14px, 1.5vw, 16px)" }}
+          >
             See How It Works
           </a>
         </div>
@@ -222,7 +218,7 @@ export default function LandingPage() {
         style={{
           position: "relative",
           zIndex: 10,
-          padding: "80px 24px 120px",
+          padding: "clamp(40px, 6vw, 80px) 20px clamp(60px, 8vw, 120px)",
           maxWidth: "1100px",
           margin: "0 auto",
         }}
@@ -231,10 +227,10 @@ export default function LandingPage() {
           className="animate-fade-in-up"
           style={{
             fontFamily: "var(--font-display)",
-            fontSize: "32px",
+            fontSize: "clamp(24px, 3vw, 32px)",
             fontWeight: 700,
             textAlign: "center",
-            marginBottom: "64px",
+            marginBottom: "clamp(36px, 5vw, 64px)",
             letterSpacing: "-1px",
           }}
         >
@@ -245,15 +241,15 @@ export default function LandingPage() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-            gap: "24px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))",
+            gap: "20px",
           }}
         >
           {features.map((feature, i) => (
             <div
               key={feature.title}
               className={`glass-card animate-fade-in-up delay-${(i + 1) * 100}`}
-              style={{ padding: "32px 28px" }}
+              style={{ padding: "clamp(24px, 3vw, 32px) clamp(20px, 2.5vw, 28px)" }}
             >
               <div
                 style={{
@@ -299,7 +295,7 @@ export default function LandingPage() {
           position: "relative",
           zIndex: 10,
           textAlign: "center",
-          padding: "32px 24px",
+          padding: "24px 20px",
           borderTop: "1px solid var(--border)",
           color: "var(--text-dim)",
           fontSize: "13px",

@@ -11,10 +11,12 @@ import {
   Lightbulb,
   Settings,
   LogOut,
-  Sparkles,
   ChevronRight,
+  Menu,
+  X,
 } from "lucide-react";
 import { useState, useEffect, type ReactNode } from "react";
+import Logo from "@/components/Logo";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
@@ -24,10 +26,23 @@ const navItems = [
   { href: "/settings/privacy", label: "Settings", icon: Settings },
 ];
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
+}
+
 export default function ProtectedLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [user, setUser] = useState<{ email?: string; name?: string; avatarUrl?: string } | null>(null);
 
   useEffect(() => {
@@ -43,12 +58,188 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  // Close drawer on route change
+  useEffect(() => {
+    setDrawerOpen(false);
+  }, [pathname]);
+
   const handleSignOut = async () => {
     const supabase = createSupabaseBrowserClient();
     await supabase.auth.signOut();
     router.push("/login");
   };
 
+  // ─── MOBILE LAYOUT ───
+  if (isMobile) {
+    return (
+      <div style={{ minHeight: "100vh", paddingBottom: "72px" }}>
+        {/* Mobile Top Bar */}
+        <div className="mobile-topbar">
+          <button className="hamburger-btn" onClick={() => setDrawerOpen(true)}>
+            <Menu size={22} />
+          </button>
+          <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
+            <Logo size="sm" />
+            <span
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "17px",
+                fontWeight: 700,
+                color: "var(--text-primary)",
+                letterSpacing: "-0.5px",
+              }}
+            >
+              FinGenie
+            </span>
+          </Link>
+          {user?.avatarUrl ? (
+            <img
+              src={user.avatarUrl}
+              alt=""
+              style={{ width: "30px", height: "30px", borderRadius: "50%" }}
+            />
+          ) : (
+            <div
+              style={{
+                width: "30px",
+                height: "30px",
+                borderRadius: "50%",
+                background: "var(--bg-elevated)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "13px",
+                fontWeight: 600,
+                color: "var(--mint-primary)",
+              }}
+            >
+              {user?.name?.[0] || "?"}
+            </div>
+          )}
+        </div>
+
+        {/* Slide-out Drawer */}
+        {drawerOpen && (
+          <>
+            <div className="drawer-overlay" onClick={() => setDrawerOpen(false)} />
+            <div className="drawer">
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px 20px", borderBottom: "1px solid var(--border)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <Logo size="sm" />
+                  <span style={{ fontFamily: "var(--font-display)", fontSize: "18px", fontWeight: 700 }}>FinGenie</span>
+                </div>
+                <button className="hamburger-btn" onClick={() => setDrawerOpen(false)}>
+                  <X size={20} />
+                </button>
+              </div>
+              <nav style={{ padding: "16px 12px", display: "flex", flexDirection: "column", gap: "4px" }}>
+                {navItems.map((item) => {
+                  const isActive = pathname.startsWith(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px",
+                        padding: "12px 16px",
+                        borderRadius: "var(--radius-sm)",
+                        color: isActive ? "var(--mint-primary)" : "var(--text-secondary)",
+                        background: isActive ? "var(--mint-dim)" : "transparent",
+                        textDecoration: "none",
+                        fontSize: "15px",
+                        fontWeight: isActive ? 500 : 400,
+                      }}
+                    >
+                      <item.icon size={20} />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </nav>
+              {/* User section in drawer */}
+              <div style={{ padding: "16px 20px", borderTop: "1px solid var(--border)", marginTop: "auto" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
+                  {user?.avatarUrl ? (
+                    <img src={user.avatarUrl} alt="" style={{ width: "36px", height: "36px", borderRadius: "50%" }} />
+                  ) : (
+                    <div
+                      style={{
+                        width: "36px",
+                        height: "36px",
+                        borderRadius: "50%",
+                        background: "var(--bg-elevated)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "14px",
+                        fontWeight: 600,
+                        color: "var(--mint-primary)",
+                      }}
+                    >
+                      {user?.name?.[0] || "?"}
+                    </div>
+                  )}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: "14px", fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {user?.name || "User"}
+                    </div>
+                    <div style={{ fontSize: "12px", color: "var(--text-dim)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {user?.email}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={handleSignOut}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    width: "100%",
+                    padding: "10px 16px",
+                    background: "var(--bg-elevated)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--radius-sm)",
+                    cursor: "pointer",
+                    color: "var(--text-secondary)",
+                    fontSize: "14px",
+                  }}
+                >
+                  <LogOut size={16} />
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Page Content */}
+        <main style={{ paddingTop: "72px", padding: "72px 16px 16px" }}>
+          {children}
+        </main>
+
+        {/* Bottom Navigation */}
+        <nav className="bottom-nav">
+          {navItems.slice(0, 5).map((item) => {
+            const isActive = pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={isActive ? "active" : ""}
+              >
+                <item.icon size={20} />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+    );
+  }
+
+  // ─── DESKTOP LAYOUT ───
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       {/* Sidebar */}
@@ -79,20 +270,7 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
             minHeight: "73px",
           }}
         >
-          <div
-            style={{
-              width: "32px",
-              height: "32px",
-              minWidth: "32px",
-              borderRadius: "8px",
-              background: "linear-gradient(135deg, var(--mint-primary), var(--emerald))",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Sparkles size={18} color="var(--bg-primary)" />
-          </div>
+          <Logo size="sm" />
           {!collapsed && (
             <span
               style={{

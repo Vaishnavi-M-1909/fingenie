@@ -1,8 +1,9 @@
 "use client";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useState } from "react";
+import Logo from "@/components/Logo";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
@@ -27,6 +28,7 @@ export default function LoginPage() {
         justifyContent: "center",
         position: "relative",
         overflow: "hidden",
+        padding: "20px",
       }}
     >
       {/* Background */}
@@ -36,8 +38,8 @@ export default function LoginPage() {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: "700px",
-          height: "700px",
+          width: "min(700px, 90vw)",
+          height: "min(700px, 90vw)",
           borderRadius: "50%",
           background: "radial-gradient(circle, var(--mint-glow) 0%, transparent 70%)",
           filter: "blur(100px)",
@@ -50,9 +52,9 @@ export default function LoginPage() {
         style={{
           position: "relative",
           zIndex: 10,
-          padding: "48px",
+          padding: "clamp(28px, 5vw, 48px)",
           maxWidth: "420px",
-          width: "90%",
+          width: "100%",
           textAlign: "center",
         }}
       >
@@ -66,19 +68,7 @@ export default function LoginPage() {
             marginBottom: "32px",
           }}
         >
-          <div
-            style={{
-              width: "44px",
-              height: "44px",
-              borderRadius: "12px",
-              background: "linear-gradient(135deg, var(--mint-primary), var(--emerald))",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Sparkles size={24} color="var(--bg-primary)" />
-          </div>
+          <Logo size="lg" />
           <span
             style={{
               fontFamily: "var(--font-display)",

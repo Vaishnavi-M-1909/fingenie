@@ -81,11 +81,11 @@ export default function UploadPage() {
   };
 
   return (
-    <div style={{ maxWidth: "640px" }}>
+    <div style={{ maxWidth: "640px", width: "100%" }}>
       <h1
         style={{
           fontFamily: "var(--font-display)",
-          fontSize: "28px",
+          fontSize: "clamp(22px, 3vw, 28px)",
           fontWeight: 700,
           letterSpacing: "-1px",
           marginBottom: "8px",
@@ -106,7 +106,7 @@ export default function UploadPage() {
           style={{
             border: `2px dashed ${dragOver ? "var(--mint-primary)" : "var(--border)"}`,
             borderRadius: "var(--radius-lg)",
-            padding: "80px 40px",
+            padding: "clamp(40px, 8vw, 80px) clamp(20px, 4vw, 40px)",
             textAlign: "center",
             background: dragOver ? "var(--mint-dim)" : "var(--bg-card)",
             transition: "all 0.3s",

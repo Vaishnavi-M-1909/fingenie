@@ -394,8 +394,179 @@ select.input {
   padding: 0 24px;
 }
 
+/* Prevent horizontal scroll */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Utility classes */
+.mobile-hidden {
+  display: block;
+}
+
+.mobile-only {
+  display: none !important;
+}
+
+/* ── Bottom Nav (mobile) ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+  backdrop-filter: blur(16px);
+}
+
+.bottom-nav a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.bottom-nav a.active {
+  color: var(--mint-primary);
+}
+
+/* ── Mobile Top Bar ── */
+.mobile-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 56px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  backdrop-filter: blur(16px);
+}
+
+/* ── Slide-out drawer ── */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 280px;
+  z-index: 201;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  padding: 20px 0;
+  animation: slideInLeft 0.3s ease-out;
+  overflow-y: auto;
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+/* ── Hamburger button ── */
+.hamburger-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-primary);
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s;
+}
+
+.hamburger-btn:hover {
+  background: var(--bg-elevated);
+}
+
+/* ── Responsive: Tablet ── */
 @media (max-width: 768px) {
   .container {
     padding: 0 16px;
+  }
+
+  .mobile-hidden {
+    display: none !important;
+  }
+
+  .mobile-only {
+    display: flex !important;
+  }
+
+  /* Ensure touch targets are at least 44px */
+  .btn {
+    min-height: 44px;
+    padding: 12px 20px;
+  }
+
+  .btn-sm {
+    min-height: 36px;
+  }
+
+  .input {
+    min-height: 44px;
+    font-size: 16px; /* prevents zoom on iOS */
+  }
+
+  select.input {
+    font-size: 16px;
+  }
+
+  /* Modal: full width on mobile */
+  .modal-content {
+    max-width: 100%;
+    width: 95%;
+    margin: 16px;
+    padding: 24px;
+  }
+}
+
+/* ── Responsive: Phone ── */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 12px;
+  }
+
+  h1 {
+    font-size: 24px !important;
+    letter-spacing: -0.5px !important;
+  }
+
+  .btn {
+    font-size: 13px;
+    padding: 10px 16px;
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 3px 10px;
   }
 }

@@ -37,8 +37,8 @@ function HealthRing({ score }: { score: number | null }) {
   const color = safeScore >= 70 ? "var(--mint-primary)" : safeScore >= 40 ? "var(--amber)" : "var(--coral)";
 
   return (
-    <div style={{ position: "relative", width: "160px", height: "160px" }}>
-      <svg width="160" height="160" viewBox="0 0 160 160">
+    <div style={{ position: "relative", width: "140px", height: "140px" }}>
+      <svg width="140" height="140" viewBox="0 0 160 160">
         <circle cx="80" cy="80" r="60" fill="none" stroke="var(--border)" strokeWidth="10" />
         <circle
           cx="80"
@@ -67,7 +67,7 @@ function HealthRing({ score }: { score: number | null }) {
         <span
           style={{
             fontFamily: "var(--font-display)",
-            fontSize: "36px",
+            fontSize: "32px",
             fontWeight: 800,
             color,
             lineHeight: 1,
@@ -75,7 +75,7 @@ function HealthRing({ score }: { score: number | null }) {
         >
           {safeScore}
         </span>
-        <span style={{ fontSize: "11px", color: "var(--text-dim)", marginTop: "4px" }}>
+        <span style={{ fontSize: "10px", color: "var(--text-dim)", marginTop: "4px" }}>
           Health Score
         </span>
       </div>
@@ -121,49 +121,51 @@ export default function DashboardPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          marginBottom: "36px",
+          marginBottom: "28px",
+          flexWrap: "wrap",
+          gap: "12px",
         }}
       >
         <div>
           <h1
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "28px",
+              fontSize: "clamp(22px, 3vw, 28px)",
               fontWeight: 700,
               letterSpacing: "-1px",
             }}
           >
             Dashboard
           </h1>
-          <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginTop: "4px" }}>
+          <p style={{ color: "var(--text-secondary)", fontSize: "13px", marginTop: "4px" }}>
             Your spending overview for {getMonthLabel(currentMonth)}
           </p>
         </div>
 
         {/* Month selector */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <button className="btn btn-ghost" onClick={() => navigateMonth(-1)}>
+          <button className="btn btn-ghost" onClick={() => navigateMonth(-1)} style={{ padding: "8px" }}>
             <ChevronLeft size={18} />
           </button>
           <span
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "14px",
+              fontSize: "13px",
               fontWeight: 500,
-              minWidth: "160px",
+              minWidth: "140px",
               textAlign: "center",
             }}
           >
             {getMonthLabel(currentMonth)}
           </span>
-          <button className="btn btn-ghost" onClick={() => navigateMonth(1)}>
+          <button className="btn btn-ghost" onClick={() => navigateMonth(1)} style={{ padding: "8px" }}>
             <ChevronRight size={18} />
           </button>
         </div>
       </div>
 
       {isLoading ? (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "20px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(200px, 100%), 1fr))", gap: "16px" }}>
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="skeleton" style={{ height: "120px" }} />
           ))}
@@ -172,7 +174,7 @@ export default function DashboardPage() {
         <div
           className="glass-card"
           style={{
-            padding: "80px 40px",
+            padding: "clamp(40px, 6vw, 80px) clamp(20px, 4vw, 40px)",
             textAlign: "center",
           }}
         >
@@ -194,16 +196,16 @@ export default function DashboardPage() {
             className="animate-fade-in-up"
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-              gap: "20px",
-              marginBottom: "28px",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))",
+              gap: "16px",
+              marginBottom: "24px",
             }}
           >
-            <div className="glass-card" style={{ padding: "24px" }}>
-              <div style={{ fontSize: "12px", color: "var(--text-dim)", marginBottom: "8px", fontFamily: "var(--font-display)", textTransform: "uppercase", letterSpacing: "1px" }}>
+            <div className="glass-card" style={{ padding: "20px" }}>
+              <div style={{ fontSize: "11px", color: "var(--text-dim)", marginBottom: "8px", fontFamily: "var(--font-display)", textTransform: "uppercase", letterSpacing: "1px" }}>
                 Total Spent
               </div>
-              <div style={{ fontSize: "28px", fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--coral)" }}>
+              <div style={{ fontSize: "clamp(22px, 3vw, 28px)", fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--coral)" }}>
                 {formatCurrency(data?.totalSpent || 0)}
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "8px", fontSize: "12px", color: "var(--text-dim)" }}>
@@ -212,11 +214,11 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="glass-card" style={{ padding: "24px" }}>
-              <div style={{ fontSize: "12px", color: "var(--text-dim)", marginBottom: "8px", fontFamily: "var(--font-display)", textTransform: "uppercase", letterSpacing: "1px" }}>
+            <div className="glass-card" style={{ padding: "20px" }}>
+              <div style={{ fontSize: "11px", color: "var(--text-dim)", marginBottom: "8px", fontFamily: "var(--font-display)", textTransform: "uppercase", letterSpacing: "1px" }}>
                 Top Category
               </div>
-              <div style={{ fontSize: "20px", fontWeight: 600, fontFamily: "var(--font-display)" }}>
+              <div style={{ fontSize: "clamp(16px, 2vw, 20px)", fontWeight: 600, fontFamily: "var(--font-display)" }}>
                 {pieData[0]?.name || "—"}
               </div>
               <div style={{ fontSize: "14px", color: "var(--mint-primary)", marginTop: "4px" }}>
@@ -224,11 +226,11 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="glass-card" style={{ padding: "24px" }}>
-              <div style={{ fontSize: "12px", color: "var(--text-dim)", marginBottom: "8px", fontFamily: "var(--font-display)", textTransform: "uppercase", letterSpacing: "1px" }}>
+            <div className="glass-card" style={{ padding: "20px" }}>
+              <div style={{ fontSize: "11px", color: "var(--text-dim)", marginBottom: "8px", fontFamily: "var(--font-display)", textTransform: "uppercase", letterSpacing: "1px" }}>
                 Recurring
               </div>
-              <div style={{ fontSize: "20px", fontWeight: 600, fontFamily: "var(--font-display)" }}>
+              <div style={{ fontSize: "clamp(16px, 2vw, 20px)", fontWeight: 600, fontFamily: "var(--font-display)" }}>
                 {data?.recurring?.length || 0} subscriptions
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "4px", fontSize: "13px", color: "var(--amber)" }}>
@@ -241,7 +243,7 @@ export default function DashboardPage() {
             <div
               className="glass-card"
               style={{
-                padding: "24px",
+                padding: "20px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -251,22 +253,22 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Charts row */}
+          {/* Charts row — stacks on mobile */}
           <div
             className="animate-fade-in-up delay-200"
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "20px",
-              marginBottom: "28px",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(400px, 100%), 1fr))",
+              gap: "16px",
+              marginBottom: "24px",
             }}
           >
             {/* Spending Timeline */}
-            <div className="glass-card" style={{ padding: "24px" }}>
-              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "16px", marginBottom: "20px", fontWeight: 600 }}>
+            <div className="glass-card" style={{ padding: "20px" }}>
+              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "15px", marginBottom: "16px", fontWeight: 600 }}>
                 Spending Timeline
               </h3>
-              <div style={{ height: "240px" }}>
+              <div style={{ height: "220px" }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={data?.dailyTotals || []}>
                     <defs>
@@ -286,6 +288,7 @@ export default function DashboardPage() {
                       tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`}
                       stroke="var(--text-dim)"
                       tick={{ fontSize: 11 }}
+                      width={48}
                     />
                     <Tooltip
                       contentStyle={{
@@ -304,20 +307,20 @@ export default function DashboardPage() {
             </div>
 
             {/* Category Pie */}
-            <div className="glass-card" style={{ padding: "24px" }}>
-              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "16px", marginBottom: "20px", fontWeight: 600 }}>
+            <div className="glass-card" style={{ padding: "20px" }}>
+              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "15px", marginBottom: "16px", fontWeight: 600 }}>
                 By Category
               </h3>
-              <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
-                <div style={{ width: "180px", height: "180px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap", justifyContent: "center" }}>
+                <div style={{ width: "160px", height: "160px", flexShrink: 0 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={pieData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={50}
-                        outerRadius={80}
+                        innerRadius={45}
+                        outerRadius={72}
                         paddingAngle={3}
                         dataKey="value"
                         strokeWidth={0}
@@ -338,12 +341,12 @@ export default function DashboardPage() {
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "6px", minWidth: "140px" }}>
                   {pieData.slice(0, 6).map((item, i) => (
-                    <div key={item.name} style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px" }}>
-                      <div style={{ width: "10px", height: "10px", borderRadius: "3px", background: COLORS[i % COLORS.length] }} />
-                      <span style={{ flex: 1, color: "var(--text-secondary)" }}>{item.name}</span>
-                      <span style={{ fontWeight: 500, fontFamily: "var(--font-display)" }}>{formatCurrency(item.value as number)}</span>
+                    <div key={item.name} style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px" }}>
+                      <div style={{ width: "8px", height: "8px", borderRadius: "2px", background: COLORS[i % COLORS.length], flexShrink: 0 }} />
+                      <span style={{ flex: 1, color: "var(--text-secondary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.name}</span>
+                      <span style={{ fontWeight: 500, fontFamily: "var(--font-display)", whiteSpace: "nowrap" }}>{formatCurrency(item.value as number)}</span>
                     </div>
                   ))}
                 </div>
@@ -352,41 +355,42 @@ export default function DashboardPage() {
           </div>
 
           {/* Top Merchants */}
-          <div className="glass-card animate-fade-in-up delay-300" style={{ padding: "24px" }}>
-            <h3 style={{ fontFamily: "var(--font-display)", fontSize: "16px", marginBottom: "20px", fontWeight: 600 }}>
-              <TrendingUp size={18} style={{ display: "inline", marginRight: "8px", color: "var(--mint-primary)" }} />
+          <div className="glass-card animate-fade-in-up delay-300" style={{ padding: "20px" }}>
+            <h3 style={{ fontFamily: "var(--font-display)", fontSize: "15px", marginBottom: "16px", fontWeight: 600 }}>
+              <TrendingUp size={16} style={{ display: "inline", marginRight: "8px", color: "var(--mint-primary)" }} />
               Top Merchants
             </h3>
-            <div style={{ display: "grid", gap: "12px" }}>
+            <div style={{ display: "grid", gap: "8px" }}>
               {(data?.topMerchants || []).slice(0, 8).map((m: { merchant: string; total: number }, i: number) => (
                 <div
                   key={m.merchant}
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: "12px",
-                    padding: "12px 16px",
+                    gap: "10px",
+                    padding: "10px 14px",
                     background: "var(--bg-secondary)",
                     borderRadius: "var(--radius-sm)",
+                    flexWrap: "wrap",
                   }}
                 >
                   <span
                     style={{
                       fontFamily: "var(--font-display)",
-                      fontSize: "12px",
+                      fontSize: "11px",
                       fontWeight: 600,
                       color: "var(--text-dim)",
-                      width: "24px",
+                      width: "20px",
                     }}
                   >
                     #{i + 1}
                   </span>
-                  <span style={{ flex: 1, fontSize: "14px" }}>{m.merchant}</span>
-                  <span style={{ fontFamily: "var(--font-display)", fontWeight: 600, color: "var(--coral)" }}>
+                  <span style={{ flex: 1, fontSize: "13px", minWidth: "80px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{m.merchant}</span>
+                  <span style={{ fontFamily: "var(--font-display)", fontWeight: 600, color: "var(--coral)", fontSize: "13px" }}>
                     {formatCurrency(m.total)}
                   </span>
-                  {/* Progress bar */}
-                  <div style={{ width: "80px", height: "4px", background: "var(--border)", borderRadius: "2px" }}>
+                  {/* Progress bar — hidden on very small screens */}
+                  <div className="mobile-hidden" style={{ width: "60px", height: "4px", background: "var(--border)", borderRadius: "2px" }}>
                     <div
                       style={{
                         height: "100%",

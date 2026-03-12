@@ -53,12 +53,12 @@ export default function InsightsPage() {
 
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "36px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "28px", flexWrap: "wrap", gap: "12px" }}>
         <div>
           <h1
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "28px",
+              fontSize: "clamp(22px, 3vw, 28px)",
               fontWeight: 700,
               letterSpacing: "-1px",
               marginBottom: "4px",
@@ -71,12 +71,12 @@ export default function InsightsPage() {
           </p>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", flex: "1 1 auto", justifyContent: "flex-end" }}>
           <select
             className="input"
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
-            style={{ width: "200px" }}
+            style={{ width: "auto", minWidth: "160px", flex: "1 1 auto", maxWidth: "220px" }}
           >
             {Array.from({ length: 12 }, (_, i) => {
               const d = new Date();
@@ -144,7 +144,7 @@ export default function InsightsPage() {
               <div
                 key={insight.id}
                 className={`glass-card animate-fade-in-up delay-${Math.min(idx + 1, 5) * 100}`}
-                style={{ padding: "28px" }}
+                style={{ padding: "clamp(16px, 3vw, 28px)" }}
               >
                 {/* Header */}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>

@@ -24,11 +24,11 @@ export default function SettingsPrivacyPage() {
   };
 
   return (
-    <div style={{ maxWidth: "640px" }}>
+    <div style={{ maxWidth: "640px", width: "100%" }}>
       <h1
         style={{
           fontFamily: "var(--font-display)",
-          fontSize: "28px",
+          fontSize: "clamp(22px, 3vw, 28px)",
           fontWeight: 700,
           letterSpacing: "-1px",
           marginBottom: "8px",
