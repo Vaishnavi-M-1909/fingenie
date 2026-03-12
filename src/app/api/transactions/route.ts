@@ -1,0 +1,63 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getUser } from "@/lib/auth";
+
+export async function GET(request: Request) {
+  try {
+    const user = await getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const month = searchParams.get("month"); // format: "2026-03"
+    const category = searchParams.get("category");
+    const search = searchParams.get("search");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "50");
+
+    const where: Record<string, unknown> = { userId: user.id };
+
+    if (month) {
+      const [year, mon] = month.split("-").map(Number);
+      where.date = {
+        gte: new Date(year, mon - 1, 1),
+        lt: new Date(year, mon, 1),
+      };
+    }
+
+    if (category) {
+      where.category = category;
+    }
+
+    if (search) {
+      where.OR = [
+        { merchant: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
+    const [transactions, total] = await Promise.all([
+      prisma.transaction.findMany({
+        where,
+        orderBy: { date: "desc" },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.transaction.count({ where }),
+    ]);
+
+    return NextResponse.json({
+      transactions,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error("Transactions error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}

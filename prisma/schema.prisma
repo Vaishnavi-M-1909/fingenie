@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  name         String?
+  avatarUrl    String?
+  createdAt    DateTime      @default(now()) @map("created_at")
+  statements   Statement[]
+  transactions Transaction[]
+  insights     Insight[]
+
+  @@map("users")
+}
+
+model Statement {
+  id               String        @id @default(cuid())
+  userId           String        @map("user_id")
+  filePath         String        @map("file_path")
+  originalFilename String        @map("original_filename")
+  uploadedAt       DateTime      @default(now()) @map("uploaded_at")
+  status           String        @default("queued") // queued | parsing | done | failed
+  meta             Json?
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions     Transaction[]
+  insights         Insight[]
+
+  @@index([userId])
+  @@map("statements")
+}
+
+model Transaction {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  statementId String?   @map("statement_id")
+  date        DateTime
+  merchant    String
+  amount      Float
+  currency    String    @default("INR")
+  category    String?
+  description String?
+  rawLine     String    @map("raw_line")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  statement   Statement? @relation(fields: [statementId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([date])
+  @@index([statementId])
+  @@map("transactions")
+}
+
+model Insight {
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  statementId     String?  @map("statement_id")
+  month           String   // e.g. "2026-03"
+  score           Int?
+  summary         String
+  recommendations Json?    // list of {title, url}
+  createdAt       DateTime @default(now()) @map("created_at")
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  statement       Statement? @relation(fields: [statementId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([month])
+  @@map("insights")
+}
+
+model MerchantMap {
+  id             String @id @default(cuid())
+  normalizedName String @unique @map("normalized_name")
+  category       String
+  createdBy      String @default("system") @map("created_by") // "system" | userId
+
+  @@map("merchant_maps")
+}
