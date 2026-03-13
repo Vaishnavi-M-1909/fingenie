@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Only CSV, PDF, and Images are supported" }, { status: 400 });
     }
 
-    // Upload to Supabase Storage
+    // Upload to Supabase Storage (Vault)
     const supabase = await createSupabaseServerClient();
     const storagePath = `${user.id}/${Date.now()}_${file.name}`;
 
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
       },
     });
 
-    // Parse synchronously (MVP approach)
+    // Parse synchronously
     try {
       const arrayBuffer = await file.arrayBuffer();
       let parseResult;
@@ -68,6 +68,38 @@ export async function POST(request: Request) {
         // Use Vision OCR for images
         const base64 = Buffer.from(arrayBuffer).toString("base64");
         parseResult = await parseImage(base64, file.type);
+      }
+
+      // Cross-check bank account if metadata was extracted
+      let bankAccountId: string | null = null;
+      let accountWarning: string | null = null;
+
+      if (parseResult.metadata.bankAccountMeta?.accountNumber) {
+        const extractedAccountNumber = parseResult.metadata.bankAccountMeta.accountNumber;
+
+        // Look for matching registered bank account
+        const matchingAccount = await prisma.bankAccount.findFirst({
+          where: {
+            userId: user.id,
+            accountNumber: extractedAccountNumber,
+          },
+        });
+
+        if (matchingAccount) {
+          bankAccountId = matchingAccount.id;
+          console.log(`[Upload] Statement matched to bank account: ${matchingAccount.bankName} (${extractedAccountNumber})`);
+        } else {
+          // No matching account found — warn the user
+          const registeredAccounts = await prisma.bankAccount.findMany({
+            where: { userId: user.id },
+            select: { accountNumber: true, bankName: true },
+          });
+
+          if (registeredAccounts.length > 0) {
+            accountWarning = `Statement account (${extractedAccountNumber}) does not match any registered account. Registered: ${registeredAccounts.map((a: { bankName: string; accountNumber: string }) => `${a.bankName} (${a.accountNumber})`).join(", ")}`;
+            console.warn(`[Upload] ${accountWarning}`);
+          }
+        }
       }
 
       // Save transactions
@@ -87,15 +119,18 @@ export async function POST(request: Request) {
         });
       }
 
-      // Update statement status
+      // Update statement status and link bank account
       await prisma.statement.update({
         where: { id: statement.id },
         data: {
           status: parseResult.transactions.length > 0 ? "done" : "failed",
+          bankAccountId: bankAccountId,
           meta: JSON.parse(JSON.stringify({
             totalRows: parseResult.metadata.totalRows,
             parsedRows: parseResult.metadata.parsedRows,
             failedRows: parseResult.metadata.failedRows,
+            bankName: parseResult.metadata.bankName,
+            bankAccountMeta: parseResult.metadata.bankAccountMeta,
             errors: parseResult.errors.slice(0, 10),
           })),
         },
@@ -107,6 +142,8 @@ export async function POST(request: Request) {
         parsed: parseResult.metadata.parsedRows,
         failed: parseResult.metadata.failedRows,
         total: parseResult.metadata.totalRows,
+        bankName: parseResult.metadata.bankName,
+        accountWarning,
       });
     } catch (parseError) {
       console.error("Parse error:", parseError);

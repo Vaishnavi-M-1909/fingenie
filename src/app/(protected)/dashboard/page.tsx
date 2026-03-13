@@ -86,10 +86,19 @@ export default function DashboardPage() {
       {/* Editorial Header */}
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "40px", flexWrap: "wrap", gap: "20px" }}>
         <div>
+          {data?.userName && (
+            <div style={{ fontFamily: "var(--font-body)", fontSize: "1.05rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
+              Welcome back, <span style={{ color: "var(--brand-primary)", fontWeight: 700 }}>{data.userName}</span>
+            </div>
+          )}
           <h1 className="display-large" style={{ color: "var(--text-primary)", marginBottom: "8px" }}>
             Telemetry.
           </h1>
-          <div className="eyebrow" style={{ color: "var(--brand-primary)" }}>Data aggregation operative</div>
+          <div className="eyebrow" style={{ color: "var(--brand-primary)" }}>
+            {data?.bankAccounts?.length > 0
+              ? `${data.bankAccounts[0].bankName} · ${data.bankAccounts[0].accountNumber}`
+              : "Data aggregation operative"}
+          </div>
         </div>
 
         {/* Sharp Navigation */}

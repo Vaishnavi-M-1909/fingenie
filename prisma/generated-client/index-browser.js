@@ -137,6 +137,17 @@ exports.Prisma.ChatScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.BankAccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  accountHolderName: 'accountHolderName',
+  accountNumber: 'accountNumber',
+  ifscCode: 'ifscCode',
+  bankName: 'bankName',
+  branch: 'branch',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.StatementScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -144,7 +155,8 @@ exports.Prisma.StatementScalarFieldEnum = {
   originalFilename: 'originalFilename',
   uploadedAt: 'uploadedAt',
   status: 'status',
-  meta: 'meta'
+  meta: 'meta',
+  bankAccountId: 'bankAccountId'
 };
 
 exports.Prisma.TransactionScalarFieldEnum = {
@@ -208,6 +220,7 @@ exports.Prisma.JsonNullValueFilter = {
 exports.Prisma.ModelName = {
   User: 'User',
   Chat: 'Chat',
+  BankAccount: 'BankAccount',
   Statement: 'Statement',
   Transaction: 'Transaction',
   Insight: 'Insight',

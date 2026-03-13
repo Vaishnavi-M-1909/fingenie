@@ -9,6 +9,19 @@ export interface ParsedTransaction {
   confidence: number; // 0-1
 }
 
+export interface BankAccountMeta {
+  accountHolderName?: string;
+  accountNumber?: string;
+  ifscCode?: string;
+  bankName?: string;
+  branch?: string;
+  customerId?: string;
+  statementPeriod?: {
+    from?: string;
+    to?: string;
+  };
+}
+
 export interface ParseResult {
   transactions: ParsedTransaction[];
   errors: ParserError[];
@@ -17,6 +30,7 @@ export interface ParseResult {
     parsedRows: number;
     failedRows: number;
     bankName?: string;
+    bankAccountMeta?: BankAccountMeta;
   };
 }
 

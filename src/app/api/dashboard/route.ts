@@ -29,9 +29,17 @@ export async function GET(request: Request) {
       orderBy: { date: "asc" },
     });
 
+    // Fetch user's bank accounts
+    const bankAccounts = await prisma.bankAccount.findMany({
+      where: { userId: user.id },
+      select: { id: true, bankName: true, accountNumber: true, accountHolderName: true },
+    });
+
     if (transactions.length === 0) {
       return NextResponse.json({
         month: targetMonth,
+        userName: user.name || null,
+        bankAccounts,
         totalSpent: 0,
         categoryTotals: {},
         dailyTotals: [],
@@ -121,6 +129,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       month: targetMonth,
+      userName: user.name || null,
+      bankAccounts,
       totalSpent,
       categoryTotals,
       dailyTotals,

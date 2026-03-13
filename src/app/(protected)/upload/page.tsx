@@ -13,6 +13,8 @@ interface UploadResult {
   failed: number;
   total: number;
   error?: string;
+  bankName?: string;
+  accountWarning?: string;
 }
 
 export default function UploadPage() {
@@ -198,9 +200,28 @@ export default function UploadPage() {
       {state === "done" && result && (
         <div className="editorial-card animate-scale-in" style={{ padding: "60px 40px", textAlign: "center", borderTop: "4px solid var(--brand-primary)" }}>
           <CheckCircle size={56} style={{ color: "var(--brand-primary)", marginBottom: "24px", margin: "0 auto" }} />
-          <h3 className="display-large" style={{ fontSize: "2.5rem", marginBottom: "32px", color: "var(--brand-primary)", lineHeight: 1 }}>
+          <h3 className="display-large" style={{ fontSize: "2.5rem", marginBottom: "12px", color: "var(--brand-primary)", lineHeight: 1 }}>
             Upload Successful
           </h3>
+
+          {result.bankName && (
+            <div style={{ fontFamily: "var(--font-body)", fontSize: "1rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "24px" }}>
+              Detected: <span style={{ color: "var(--text-primary)", fontWeight: 700 }}>{result.bankName}</span>
+            </div>
+          )}
+
+          {result.accountWarning && (
+            <div style={{
+              display: "flex", alignItems: "flex-start", gap: "12px", padding: "14px 18px",
+              background: "rgba(255,59,0,0.08)", border: "1px solid var(--accent-coral)",
+              borderRadius: "var(--radius-sm)", marginBottom: "24px", textAlign: "left",
+            }}>
+              <AlertTriangle size={20} style={{ color: "var(--accent-coral)", flexShrink: 0, marginTop: "2px" }} />
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", fontWeight: 500, color: "var(--text-primary)", lineHeight: 1.4 }}>
+                {result.accountWarning}
+              </span>
+            </div>
+          )}
           
           <div style={{ display: "flex", justifyContent: "center", gap: "16px", marginBottom: "40px" }}>
             <div style={{ background: "var(--bg-secondary)", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)", padding: "20px", flex: 1 }}>

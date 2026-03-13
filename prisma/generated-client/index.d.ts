@@ -24,6 +24,11 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  */
 export type Chat = $Result.DefaultSelection<Prisma.$ChatPayload>
 /**
+ * Model BankAccount
+ * 
+ */
+export type BankAccount = $Result.DefaultSelection<Prisma.$BankAccountPayload>
+/**
  * Model Statement
  * 
  */
@@ -184,6 +189,16 @@ export class PrismaClient<
     * ```
     */
   get chat(): Prisma.ChatDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.bankAccount`: Exposes CRUD operations for the **BankAccount** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more BankAccounts
+    * const bankAccounts = await prisma.bankAccount.findMany()
+    * ```
+    */
+  get bankAccount(): Prisma.BankAccountDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.statement`: Exposes CRUD operations for the **Statement** model.
@@ -660,6 +675,7 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     Chat: 'Chat',
+    BankAccount: 'BankAccount',
     Statement: 'Statement',
     Transaction: 'Transaction',
     Insight: 'Insight',
@@ -679,7 +695,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "chat" | "statement" | "transaction" | "insight" | "merchantMap"
+      modelProps: "user" | "chat" | "bankAccount" | "statement" | "transaction" | "insight" | "merchantMap"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -828,6 +844,80 @@ export namespace Prisma {
           count: {
             args: Prisma.ChatCountArgs<ExtArgs>
             result: $Utils.Optional<ChatCountAggregateOutputType> | number
+          }
+        }
+      }
+      BankAccount: {
+        payload: Prisma.$BankAccountPayload<ExtArgs>
+        fields: Prisma.BankAccountFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BankAccountFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BankAccountPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BankAccountFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BankAccountPayload>
+          }
+          findFirst: {
+            args: Prisma.BankAccountFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BankAccountPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BankAccountFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BankAccountPayload>
+          }
+          findMany: {
+            args: Prisma.BankAccountFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BankAccountPayload>[]
+          }
+          create: {
+            args: Prisma.BankAccountCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BankAccountPayload>
+          }
+          createMany: {
+            args: Prisma.BankAccountCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BankAccountCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BankAccountPayload>[]
+          }
+          delete: {
+            args: Prisma.BankAccountDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BankAccountPayload>
+          }
+          update: {
+            args: Prisma.BankAccountUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BankAccountPayload>
+          }
+          deleteMany: {
+            args: Prisma.BankAccountDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BankAccountUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.BankAccountUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BankAccountPayload>[]
+          }
+          upsert: {
+            args: Prisma.BankAccountUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BankAccountPayload>
+          }
+          aggregate: {
+            args: Prisma.BankAccountAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBankAccount>
+          }
+          groupBy: {
+            args: Prisma.BankAccountGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BankAccountGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BankAccountCountArgs<ExtArgs>
+            result: $Utils.Optional<BankAccountCountAggregateOutputType> | number
           }
         }
       }
@@ -1237,6 +1327,7 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     user?: UserOmit
     chat?: ChatOmit
+    bankAccount?: BankAccountOmit
     statement?: StatementOmit
     transaction?: TransactionOmit
     insight?: InsightOmit
@@ -1325,6 +1416,7 @@ export namespace Prisma {
     transactions: number
     insights: number
     chats: number
+    bankAccounts: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1332,6 +1424,7 @@ export namespace Prisma {
     transactions?: boolean | UserCountOutputTypeCountTransactionsArgs
     insights?: boolean | UserCountOutputTypeCountInsightsArgs
     chats?: boolean | UserCountOutputTypeCountChatsArgs
+    bankAccounts?: boolean | UserCountOutputTypeCountBankAccountsArgs
   }
 
   // Custom InputTypes
@@ -1371,6 +1464,44 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountChatsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ChatWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountBankAccountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BankAccountWhereInput
+  }
+
+
+  /**
+   * Count Type BankAccountCountOutputType
+   */
+
+  export type BankAccountCountOutputType = {
+    statements: number
+  }
+
+  export type BankAccountCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    statements?: boolean | BankAccountCountOutputTypeCountStatementsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * BankAccountCountOutputType without action
+   */
+  export type BankAccountCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BankAccountCountOutputType
+     */
+    select?: BankAccountCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * BankAccountCountOutputType without action
+   */
+  export type BankAccountCountOutputTypeCountStatementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StatementWhereInput
   }
 
 
@@ -1586,6 +1717,7 @@ export namespace Prisma {
     transactions?: boolean | User$transactionsArgs<ExtArgs>
     insights?: boolean | User$insightsArgs<ExtArgs>
     chats?: boolean | User$chatsArgs<ExtArgs>
+    bankAccounts?: boolean | User$bankAccountsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1619,6 +1751,7 @@ export namespace Prisma {
     transactions?: boolean | User$transactionsArgs<ExtArgs>
     insights?: boolean | User$insightsArgs<ExtArgs>
     chats?: boolean | User$chatsArgs<ExtArgs>
+    bankAccounts?: boolean | User$bankAccountsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1631,6 +1764,7 @@ export namespace Prisma {
       transactions: Prisma.$TransactionPayload<ExtArgs>[]
       insights: Prisma.$InsightPayload<ExtArgs>[]
       chats: Prisma.$ChatPayload<ExtArgs>[]
+      bankAccounts: Prisma.$BankAccountPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2036,6 +2170,7 @@ export namespace Prisma {
     transactions<T extends User$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, User$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     insights<T extends User$insightsArgs<ExtArgs> = {}>(args?: Subset<T, User$insightsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InsightPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     chats<T extends User$chatsArgs<ExtArgs> = {}>(args?: Subset<T, User$chatsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    bankAccounts<T extends User$bankAccountsArgs<ExtArgs> = {}>(args?: Subset<T, User$bankAccountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BankAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2556,6 +2691,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ChatScalarFieldEnum | ChatScalarFieldEnum[]
+  }
+
+  /**
+   * User.bankAccounts
+   */
+  export type User$bankAccountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BankAccount
+     */
+    select?: BankAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BankAccount
+     */
+    omit?: BankAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BankAccountInclude<ExtArgs> | null
+    where?: BankAccountWhereInput
+    orderBy?: BankAccountOrderByWithRelationInput | BankAccountOrderByWithRelationInput[]
+    cursor?: BankAccountWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BankAccountScalarFieldEnum | BankAccountScalarFieldEnum[]
   }
 
   /**
@@ -3654,6 +3813,1138 @@ export namespace Prisma {
 
 
   /**
+   * Model BankAccount
+   */
+
+  export type AggregateBankAccount = {
+    _count: BankAccountCountAggregateOutputType | null
+    _min: BankAccountMinAggregateOutputType | null
+    _max: BankAccountMaxAggregateOutputType | null
+  }
+
+  export type BankAccountMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    accountHolderName: string | null
+    accountNumber: string | null
+    ifscCode: string | null
+    bankName: string | null
+    branch: string | null
+    createdAt: Date | null
+  }
+
+  export type BankAccountMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    accountHolderName: string | null
+    accountNumber: string | null
+    ifscCode: string | null
+    bankName: string | null
+    branch: string | null
+    createdAt: Date | null
+  }
+
+  export type BankAccountCountAggregateOutputType = {
+    id: number
+    userId: number
+    accountHolderName: number
+    accountNumber: number
+    ifscCode: number
+    bankName: number
+    branch: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type BankAccountMinAggregateInputType = {
+    id?: true
+    userId?: true
+    accountHolderName?: true
+    accountNumber?: true
+    ifscCode?: true
+    bankName?: true
+    branch?: true
+    createdAt?: true
+  }
+
+  export type BankAccountMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    accountHolderName?: true
+    accountNumber?: true
+    ifscCode?: true
+    bankName?: true
+    branch?: true
+    createdAt?: true
+  }
+
+  export type BankAccountCountAggregateInputType = {
+    id?: true
+    userId?: true
+    accountHolderName?: true
+    accountNumber?: true
+    ifscCode?: true
+    bankName?: true
+    branch?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type BankAccountAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BankAccount to aggregate.
+     */
+    where?: BankAccountWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BankAccounts to fetch.
+     */
+    orderBy?: BankAccountOrderByWithRelationInput | BankAccountOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BankAccountWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BankAccounts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BankAccounts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned BankAccounts
+    **/
+    _count?: true | BankAccountCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BankAccountMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BankAccountMaxAggregateInputType
+  }
+
+  export type GetBankAccountAggregateType<T extends BankAccountAggregateArgs> = {
+        [P in keyof T & keyof AggregateBankAccount]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBankAccount[P]>
+      : GetScalarType<T[P], AggregateBankAccount[P]>
+  }
+
+
+
+
+  export type BankAccountGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BankAccountWhereInput
+    orderBy?: BankAccountOrderByWithAggregationInput | BankAccountOrderByWithAggregationInput[]
+    by: BankAccountScalarFieldEnum[] | BankAccountScalarFieldEnum
+    having?: BankAccountScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BankAccountCountAggregateInputType | true
+    _min?: BankAccountMinAggregateInputType
+    _max?: BankAccountMaxAggregateInputType
+  }
+
+  export type BankAccountGroupByOutputType = {
+    id: string
+    userId: string
+    accountHolderName: string
+    accountNumber: string
+    ifscCode: string | null
+    bankName: string
+    branch: string | null
+    createdAt: Date
+    _count: BankAccountCountAggregateOutputType | null
+    _min: BankAccountMinAggregateOutputType | null
+    _max: BankAccountMaxAggregateOutputType | null
+  }
+
+  type GetBankAccountGroupByPayload<T extends BankAccountGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BankAccountGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BankAccountGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BankAccountGroupByOutputType[P]>
+            : GetScalarType<T[P], BankAccountGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BankAccountSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    accountHolderName?: boolean
+    accountNumber?: boolean
+    ifscCode?: boolean
+    bankName?: boolean
+    branch?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    statements?: boolean | BankAccount$statementsArgs<ExtArgs>
+    _count?: boolean | BankAccountCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["bankAccount"]>
+
+  export type BankAccountSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    accountHolderName?: boolean
+    accountNumber?: boolean
+    ifscCode?: boolean
+    bankName?: boolean
+    branch?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["bankAccount"]>
+
+  export type BankAccountSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    accountHolderName?: boolean
+    accountNumber?: boolean
+    ifscCode?: boolean
+    bankName?: boolean
+    branch?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["bankAccount"]>
+
+  export type BankAccountSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    accountHolderName?: boolean
+    accountNumber?: boolean
+    ifscCode?: boolean
+    bankName?: boolean
+    branch?: boolean
+    createdAt?: boolean
+  }
+
+  export type BankAccountOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "accountHolderName" | "accountNumber" | "ifscCode" | "bankName" | "branch" | "createdAt", ExtArgs["result"]["bankAccount"]>
+  export type BankAccountInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    statements?: boolean | BankAccount$statementsArgs<ExtArgs>
+    _count?: boolean | BankAccountCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type BankAccountIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type BankAccountIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $BankAccountPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "BankAccount"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      statements: Prisma.$StatementPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      accountHolderName: string
+      accountNumber: string
+      ifscCode: string | null
+      bankName: string
+      branch: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["bankAccount"]>
+    composites: {}
+  }
+
+  type BankAccountGetPayload<S extends boolean | null | undefined | BankAccountDefaultArgs> = $Result.GetResult<Prisma.$BankAccountPayload, S>
+
+  type BankAccountCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<BankAccountFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: BankAccountCountAggregateInputType | true
+    }
+
+  export interface BankAccountDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BankAccount'], meta: { name: 'BankAccount' } }
+    /**
+     * Find zero or one BankAccount that matches the filter.
+     * @param {BankAccountFindUniqueArgs} args - Arguments to find a BankAccount
+     * @example
+     * // Get one BankAccount
+     * const bankAccount = await prisma.bankAccount.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BankAccountFindUniqueArgs>(args: SelectSubset<T, BankAccountFindUniqueArgs<ExtArgs>>): Prisma__BankAccountClient<$Result.GetResult<Prisma.$BankAccountPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one BankAccount that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {BankAccountFindUniqueOrThrowArgs} args - Arguments to find a BankAccount
+     * @example
+     * // Get one BankAccount
+     * const bankAccount = await prisma.bankAccount.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BankAccountFindUniqueOrThrowArgs>(args: SelectSubset<T, BankAccountFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BankAccountClient<$Result.GetResult<Prisma.$BankAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BankAccount that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BankAccountFindFirstArgs} args - Arguments to find a BankAccount
+     * @example
+     * // Get one BankAccount
+     * const bankAccount = await prisma.bankAccount.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BankAccountFindFirstArgs>(args?: SelectSubset<T, BankAccountFindFirstArgs<ExtArgs>>): Prisma__BankAccountClient<$Result.GetResult<Prisma.$BankAccountPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BankAccount that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BankAccountFindFirstOrThrowArgs} args - Arguments to find a BankAccount
+     * @example
+     * // Get one BankAccount
+     * const bankAccount = await prisma.bankAccount.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BankAccountFindFirstOrThrowArgs>(args?: SelectSubset<T, BankAccountFindFirstOrThrowArgs<ExtArgs>>): Prisma__BankAccountClient<$Result.GetResult<Prisma.$BankAccountPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more BankAccounts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BankAccountFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all BankAccounts
+     * const bankAccounts = await prisma.bankAccount.findMany()
+     * 
+     * // Get first 10 BankAccounts
+     * const bankAccounts = await prisma.bankAccount.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const bankAccountWithIdOnly = await prisma.bankAccount.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends BankAccountFindManyArgs>(args?: SelectSubset<T, BankAccountFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BankAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a BankAccount.
+     * @param {BankAccountCreateArgs} args - Arguments to create a BankAccount.
+     * @example
+     * // Create one BankAccount
+     * const BankAccount = await prisma.bankAccount.create({
+     *   data: {
+     *     // ... data to create a BankAccount
+     *   }
+     * })
+     * 
+     */
+    create<T extends BankAccountCreateArgs>(args: SelectSubset<T, BankAccountCreateArgs<ExtArgs>>): Prisma__BankAccountClient<$Result.GetResult<Prisma.$BankAccountPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many BankAccounts.
+     * @param {BankAccountCreateManyArgs} args - Arguments to create many BankAccounts.
+     * @example
+     * // Create many BankAccounts
+     * const bankAccount = await prisma.bankAccount.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BankAccountCreateManyArgs>(args?: SelectSubset<T, BankAccountCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many BankAccounts and returns the data saved in the database.
+     * @param {BankAccountCreateManyAndReturnArgs} args - Arguments to create many BankAccounts.
+     * @example
+     * // Create many BankAccounts
+     * const bankAccount = await prisma.bankAccount.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many BankAccounts and only return the `id`
+     * const bankAccountWithIdOnly = await prisma.bankAccount.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BankAccountCreateManyAndReturnArgs>(args?: SelectSubset<T, BankAccountCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BankAccountPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a BankAccount.
+     * @param {BankAccountDeleteArgs} args - Arguments to delete one BankAccount.
+     * @example
+     * // Delete one BankAccount
+     * const BankAccount = await prisma.bankAccount.delete({
+     *   where: {
+     *     // ... filter to delete one BankAccount
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BankAccountDeleteArgs>(args: SelectSubset<T, BankAccountDeleteArgs<ExtArgs>>): Prisma__BankAccountClient<$Result.GetResult<Prisma.$BankAccountPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one BankAccount.
+     * @param {BankAccountUpdateArgs} args - Arguments to update one BankAccount.
+     * @example
+     * // Update one BankAccount
+     * const bankAccount = await prisma.bankAccount.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BankAccountUpdateArgs>(args: SelectSubset<T, BankAccountUpdateArgs<ExtArgs>>): Prisma__BankAccountClient<$Result.GetResult<Prisma.$BankAccountPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more BankAccounts.
+     * @param {BankAccountDeleteManyArgs} args - Arguments to filter BankAccounts to delete.
+     * @example
+     * // Delete a few BankAccounts
+     * const { count } = await prisma.bankAccount.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BankAccountDeleteManyArgs>(args?: SelectSubset<T, BankAccountDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BankAccounts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BankAccountUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many BankAccounts
+     * const bankAccount = await prisma.bankAccount.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BankAccountUpdateManyArgs>(args: SelectSubset<T, BankAccountUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BankAccounts and returns the data updated in the database.
+     * @param {BankAccountUpdateManyAndReturnArgs} args - Arguments to update many BankAccounts.
+     * @example
+     * // Update many BankAccounts
+     * const bankAccount = await prisma.bankAccount.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more BankAccounts and only return the `id`
+     * const bankAccountWithIdOnly = await prisma.bankAccount.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends BankAccountUpdateManyAndReturnArgs>(args: SelectSubset<T, BankAccountUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BankAccountPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one BankAccount.
+     * @param {BankAccountUpsertArgs} args - Arguments to update or create a BankAccount.
+     * @example
+     * // Update or create a BankAccount
+     * const bankAccount = await prisma.bankAccount.upsert({
+     *   create: {
+     *     // ... data to create a BankAccount
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the BankAccount we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BankAccountUpsertArgs>(args: SelectSubset<T, BankAccountUpsertArgs<ExtArgs>>): Prisma__BankAccountClient<$Result.GetResult<Prisma.$BankAccountPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of BankAccounts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BankAccountCountArgs} args - Arguments to filter BankAccounts to count.
+     * @example
+     * // Count the number of BankAccounts
+     * const count = await prisma.bankAccount.count({
+     *   where: {
+     *     // ... the filter for the BankAccounts we want to count
+     *   }
+     * })
+    **/
+    count<T extends BankAccountCountArgs>(
+      args?: Subset<T, BankAccountCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BankAccountCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a BankAccount.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BankAccountAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BankAccountAggregateArgs>(args: Subset<T, BankAccountAggregateArgs>): Prisma.PrismaPromise<GetBankAccountAggregateType<T>>
+
+    /**
+     * Group by BankAccount.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BankAccountGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BankAccountGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BankAccountGroupByArgs['orderBy'] }
+        : { orderBy?: BankAccountGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BankAccountGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBankAccountGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the BankAccount model
+   */
+  readonly fields: BankAccountFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for BankAccount.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BankAccountClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    statements<T extends BankAccount$statementsArgs<ExtArgs> = {}>(args?: Subset<T, BankAccount$statementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StatementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the BankAccount model
+   */
+  interface BankAccountFieldRefs {
+    readonly id: FieldRef<"BankAccount", 'String'>
+    readonly userId: FieldRef<"BankAccount", 'String'>
+    readonly accountHolderName: FieldRef<"BankAccount", 'String'>
+    readonly accountNumber: FieldRef<"BankAccount", 'String'>
+    readonly ifscCode: FieldRef<"BankAccount", 'String'>
+    readonly bankName: FieldRef<"BankAccount", 'String'>
+    readonly branch: FieldRef<"BankAccount", 'String'>
+    readonly createdAt: FieldRef<"BankAccount", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * BankAccount findUnique
+   */
+  export type BankAccountFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BankAccount
+     */
+    select?: BankAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BankAccount
+     */
+    omit?: BankAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BankAccountInclude<ExtArgs> | null
+    /**
+     * Filter, which BankAccount to fetch.
+     */
+    where: BankAccountWhereUniqueInput
+  }
+
+  /**
+   * BankAccount findUniqueOrThrow
+   */
+  export type BankAccountFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BankAccount
+     */
+    select?: BankAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BankAccount
+     */
+    omit?: BankAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BankAccountInclude<ExtArgs> | null
+    /**
+     * Filter, which BankAccount to fetch.
+     */
+    where: BankAccountWhereUniqueInput
+  }
+
+  /**
+   * BankAccount findFirst
+   */
+  export type BankAccountFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BankAccount
+     */
+    select?: BankAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BankAccount
+     */
+    omit?: BankAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BankAccountInclude<ExtArgs> | null
+    /**
+     * Filter, which BankAccount to fetch.
+     */
+    where?: BankAccountWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BankAccounts to fetch.
+     */
+    orderBy?: BankAccountOrderByWithRelationInput | BankAccountOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BankAccounts.
+     */
+    cursor?: BankAccountWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BankAccounts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BankAccounts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BankAccounts.
+     */
+    distinct?: BankAccountScalarFieldEnum | BankAccountScalarFieldEnum[]
+  }
+
+  /**
+   * BankAccount findFirstOrThrow
+   */
+  export type BankAccountFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BankAccount
+     */
+    select?: BankAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BankAccount
+     */
+    omit?: BankAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BankAccountInclude<ExtArgs> | null
+    /**
+     * Filter, which BankAccount to fetch.
+     */
+    where?: BankAccountWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BankAccounts to fetch.
+     */
+    orderBy?: BankAccountOrderByWithRelationInput | BankAccountOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BankAccounts.
+     */
+    cursor?: BankAccountWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BankAccounts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BankAccounts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BankAccounts.
+     */
+    distinct?: BankAccountScalarFieldEnum | BankAccountScalarFieldEnum[]
+  }
+
+  /**
+   * BankAccount findMany
+   */
+  export type BankAccountFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BankAccount
+     */
+    select?: BankAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BankAccount
+     */
+    omit?: BankAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BankAccountInclude<ExtArgs> | null
+    /**
+     * Filter, which BankAccounts to fetch.
+     */
+    where?: BankAccountWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BankAccounts to fetch.
+     */
+    orderBy?: BankAccountOrderByWithRelationInput | BankAccountOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing BankAccounts.
+     */
+    cursor?: BankAccountWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BankAccounts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BankAccounts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BankAccounts.
+     */
+    distinct?: BankAccountScalarFieldEnum | BankAccountScalarFieldEnum[]
+  }
+
+  /**
+   * BankAccount create
+   */
+  export type BankAccountCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BankAccount
+     */
+    select?: BankAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BankAccount
+     */
+    omit?: BankAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BankAccountInclude<ExtArgs> | null
+    /**
+     * The data needed to create a BankAccount.
+     */
+    data: XOR<BankAccountCreateInput, BankAccountUncheckedCreateInput>
+  }
+
+  /**
+   * BankAccount createMany
+   */
+  export type BankAccountCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many BankAccounts.
+     */
+    data: BankAccountCreateManyInput | BankAccountCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * BankAccount createManyAndReturn
+   */
+  export type BankAccountCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BankAccount
+     */
+    select?: BankAccountSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BankAccount
+     */
+    omit?: BankAccountOmit<ExtArgs> | null
+    /**
+     * The data used to create many BankAccounts.
+     */
+    data: BankAccountCreateManyInput | BankAccountCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BankAccountIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BankAccount update
+   */
+  export type BankAccountUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BankAccount
+     */
+    select?: BankAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BankAccount
+     */
+    omit?: BankAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BankAccountInclude<ExtArgs> | null
+    /**
+     * The data needed to update a BankAccount.
+     */
+    data: XOR<BankAccountUpdateInput, BankAccountUncheckedUpdateInput>
+    /**
+     * Choose, which BankAccount to update.
+     */
+    where: BankAccountWhereUniqueInput
+  }
+
+  /**
+   * BankAccount updateMany
+   */
+  export type BankAccountUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update BankAccounts.
+     */
+    data: XOR<BankAccountUpdateManyMutationInput, BankAccountUncheckedUpdateManyInput>
+    /**
+     * Filter which BankAccounts to update
+     */
+    where?: BankAccountWhereInput
+    /**
+     * Limit how many BankAccounts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * BankAccount updateManyAndReturn
+   */
+  export type BankAccountUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BankAccount
+     */
+    select?: BankAccountSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BankAccount
+     */
+    omit?: BankAccountOmit<ExtArgs> | null
+    /**
+     * The data used to update BankAccounts.
+     */
+    data: XOR<BankAccountUpdateManyMutationInput, BankAccountUncheckedUpdateManyInput>
+    /**
+     * Filter which BankAccounts to update
+     */
+    where?: BankAccountWhereInput
+    /**
+     * Limit how many BankAccounts to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BankAccountIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BankAccount upsert
+   */
+  export type BankAccountUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BankAccount
+     */
+    select?: BankAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BankAccount
+     */
+    omit?: BankAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BankAccountInclude<ExtArgs> | null
+    /**
+     * The filter to search for the BankAccount to update in case it exists.
+     */
+    where: BankAccountWhereUniqueInput
+    /**
+     * In case the BankAccount found by the `where` argument doesn't exist, create a new BankAccount with this data.
+     */
+    create: XOR<BankAccountCreateInput, BankAccountUncheckedCreateInput>
+    /**
+     * In case the BankAccount was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BankAccountUpdateInput, BankAccountUncheckedUpdateInput>
+  }
+
+  /**
+   * BankAccount delete
+   */
+  export type BankAccountDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BankAccount
+     */
+    select?: BankAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BankAccount
+     */
+    omit?: BankAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BankAccountInclude<ExtArgs> | null
+    /**
+     * Filter which BankAccount to delete.
+     */
+    where: BankAccountWhereUniqueInput
+  }
+
+  /**
+   * BankAccount deleteMany
+   */
+  export type BankAccountDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BankAccounts to delete
+     */
+    where?: BankAccountWhereInput
+    /**
+     * Limit how many BankAccounts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * BankAccount.statements
+   */
+  export type BankAccount$statementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Statement
+     */
+    select?: StatementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Statement
+     */
+    omit?: StatementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StatementInclude<ExtArgs> | null
+    where?: StatementWhereInput
+    orderBy?: StatementOrderByWithRelationInput | StatementOrderByWithRelationInput[]
+    cursor?: StatementWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: StatementScalarFieldEnum | StatementScalarFieldEnum[]
+  }
+
+  /**
+   * BankAccount without action
+   */
+  export type BankAccountDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BankAccount
+     */
+    select?: BankAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BankAccount
+     */
+    omit?: BankAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BankAccountInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Statement
    */
 
@@ -3670,6 +4961,7 @@ export namespace Prisma {
     originalFilename: string | null
     uploadedAt: Date | null
     status: string | null
+    bankAccountId: string | null
   }
 
   export type StatementMaxAggregateOutputType = {
@@ -3679,6 +4971,7 @@ export namespace Prisma {
     originalFilename: string | null
     uploadedAt: Date | null
     status: string | null
+    bankAccountId: string | null
   }
 
   export type StatementCountAggregateOutputType = {
@@ -3689,6 +4982,7 @@ export namespace Prisma {
     uploadedAt: number
     status: number
     meta: number
+    bankAccountId: number
     _all: number
   }
 
@@ -3700,6 +4994,7 @@ export namespace Prisma {
     originalFilename?: true
     uploadedAt?: true
     status?: true
+    bankAccountId?: true
   }
 
   export type StatementMaxAggregateInputType = {
@@ -3709,6 +5004,7 @@ export namespace Prisma {
     originalFilename?: true
     uploadedAt?: true
     status?: true
+    bankAccountId?: true
   }
 
   export type StatementCountAggregateInputType = {
@@ -3719,6 +5015,7 @@ export namespace Prisma {
     uploadedAt?: true
     status?: true
     meta?: true
+    bankAccountId?: true
     _all?: true
   }
 
@@ -3802,6 +5099,7 @@ export namespace Prisma {
     uploadedAt: Date
     status: string
     meta: JsonValue | null
+    bankAccountId: string | null
     _count: StatementCountAggregateOutputType | null
     _min: StatementMinAggregateOutputType | null
     _max: StatementMaxAggregateOutputType | null
@@ -3829,7 +5127,9 @@ export namespace Prisma {
     uploadedAt?: boolean
     status?: boolean
     meta?: boolean
+    bankAccountId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    bankAccount?: boolean | Statement$bankAccountArgs<ExtArgs>
     transactions?: boolean | Statement$transactionsArgs<ExtArgs>
     insights?: boolean | Statement$insightsArgs<ExtArgs>
     _count?: boolean | StatementCountOutputTypeDefaultArgs<ExtArgs>
@@ -3843,7 +5143,9 @@ export namespace Prisma {
     uploadedAt?: boolean
     status?: boolean
     meta?: boolean
+    bankAccountId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    bankAccount?: boolean | Statement$bankAccountArgs<ExtArgs>
   }, ExtArgs["result"]["statement"]>
 
   export type StatementSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3854,7 +5156,9 @@ export namespace Prisma {
     uploadedAt?: boolean
     status?: boolean
     meta?: boolean
+    bankAccountId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    bankAccount?: boolean | Statement$bankAccountArgs<ExtArgs>
   }, ExtArgs["result"]["statement"]>
 
   export type StatementSelectScalar = {
@@ -3865,26 +5169,31 @@ export namespace Prisma {
     uploadedAt?: boolean
     status?: boolean
     meta?: boolean
+    bankAccountId?: boolean
   }
 
-  export type StatementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "filePath" | "originalFilename" | "uploadedAt" | "status" | "meta", ExtArgs["result"]["statement"]>
+  export type StatementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "filePath" | "originalFilename" | "uploadedAt" | "status" | "meta" | "bankAccountId", ExtArgs["result"]["statement"]>
   export type StatementInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    bankAccount?: boolean | Statement$bankAccountArgs<ExtArgs>
     transactions?: boolean | Statement$transactionsArgs<ExtArgs>
     insights?: boolean | Statement$insightsArgs<ExtArgs>
     _count?: boolean | StatementCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type StatementIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    bankAccount?: boolean | Statement$bankAccountArgs<ExtArgs>
   }
   export type StatementIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    bankAccount?: boolean | Statement$bankAccountArgs<ExtArgs>
   }
 
   export type $StatementPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Statement"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
+      bankAccount: Prisma.$BankAccountPayload<ExtArgs> | null
       transactions: Prisma.$TransactionPayload<ExtArgs>[]
       insights: Prisma.$InsightPayload<ExtArgs>[]
     }
@@ -3896,6 +5205,7 @@ export namespace Prisma {
       uploadedAt: Date
       status: string
       meta: Prisma.JsonValue | null
+      bankAccountId: string | null
     }, ExtArgs["result"]["statement"]>
     composites: {}
   }
@@ -4291,6 +5601,7 @@ export namespace Prisma {
   export interface Prisma__StatementClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    bankAccount<T extends Statement$bankAccountArgs<ExtArgs> = {}>(args?: Subset<T, Statement$bankAccountArgs<ExtArgs>>): Prisma__BankAccountClient<$Result.GetResult<Prisma.$BankAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     transactions<T extends Statement$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, Statement$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     insights<T extends Statement$insightsArgs<ExtArgs> = {}>(args?: Subset<T, Statement$insightsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InsightPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -4329,6 +5640,7 @@ export namespace Prisma {
     readonly uploadedAt: FieldRef<"Statement", 'DateTime'>
     readonly status: FieldRef<"Statement", 'String'>
     readonly meta: FieldRef<"Statement", 'Json'>
+    readonly bankAccountId: FieldRef<"Statement", 'String'>
   }
     
 
@@ -4727,6 +6039,25 @@ export namespace Prisma {
      * Limit how many Statements to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Statement.bankAccount
+   */
+  export type Statement$bankAccountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BankAccount
+     */
+    select?: BankAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BankAccount
+     */
+    omit?: BankAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BankAccountInclude<ExtArgs> | null
+    where?: BankAccountWhereInput
   }
 
   /**
@@ -8168,6 +9499,20 @@ export namespace Prisma {
   export type ChatScalarFieldEnum = (typeof ChatScalarFieldEnum)[keyof typeof ChatScalarFieldEnum]
 
 
+  export const BankAccountScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    accountHolderName: 'accountHolderName',
+    accountNumber: 'accountNumber',
+    ifscCode: 'ifscCode',
+    bankName: 'bankName',
+    branch: 'branch',
+    createdAt: 'createdAt'
+  };
+
+  export type BankAccountScalarFieldEnum = (typeof BankAccountScalarFieldEnum)[keyof typeof BankAccountScalarFieldEnum]
+
+
   export const StatementScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
@@ -8175,7 +9520,8 @@ export namespace Prisma {
     originalFilename: 'originalFilename',
     uploadedAt: 'uploadedAt',
     status: 'status',
-    meta: 'meta'
+    meta: 'meta',
+    bankAccountId: 'bankAccountId'
   };
 
   export type StatementScalarFieldEnum = (typeof StatementScalarFieldEnum)[keyof typeof StatementScalarFieldEnum]
@@ -8353,6 +9699,7 @@ export namespace Prisma {
     transactions?: TransactionListRelationFilter
     insights?: InsightListRelationFilter
     chats?: ChatListRelationFilter
+    bankAccounts?: BankAccountListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -8365,6 +9712,7 @@ export namespace Prisma {
     transactions?: TransactionOrderByRelationAggregateInput
     insights?: InsightOrderByRelationAggregateInput
     chats?: ChatOrderByRelationAggregateInput
+    bankAccounts?: BankAccountOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -8380,6 +9728,7 @@ export namespace Prisma {
     transactions?: TransactionListRelationFilter
     insights?: InsightListRelationFilter
     chats?: ChatListRelationFilter
+    bankAccounts?: BankAccountListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -8464,6 +9813,80 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Chat"> | Date | string
   }
 
+  export type BankAccountWhereInput = {
+    AND?: BankAccountWhereInput | BankAccountWhereInput[]
+    OR?: BankAccountWhereInput[]
+    NOT?: BankAccountWhereInput | BankAccountWhereInput[]
+    id?: StringFilter<"BankAccount"> | string
+    userId?: StringFilter<"BankAccount"> | string
+    accountHolderName?: StringFilter<"BankAccount"> | string
+    accountNumber?: StringFilter<"BankAccount"> | string
+    ifscCode?: StringNullableFilter<"BankAccount"> | string | null
+    bankName?: StringFilter<"BankAccount"> | string
+    branch?: StringNullableFilter<"BankAccount"> | string | null
+    createdAt?: DateTimeFilter<"BankAccount"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    statements?: StatementListRelationFilter
+  }
+
+  export type BankAccountOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    accountHolderName?: SortOrder
+    accountNumber?: SortOrder
+    ifscCode?: SortOrderInput | SortOrder
+    bankName?: SortOrder
+    branch?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    statements?: StatementOrderByRelationAggregateInput
+  }
+
+  export type BankAccountWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId_accountNumber?: BankAccountUserIdAccountNumberCompoundUniqueInput
+    AND?: BankAccountWhereInput | BankAccountWhereInput[]
+    OR?: BankAccountWhereInput[]
+    NOT?: BankAccountWhereInput | BankAccountWhereInput[]
+    userId?: StringFilter<"BankAccount"> | string
+    accountHolderName?: StringFilter<"BankAccount"> | string
+    accountNumber?: StringFilter<"BankAccount"> | string
+    ifscCode?: StringNullableFilter<"BankAccount"> | string | null
+    bankName?: StringFilter<"BankAccount"> | string
+    branch?: StringNullableFilter<"BankAccount"> | string | null
+    createdAt?: DateTimeFilter<"BankAccount"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    statements?: StatementListRelationFilter
+  }, "id" | "userId_accountNumber">
+
+  export type BankAccountOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    accountHolderName?: SortOrder
+    accountNumber?: SortOrder
+    ifscCode?: SortOrderInput | SortOrder
+    bankName?: SortOrder
+    branch?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: BankAccountCountOrderByAggregateInput
+    _max?: BankAccountMaxOrderByAggregateInput
+    _min?: BankAccountMinOrderByAggregateInput
+  }
+
+  export type BankAccountScalarWhereWithAggregatesInput = {
+    AND?: BankAccountScalarWhereWithAggregatesInput | BankAccountScalarWhereWithAggregatesInput[]
+    OR?: BankAccountScalarWhereWithAggregatesInput[]
+    NOT?: BankAccountScalarWhereWithAggregatesInput | BankAccountScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"BankAccount"> | string
+    userId?: StringWithAggregatesFilter<"BankAccount"> | string
+    accountHolderName?: StringWithAggregatesFilter<"BankAccount"> | string
+    accountNumber?: StringWithAggregatesFilter<"BankAccount"> | string
+    ifscCode?: StringNullableWithAggregatesFilter<"BankAccount"> | string | null
+    bankName?: StringWithAggregatesFilter<"BankAccount"> | string
+    branch?: StringNullableWithAggregatesFilter<"BankAccount"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"BankAccount"> | Date | string
+  }
+
   export type StatementWhereInput = {
     AND?: StatementWhereInput | StatementWhereInput[]
     OR?: StatementWhereInput[]
@@ -8475,7 +9898,9 @@ export namespace Prisma {
     uploadedAt?: DateTimeFilter<"Statement"> | Date | string
     status?: StringFilter<"Statement"> | string
     meta?: JsonNullableFilter<"Statement">
+    bankAccountId?: StringNullableFilter<"Statement"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    bankAccount?: XOR<BankAccountNullableScalarRelationFilter, BankAccountWhereInput> | null
     transactions?: TransactionListRelationFilter
     insights?: InsightListRelationFilter
   }
@@ -8488,7 +9913,9 @@ export namespace Prisma {
     uploadedAt?: SortOrder
     status?: SortOrder
     meta?: SortOrderInput | SortOrder
+    bankAccountId?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
+    bankAccount?: BankAccountOrderByWithRelationInput
     transactions?: TransactionOrderByRelationAggregateInput
     insights?: InsightOrderByRelationAggregateInput
   }
@@ -8504,7 +9931,9 @@ export namespace Prisma {
     uploadedAt?: DateTimeFilter<"Statement"> | Date | string
     status?: StringFilter<"Statement"> | string
     meta?: JsonNullableFilter<"Statement">
+    bankAccountId?: StringNullableFilter<"Statement"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    bankAccount?: XOR<BankAccountNullableScalarRelationFilter, BankAccountWhereInput> | null
     transactions?: TransactionListRelationFilter
     insights?: InsightListRelationFilter
   }, "id">
@@ -8517,6 +9946,7 @@ export namespace Prisma {
     uploadedAt?: SortOrder
     status?: SortOrder
     meta?: SortOrderInput | SortOrder
+    bankAccountId?: SortOrderInput | SortOrder
     _count?: StatementCountOrderByAggregateInput
     _max?: StatementMaxOrderByAggregateInput
     _min?: StatementMinOrderByAggregateInput
@@ -8533,6 +9963,7 @@ export namespace Prisma {
     uploadedAt?: DateTimeWithAggregatesFilter<"Statement"> | Date | string
     status?: StringWithAggregatesFilter<"Statement"> | string
     meta?: JsonNullableWithAggregatesFilter<"Statement">
+    bankAccountId?: StringNullableWithAggregatesFilter<"Statement"> | string | null
   }
 
   export type TransactionWhereInput = {
@@ -8752,6 +10183,7 @@ export namespace Prisma {
     transactions?: TransactionCreateNestedManyWithoutUserInput
     insights?: InsightCreateNestedManyWithoutUserInput
     chats?: ChatCreateNestedManyWithoutUserInput
+    bankAccounts?: BankAccountCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -8764,6 +10196,7 @@ export namespace Prisma {
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
     insights?: InsightUncheckedCreateNestedManyWithoutUserInput
     chats?: ChatUncheckedCreateNestedManyWithoutUserInput
+    bankAccounts?: BankAccountUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -8776,6 +10209,7 @@ export namespace Prisma {
     transactions?: TransactionUpdateManyWithoutUserNestedInput
     insights?: InsightUpdateManyWithoutUserNestedInput
     chats?: ChatUpdateManyWithoutUserNestedInput
+    bankAccounts?: BankAccountUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -8788,6 +10222,7 @@ export namespace Prisma {
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     insights?: InsightUncheckedUpdateManyWithoutUserNestedInput
     chats?: ChatUncheckedUpdateManyWithoutUserNestedInput
+    bankAccounts?: BankAccountUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -8876,6 +10311,86 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type BankAccountCreateInput = {
+    id?: string
+    accountHolderName: string
+    accountNumber: string
+    ifscCode?: string | null
+    bankName: string
+    branch?: string | null
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutBankAccountsInput
+    statements?: StatementCreateNestedManyWithoutBankAccountInput
+  }
+
+  export type BankAccountUncheckedCreateInput = {
+    id?: string
+    userId: string
+    accountHolderName: string
+    accountNumber: string
+    ifscCode?: string | null
+    bankName: string
+    branch?: string | null
+    createdAt?: Date | string
+    statements?: StatementUncheckedCreateNestedManyWithoutBankAccountInput
+  }
+
+  export type BankAccountUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    accountHolderName?: StringFieldUpdateOperationsInput | string
+    accountNumber?: StringFieldUpdateOperationsInput | string
+    ifscCode?: NullableStringFieldUpdateOperationsInput | string | null
+    bankName?: StringFieldUpdateOperationsInput | string
+    branch?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutBankAccountsNestedInput
+    statements?: StatementUpdateManyWithoutBankAccountNestedInput
+  }
+
+  export type BankAccountUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    accountHolderName?: StringFieldUpdateOperationsInput | string
+    accountNumber?: StringFieldUpdateOperationsInput | string
+    ifscCode?: NullableStringFieldUpdateOperationsInput | string | null
+    bankName?: StringFieldUpdateOperationsInput | string
+    branch?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    statements?: StatementUncheckedUpdateManyWithoutBankAccountNestedInput
+  }
+
+  export type BankAccountCreateManyInput = {
+    id?: string
+    userId: string
+    accountHolderName: string
+    accountNumber: string
+    ifscCode?: string | null
+    bankName: string
+    branch?: string | null
+    createdAt?: Date | string
+  }
+
+  export type BankAccountUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    accountHolderName?: StringFieldUpdateOperationsInput | string
+    accountNumber?: StringFieldUpdateOperationsInput | string
+    ifscCode?: NullableStringFieldUpdateOperationsInput | string | null
+    bankName?: StringFieldUpdateOperationsInput | string
+    branch?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BankAccountUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    accountHolderName?: StringFieldUpdateOperationsInput | string
+    accountNumber?: StringFieldUpdateOperationsInput | string
+    ifscCode?: NullableStringFieldUpdateOperationsInput | string | null
+    bankName?: StringFieldUpdateOperationsInput | string
+    branch?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StatementCreateInput = {
     id?: string
     filePath: string
@@ -8884,6 +10399,7 @@ export namespace Prisma {
     status?: string
     meta?: NullableJsonNullValueInput | InputJsonValue
     user: UserCreateNestedOneWithoutStatementsInput
+    bankAccount?: BankAccountCreateNestedOneWithoutStatementsInput
     transactions?: TransactionCreateNestedManyWithoutStatementInput
     insights?: InsightCreateNestedManyWithoutStatementInput
   }
@@ -8896,6 +10412,7 @@ export namespace Prisma {
     uploadedAt?: Date | string
     status?: string
     meta?: NullableJsonNullValueInput | InputJsonValue
+    bankAccountId?: string | null
     transactions?: TransactionUncheckedCreateNestedManyWithoutStatementInput
     insights?: InsightUncheckedCreateNestedManyWithoutStatementInput
   }
@@ -8908,6 +10425,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     meta?: NullableJsonNullValueInput | InputJsonValue
     user?: UserUpdateOneRequiredWithoutStatementsNestedInput
+    bankAccount?: BankAccountUpdateOneWithoutStatementsNestedInput
     transactions?: TransactionUpdateManyWithoutStatementNestedInput
     insights?: InsightUpdateManyWithoutStatementNestedInput
   }
@@ -8920,6 +10438,7 @@ export namespace Prisma {
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     meta?: NullableJsonNullValueInput | InputJsonValue
+    bankAccountId?: NullableStringFieldUpdateOperationsInput | string | null
     transactions?: TransactionUncheckedUpdateManyWithoutStatementNestedInput
     insights?: InsightUncheckedUpdateManyWithoutStatementNestedInput
   }
@@ -8932,6 +10451,7 @@ export namespace Prisma {
     uploadedAt?: Date | string
     status?: string
     meta?: NullableJsonNullValueInput | InputJsonValue
+    bankAccountId?: string | null
   }
 
   export type StatementUpdateManyMutationInput = {
@@ -8951,6 +10471,7 @@ export namespace Prisma {
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     meta?: NullableJsonNullValueInput | InputJsonValue
+    bankAccountId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TransactionCreateInput = {
@@ -9231,6 +10752,12 @@ export namespace Prisma {
     none?: ChatWhereInput
   }
 
+  export type BankAccountListRelationFilter = {
+    every?: BankAccountWhereInput
+    some?: BankAccountWhereInput
+    none?: BankAccountWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -9249,6 +10776,10 @@ export namespace Prisma {
   }
 
   export type ChatOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type BankAccountOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -9357,6 +10888,44 @@ export namespace Prisma {
     imageUrl?: SortOrder
     createdAt?: SortOrder
   }
+
+  export type BankAccountUserIdAccountNumberCompoundUniqueInput = {
+    userId: string
+    accountNumber: string
+  }
+
+  export type BankAccountCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    accountHolderName?: SortOrder
+    accountNumber?: SortOrder
+    ifscCode?: SortOrder
+    bankName?: SortOrder
+    branch?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type BankAccountMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    accountHolderName?: SortOrder
+    accountNumber?: SortOrder
+    ifscCode?: SortOrder
+    bankName?: SortOrder
+    branch?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type BankAccountMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    accountHolderName?: SortOrder
+    accountNumber?: SortOrder
+    ifscCode?: SortOrder
+    bankName?: SortOrder
+    branch?: SortOrder
+    createdAt?: SortOrder
+  }
   export type JsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
@@ -9381,6 +10950,11 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type BankAccountNullableScalarRelationFilter = {
+    is?: BankAccountWhereInput | null
+    isNot?: BankAccountWhereInput | null
+  }
+
   export type StatementCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
@@ -9389,6 +10963,7 @@ export namespace Prisma {
     uploadedAt?: SortOrder
     status?: SortOrder
     meta?: SortOrder
+    bankAccountId?: SortOrder
   }
 
   export type StatementMaxOrderByAggregateInput = {
@@ -9398,6 +10973,7 @@ export namespace Prisma {
     originalFilename?: SortOrder
     uploadedAt?: SortOrder
     status?: SortOrder
+    bankAccountId?: SortOrder
   }
 
   export type StatementMinOrderByAggregateInput = {
@@ -9407,6 +10983,7 @@ export namespace Prisma {
     originalFilename?: SortOrder
     uploadedAt?: SortOrder
     status?: SortOrder
+    bankAccountId?: SortOrder
   }
   export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -9629,6 +11206,13 @@ export namespace Prisma {
     connect?: ChatWhereUniqueInput | ChatWhereUniqueInput[]
   }
 
+  export type BankAccountCreateNestedManyWithoutUserInput = {
+    create?: XOR<BankAccountCreateWithoutUserInput, BankAccountUncheckedCreateWithoutUserInput> | BankAccountCreateWithoutUserInput[] | BankAccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BankAccountCreateOrConnectWithoutUserInput | BankAccountCreateOrConnectWithoutUserInput[]
+    createMany?: BankAccountCreateManyUserInputEnvelope
+    connect?: BankAccountWhereUniqueInput | BankAccountWhereUniqueInput[]
+  }
+
   export type StatementUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<StatementCreateWithoutUserInput, StatementUncheckedCreateWithoutUserInput> | StatementCreateWithoutUserInput[] | StatementUncheckedCreateWithoutUserInput[]
     connectOrCreate?: StatementCreateOrConnectWithoutUserInput | StatementCreateOrConnectWithoutUserInput[]
@@ -9655,6 +11239,13 @@ export namespace Prisma {
     connectOrCreate?: ChatCreateOrConnectWithoutUserInput | ChatCreateOrConnectWithoutUserInput[]
     createMany?: ChatCreateManyUserInputEnvelope
     connect?: ChatWhereUniqueInput | ChatWhereUniqueInput[]
+  }
+
+  export type BankAccountUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<BankAccountCreateWithoutUserInput, BankAccountUncheckedCreateWithoutUserInput> | BankAccountCreateWithoutUserInput[] | BankAccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BankAccountCreateOrConnectWithoutUserInput | BankAccountCreateOrConnectWithoutUserInput[]
+    createMany?: BankAccountCreateManyUserInputEnvelope
+    connect?: BankAccountWhereUniqueInput | BankAccountWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -9725,6 +11316,20 @@ export namespace Prisma {
     deleteMany?: ChatScalarWhereInput | ChatScalarWhereInput[]
   }
 
+  export type BankAccountUpdateManyWithoutUserNestedInput = {
+    create?: XOR<BankAccountCreateWithoutUserInput, BankAccountUncheckedCreateWithoutUserInput> | BankAccountCreateWithoutUserInput[] | BankAccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BankAccountCreateOrConnectWithoutUserInput | BankAccountCreateOrConnectWithoutUserInput[]
+    upsert?: BankAccountUpsertWithWhereUniqueWithoutUserInput | BankAccountUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: BankAccountCreateManyUserInputEnvelope
+    set?: BankAccountWhereUniqueInput | BankAccountWhereUniqueInput[]
+    disconnect?: BankAccountWhereUniqueInput | BankAccountWhereUniqueInput[]
+    delete?: BankAccountWhereUniqueInput | BankAccountWhereUniqueInput[]
+    connect?: BankAccountWhereUniqueInput | BankAccountWhereUniqueInput[]
+    update?: BankAccountUpdateWithWhereUniqueWithoutUserInput | BankAccountUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: BankAccountUpdateManyWithWhereWithoutUserInput | BankAccountUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: BankAccountScalarWhereInput | BankAccountScalarWhereInput[]
+  }
+
   export type StatementUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<StatementCreateWithoutUserInput, StatementUncheckedCreateWithoutUserInput> | StatementCreateWithoutUserInput[] | StatementUncheckedCreateWithoutUserInput[]
     connectOrCreate?: StatementCreateOrConnectWithoutUserInput | StatementCreateOrConnectWithoutUserInput[]
@@ -9781,6 +11386,20 @@ export namespace Prisma {
     deleteMany?: ChatScalarWhereInput | ChatScalarWhereInput[]
   }
 
+  export type BankAccountUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<BankAccountCreateWithoutUserInput, BankAccountUncheckedCreateWithoutUserInput> | BankAccountCreateWithoutUserInput[] | BankAccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BankAccountCreateOrConnectWithoutUserInput | BankAccountCreateOrConnectWithoutUserInput[]
+    upsert?: BankAccountUpsertWithWhereUniqueWithoutUserInput | BankAccountUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: BankAccountCreateManyUserInputEnvelope
+    set?: BankAccountWhereUniqueInput | BankAccountWhereUniqueInput[]
+    disconnect?: BankAccountWhereUniqueInput | BankAccountWhereUniqueInput[]
+    delete?: BankAccountWhereUniqueInput | BankAccountWhereUniqueInput[]
+    connect?: BankAccountWhereUniqueInput | BankAccountWhereUniqueInput[]
+    update?: BankAccountUpdateWithWhereUniqueWithoutUserInput | BankAccountUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: BankAccountUpdateManyWithWhereWithoutUserInput | BankAccountUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: BankAccountScalarWhereInput | BankAccountScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutChatsInput = {
     create?: XOR<UserCreateWithoutChatsInput, UserUncheckedCreateWithoutChatsInput>
     connectOrCreate?: UserCreateOrConnectWithoutChatsInput
@@ -9795,10 +11414,72 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutChatsInput, UserUpdateWithoutChatsInput>, UserUncheckedUpdateWithoutChatsInput>
   }
 
+  export type UserCreateNestedOneWithoutBankAccountsInput = {
+    create?: XOR<UserCreateWithoutBankAccountsInput, UserUncheckedCreateWithoutBankAccountsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBankAccountsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type StatementCreateNestedManyWithoutBankAccountInput = {
+    create?: XOR<StatementCreateWithoutBankAccountInput, StatementUncheckedCreateWithoutBankAccountInput> | StatementCreateWithoutBankAccountInput[] | StatementUncheckedCreateWithoutBankAccountInput[]
+    connectOrCreate?: StatementCreateOrConnectWithoutBankAccountInput | StatementCreateOrConnectWithoutBankAccountInput[]
+    createMany?: StatementCreateManyBankAccountInputEnvelope
+    connect?: StatementWhereUniqueInput | StatementWhereUniqueInput[]
+  }
+
+  export type StatementUncheckedCreateNestedManyWithoutBankAccountInput = {
+    create?: XOR<StatementCreateWithoutBankAccountInput, StatementUncheckedCreateWithoutBankAccountInput> | StatementCreateWithoutBankAccountInput[] | StatementUncheckedCreateWithoutBankAccountInput[]
+    connectOrCreate?: StatementCreateOrConnectWithoutBankAccountInput | StatementCreateOrConnectWithoutBankAccountInput[]
+    createMany?: StatementCreateManyBankAccountInputEnvelope
+    connect?: StatementWhereUniqueInput | StatementWhereUniqueInput[]
+  }
+
+  export type UserUpdateOneRequiredWithoutBankAccountsNestedInput = {
+    create?: XOR<UserCreateWithoutBankAccountsInput, UserUncheckedCreateWithoutBankAccountsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBankAccountsInput
+    upsert?: UserUpsertWithoutBankAccountsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutBankAccountsInput, UserUpdateWithoutBankAccountsInput>, UserUncheckedUpdateWithoutBankAccountsInput>
+  }
+
+  export type StatementUpdateManyWithoutBankAccountNestedInput = {
+    create?: XOR<StatementCreateWithoutBankAccountInput, StatementUncheckedCreateWithoutBankAccountInput> | StatementCreateWithoutBankAccountInput[] | StatementUncheckedCreateWithoutBankAccountInput[]
+    connectOrCreate?: StatementCreateOrConnectWithoutBankAccountInput | StatementCreateOrConnectWithoutBankAccountInput[]
+    upsert?: StatementUpsertWithWhereUniqueWithoutBankAccountInput | StatementUpsertWithWhereUniqueWithoutBankAccountInput[]
+    createMany?: StatementCreateManyBankAccountInputEnvelope
+    set?: StatementWhereUniqueInput | StatementWhereUniqueInput[]
+    disconnect?: StatementWhereUniqueInput | StatementWhereUniqueInput[]
+    delete?: StatementWhereUniqueInput | StatementWhereUniqueInput[]
+    connect?: StatementWhereUniqueInput | StatementWhereUniqueInput[]
+    update?: StatementUpdateWithWhereUniqueWithoutBankAccountInput | StatementUpdateWithWhereUniqueWithoutBankAccountInput[]
+    updateMany?: StatementUpdateManyWithWhereWithoutBankAccountInput | StatementUpdateManyWithWhereWithoutBankAccountInput[]
+    deleteMany?: StatementScalarWhereInput | StatementScalarWhereInput[]
+  }
+
+  export type StatementUncheckedUpdateManyWithoutBankAccountNestedInput = {
+    create?: XOR<StatementCreateWithoutBankAccountInput, StatementUncheckedCreateWithoutBankAccountInput> | StatementCreateWithoutBankAccountInput[] | StatementUncheckedCreateWithoutBankAccountInput[]
+    connectOrCreate?: StatementCreateOrConnectWithoutBankAccountInput | StatementCreateOrConnectWithoutBankAccountInput[]
+    upsert?: StatementUpsertWithWhereUniqueWithoutBankAccountInput | StatementUpsertWithWhereUniqueWithoutBankAccountInput[]
+    createMany?: StatementCreateManyBankAccountInputEnvelope
+    set?: StatementWhereUniqueInput | StatementWhereUniqueInput[]
+    disconnect?: StatementWhereUniqueInput | StatementWhereUniqueInput[]
+    delete?: StatementWhereUniqueInput | StatementWhereUniqueInput[]
+    connect?: StatementWhereUniqueInput | StatementWhereUniqueInput[]
+    update?: StatementUpdateWithWhereUniqueWithoutBankAccountInput | StatementUpdateWithWhereUniqueWithoutBankAccountInput[]
+    updateMany?: StatementUpdateManyWithWhereWithoutBankAccountInput | StatementUpdateManyWithWhereWithoutBankAccountInput[]
+    deleteMany?: StatementScalarWhereInput | StatementScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutStatementsInput = {
     create?: XOR<UserCreateWithoutStatementsInput, UserUncheckedCreateWithoutStatementsInput>
     connectOrCreate?: UserCreateOrConnectWithoutStatementsInput
     connect?: UserWhereUniqueInput
+  }
+
+  export type BankAccountCreateNestedOneWithoutStatementsInput = {
+    create?: XOR<BankAccountCreateWithoutStatementsInput, BankAccountUncheckedCreateWithoutStatementsInput>
+    connectOrCreate?: BankAccountCreateOrConnectWithoutStatementsInput
+    connect?: BankAccountWhereUniqueInput
   }
 
   export type TransactionCreateNestedManyWithoutStatementInput = {
@@ -9835,6 +11516,16 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutStatementsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutStatementsInput, UserUpdateWithoutStatementsInput>, UserUncheckedUpdateWithoutStatementsInput>
+  }
+
+  export type BankAccountUpdateOneWithoutStatementsNestedInput = {
+    create?: XOR<BankAccountCreateWithoutStatementsInput, BankAccountUncheckedCreateWithoutStatementsInput>
+    connectOrCreate?: BankAccountCreateOrConnectWithoutStatementsInput
+    upsert?: BankAccountUpsertWithoutStatementsInput
+    disconnect?: BankAccountWhereInput | boolean
+    delete?: BankAccountWhereInput | boolean
+    connect?: BankAccountWhereUniqueInput
+    update?: XOR<XOR<BankAccountUpdateToOneWithWhereWithoutStatementsInput, BankAccountUpdateWithoutStatementsInput>, BankAccountUncheckedUpdateWithoutStatementsInput>
   }
 
   export type TransactionUpdateManyWithoutStatementNestedInput = {
@@ -10162,6 +11853,7 @@ export namespace Prisma {
     uploadedAt?: Date | string
     status?: string
     meta?: NullableJsonNullValueInput | InputJsonValue
+    bankAccount?: BankAccountCreateNestedOneWithoutStatementsInput
     transactions?: TransactionCreateNestedManyWithoutStatementInput
     insights?: InsightCreateNestedManyWithoutStatementInput
   }
@@ -10173,6 +11865,7 @@ export namespace Prisma {
     uploadedAt?: Date | string
     status?: string
     meta?: NullableJsonNullValueInput | InputJsonValue
+    bankAccountId?: string | null
     transactions?: TransactionUncheckedCreateNestedManyWithoutStatementInput
     insights?: InsightUncheckedCreateNestedManyWithoutStatementInput
   }
@@ -10277,6 +11970,38 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type BankAccountCreateWithoutUserInput = {
+    id?: string
+    accountHolderName: string
+    accountNumber: string
+    ifscCode?: string | null
+    bankName: string
+    branch?: string | null
+    createdAt?: Date | string
+    statements?: StatementCreateNestedManyWithoutBankAccountInput
+  }
+
+  export type BankAccountUncheckedCreateWithoutUserInput = {
+    id?: string
+    accountHolderName: string
+    accountNumber: string
+    ifscCode?: string | null
+    bankName: string
+    branch?: string | null
+    createdAt?: Date | string
+    statements?: StatementUncheckedCreateNestedManyWithoutBankAccountInput
+  }
+
+  export type BankAccountCreateOrConnectWithoutUserInput = {
+    where: BankAccountWhereUniqueInput
+    create: XOR<BankAccountCreateWithoutUserInput, BankAccountUncheckedCreateWithoutUserInput>
+  }
+
+  export type BankAccountCreateManyUserInputEnvelope = {
+    data: BankAccountCreateManyUserInput | BankAccountCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type StatementUpsertWithWhereUniqueWithoutUserInput = {
     where: StatementWhereUniqueInput
     update: XOR<StatementUpdateWithoutUserInput, StatementUncheckedUpdateWithoutUserInput>
@@ -10304,6 +12029,7 @@ export namespace Prisma {
     uploadedAt?: DateTimeFilter<"Statement"> | Date | string
     status?: StringFilter<"Statement"> | string
     meta?: JsonNullableFilter<"Statement">
+    bankAccountId?: StringNullableFilter<"Statement"> | string | null
   }
 
   export type TransactionUpsertWithWhereUniqueWithoutUserInput = {
@@ -10396,6 +12122,36 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Chat"> | Date | string
   }
 
+  export type BankAccountUpsertWithWhereUniqueWithoutUserInput = {
+    where: BankAccountWhereUniqueInput
+    update: XOR<BankAccountUpdateWithoutUserInput, BankAccountUncheckedUpdateWithoutUserInput>
+    create: XOR<BankAccountCreateWithoutUserInput, BankAccountUncheckedCreateWithoutUserInput>
+  }
+
+  export type BankAccountUpdateWithWhereUniqueWithoutUserInput = {
+    where: BankAccountWhereUniqueInput
+    data: XOR<BankAccountUpdateWithoutUserInput, BankAccountUncheckedUpdateWithoutUserInput>
+  }
+
+  export type BankAccountUpdateManyWithWhereWithoutUserInput = {
+    where: BankAccountScalarWhereInput
+    data: XOR<BankAccountUpdateManyMutationInput, BankAccountUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type BankAccountScalarWhereInput = {
+    AND?: BankAccountScalarWhereInput | BankAccountScalarWhereInput[]
+    OR?: BankAccountScalarWhereInput[]
+    NOT?: BankAccountScalarWhereInput | BankAccountScalarWhereInput[]
+    id?: StringFilter<"BankAccount"> | string
+    userId?: StringFilter<"BankAccount"> | string
+    accountHolderName?: StringFilter<"BankAccount"> | string
+    accountNumber?: StringFilter<"BankAccount"> | string
+    ifscCode?: StringNullableFilter<"BankAccount"> | string | null
+    bankName?: StringFilter<"BankAccount"> | string
+    branch?: StringNullableFilter<"BankAccount"> | string | null
+    createdAt?: DateTimeFilter<"BankAccount"> | Date | string
+  }
+
   export type UserCreateWithoutChatsInput = {
     id?: string
     email: string
@@ -10405,6 +12161,7 @@ export namespace Prisma {
     statements?: StatementCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
     insights?: InsightCreateNestedManyWithoutUserInput
+    bankAccounts?: BankAccountCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutChatsInput = {
@@ -10416,6 +12173,7 @@ export namespace Prisma {
     statements?: StatementUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
     insights?: InsightUncheckedCreateNestedManyWithoutUserInput
+    bankAccounts?: BankAccountUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutChatsInput = {
@@ -10443,6 +12201,7 @@ export namespace Prisma {
     statements?: StatementUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
     insights?: InsightUpdateManyWithoutUserNestedInput
+    bankAccounts?: BankAccountUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutChatsInput = {
@@ -10454,6 +12213,121 @@ export namespace Prisma {
     statements?: StatementUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     insights?: InsightUncheckedUpdateManyWithoutUserNestedInput
+    bankAccounts?: BankAccountUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutBankAccountsInput = {
+    id?: string
+    email: string
+    name?: string | null
+    avatarUrl?: string | null
+    createdAt?: Date | string
+    statements?: StatementCreateNestedManyWithoutUserInput
+    transactions?: TransactionCreateNestedManyWithoutUserInput
+    insights?: InsightCreateNestedManyWithoutUserInput
+    chats?: ChatCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutBankAccountsInput = {
+    id?: string
+    email: string
+    name?: string | null
+    avatarUrl?: string | null
+    createdAt?: Date | string
+    statements?: StatementUncheckedCreateNestedManyWithoutUserInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    insights?: InsightUncheckedCreateNestedManyWithoutUserInput
+    chats?: ChatUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutBankAccountsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutBankAccountsInput, UserUncheckedCreateWithoutBankAccountsInput>
+  }
+
+  export type StatementCreateWithoutBankAccountInput = {
+    id?: string
+    filePath: string
+    originalFilename: string
+    uploadedAt?: Date | string
+    status?: string
+    meta?: NullableJsonNullValueInput | InputJsonValue
+    user: UserCreateNestedOneWithoutStatementsInput
+    transactions?: TransactionCreateNestedManyWithoutStatementInput
+    insights?: InsightCreateNestedManyWithoutStatementInput
+  }
+
+  export type StatementUncheckedCreateWithoutBankAccountInput = {
+    id?: string
+    userId: string
+    filePath: string
+    originalFilename: string
+    uploadedAt?: Date | string
+    status?: string
+    meta?: NullableJsonNullValueInput | InputJsonValue
+    transactions?: TransactionUncheckedCreateNestedManyWithoutStatementInput
+    insights?: InsightUncheckedCreateNestedManyWithoutStatementInput
+  }
+
+  export type StatementCreateOrConnectWithoutBankAccountInput = {
+    where: StatementWhereUniqueInput
+    create: XOR<StatementCreateWithoutBankAccountInput, StatementUncheckedCreateWithoutBankAccountInput>
+  }
+
+  export type StatementCreateManyBankAccountInputEnvelope = {
+    data: StatementCreateManyBankAccountInput | StatementCreateManyBankAccountInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutBankAccountsInput = {
+    update: XOR<UserUpdateWithoutBankAccountsInput, UserUncheckedUpdateWithoutBankAccountsInput>
+    create: XOR<UserCreateWithoutBankAccountsInput, UserUncheckedCreateWithoutBankAccountsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutBankAccountsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutBankAccountsInput, UserUncheckedUpdateWithoutBankAccountsInput>
+  }
+
+  export type UserUpdateWithoutBankAccountsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    statements?: StatementUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    insights?: InsightUpdateManyWithoutUserNestedInput
+    chats?: ChatUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutBankAccountsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    statements?: StatementUncheckedUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    insights?: InsightUncheckedUpdateManyWithoutUserNestedInput
+    chats?: ChatUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type StatementUpsertWithWhereUniqueWithoutBankAccountInput = {
+    where: StatementWhereUniqueInput
+    update: XOR<StatementUpdateWithoutBankAccountInput, StatementUncheckedUpdateWithoutBankAccountInput>
+    create: XOR<StatementCreateWithoutBankAccountInput, StatementUncheckedCreateWithoutBankAccountInput>
+  }
+
+  export type StatementUpdateWithWhereUniqueWithoutBankAccountInput = {
+    where: StatementWhereUniqueInput
+    data: XOR<StatementUpdateWithoutBankAccountInput, StatementUncheckedUpdateWithoutBankAccountInput>
+  }
+
+  export type StatementUpdateManyWithWhereWithoutBankAccountInput = {
+    where: StatementScalarWhereInput
+    data: XOR<StatementUpdateManyMutationInput, StatementUncheckedUpdateManyWithoutBankAccountInput>
   }
 
   export type UserCreateWithoutStatementsInput = {
@@ -10465,6 +12339,7 @@ export namespace Prisma {
     transactions?: TransactionCreateNestedManyWithoutUserInput
     insights?: InsightCreateNestedManyWithoutUserInput
     chats?: ChatCreateNestedManyWithoutUserInput
+    bankAccounts?: BankAccountCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutStatementsInput = {
@@ -10476,11 +12351,39 @@ export namespace Prisma {
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
     insights?: InsightUncheckedCreateNestedManyWithoutUserInput
     chats?: ChatUncheckedCreateNestedManyWithoutUserInput
+    bankAccounts?: BankAccountUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutStatementsInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutStatementsInput, UserUncheckedCreateWithoutStatementsInput>
+  }
+
+  export type BankAccountCreateWithoutStatementsInput = {
+    id?: string
+    accountHolderName: string
+    accountNumber: string
+    ifscCode?: string | null
+    bankName: string
+    branch?: string | null
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutBankAccountsInput
+  }
+
+  export type BankAccountUncheckedCreateWithoutStatementsInput = {
+    id?: string
+    userId: string
+    accountHolderName: string
+    accountNumber: string
+    ifscCode?: string | null
+    bankName: string
+    branch?: string | null
+    createdAt?: Date | string
+  }
+
+  export type BankAccountCreateOrConnectWithoutStatementsInput = {
+    where: BankAccountWhereUniqueInput
+    create: XOR<BankAccountCreateWithoutStatementsInput, BankAccountUncheckedCreateWithoutStatementsInput>
   }
 
   export type TransactionCreateWithoutStatementInput = {
@@ -10567,6 +12470,7 @@ export namespace Prisma {
     transactions?: TransactionUpdateManyWithoutUserNestedInput
     insights?: InsightUpdateManyWithoutUserNestedInput
     chats?: ChatUpdateManyWithoutUserNestedInput
+    bankAccounts?: BankAccountUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStatementsInput = {
@@ -10578,6 +12482,40 @@ export namespace Prisma {
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     insights?: InsightUncheckedUpdateManyWithoutUserNestedInput
     chats?: ChatUncheckedUpdateManyWithoutUserNestedInput
+    bankAccounts?: BankAccountUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type BankAccountUpsertWithoutStatementsInput = {
+    update: XOR<BankAccountUpdateWithoutStatementsInput, BankAccountUncheckedUpdateWithoutStatementsInput>
+    create: XOR<BankAccountCreateWithoutStatementsInput, BankAccountUncheckedCreateWithoutStatementsInput>
+    where?: BankAccountWhereInput
+  }
+
+  export type BankAccountUpdateToOneWithWhereWithoutStatementsInput = {
+    where?: BankAccountWhereInput
+    data: XOR<BankAccountUpdateWithoutStatementsInput, BankAccountUncheckedUpdateWithoutStatementsInput>
+  }
+
+  export type BankAccountUpdateWithoutStatementsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    accountHolderName?: StringFieldUpdateOperationsInput | string
+    accountNumber?: StringFieldUpdateOperationsInput | string
+    ifscCode?: NullableStringFieldUpdateOperationsInput | string | null
+    bankName?: StringFieldUpdateOperationsInput | string
+    branch?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutBankAccountsNestedInput
+  }
+
+  export type BankAccountUncheckedUpdateWithoutStatementsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    accountHolderName?: StringFieldUpdateOperationsInput | string
+    accountNumber?: StringFieldUpdateOperationsInput | string
+    ifscCode?: NullableStringFieldUpdateOperationsInput | string | null
+    bankName?: StringFieldUpdateOperationsInput | string
+    branch?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TransactionUpsertWithWhereUniqueWithoutStatementInput = {
@@ -10621,6 +12559,7 @@ export namespace Prisma {
     statements?: StatementCreateNestedManyWithoutUserInput
     insights?: InsightCreateNestedManyWithoutUserInput
     chats?: ChatCreateNestedManyWithoutUserInput
+    bankAccounts?: BankAccountCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTransactionsInput = {
@@ -10632,6 +12571,7 @@ export namespace Prisma {
     statements?: StatementUncheckedCreateNestedManyWithoutUserInput
     insights?: InsightUncheckedCreateNestedManyWithoutUserInput
     chats?: ChatUncheckedCreateNestedManyWithoutUserInput
+    bankAccounts?: BankAccountUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTransactionsInput = {
@@ -10647,6 +12587,7 @@ export namespace Prisma {
     status?: string
     meta?: NullableJsonNullValueInput | InputJsonValue
     user: UserCreateNestedOneWithoutStatementsInput
+    bankAccount?: BankAccountCreateNestedOneWithoutStatementsInput
     insights?: InsightCreateNestedManyWithoutStatementInput
   }
 
@@ -10658,6 +12599,7 @@ export namespace Prisma {
     uploadedAt?: Date | string
     status?: string
     meta?: NullableJsonNullValueInput | InputJsonValue
+    bankAccountId?: string | null
     insights?: InsightUncheckedCreateNestedManyWithoutStatementInput
   }
 
@@ -10686,6 +12628,7 @@ export namespace Prisma {
     statements?: StatementUpdateManyWithoutUserNestedInput
     insights?: InsightUpdateManyWithoutUserNestedInput
     chats?: ChatUpdateManyWithoutUserNestedInput
+    bankAccounts?: BankAccountUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTransactionsInput = {
@@ -10697,6 +12640,7 @@ export namespace Prisma {
     statements?: StatementUncheckedUpdateManyWithoutUserNestedInput
     insights?: InsightUncheckedUpdateManyWithoutUserNestedInput
     chats?: ChatUncheckedUpdateManyWithoutUserNestedInput
+    bankAccounts?: BankAccountUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StatementUpsertWithoutTransactionsInput = {
@@ -10718,6 +12662,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     meta?: NullableJsonNullValueInput | InputJsonValue
     user?: UserUpdateOneRequiredWithoutStatementsNestedInput
+    bankAccount?: BankAccountUpdateOneWithoutStatementsNestedInput
     insights?: InsightUpdateManyWithoutStatementNestedInput
   }
 
@@ -10729,6 +12674,7 @@ export namespace Prisma {
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     meta?: NullableJsonNullValueInput | InputJsonValue
+    bankAccountId?: NullableStringFieldUpdateOperationsInput | string | null
     insights?: InsightUncheckedUpdateManyWithoutStatementNestedInput
   }
 
@@ -10741,6 +12687,7 @@ export namespace Prisma {
     statements?: StatementCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
     chats?: ChatCreateNestedManyWithoutUserInput
+    bankAccounts?: BankAccountCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutInsightsInput = {
@@ -10752,6 +12699,7 @@ export namespace Prisma {
     statements?: StatementUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
     chats?: ChatUncheckedCreateNestedManyWithoutUserInput
+    bankAccounts?: BankAccountUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutInsightsInput = {
@@ -10767,6 +12715,7 @@ export namespace Prisma {
     status?: string
     meta?: NullableJsonNullValueInput | InputJsonValue
     user: UserCreateNestedOneWithoutStatementsInput
+    bankAccount?: BankAccountCreateNestedOneWithoutStatementsInput
     transactions?: TransactionCreateNestedManyWithoutStatementInput
   }
 
@@ -10778,6 +12727,7 @@ export namespace Prisma {
     uploadedAt?: Date | string
     status?: string
     meta?: NullableJsonNullValueInput | InputJsonValue
+    bankAccountId?: string | null
     transactions?: TransactionUncheckedCreateNestedManyWithoutStatementInput
   }
 
@@ -10806,6 +12756,7 @@ export namespace Prisma {
     statements?: StatementUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
     chats?: ChatUpdateManyWithoutUserNestedInput
+    bankAccounts?: BankAccountUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutInsightsInput = {
@@ -10817,6 +12768,7 @@ export namespace Prisma {
     statements?: StatementUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     chats?: ChatUncheckedUpdateManyWithoutUserNestedInput
+    bankAccounts?: BankAccountUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StatementUpsertWithoutInsightsInput = {
@@ -10838,6 +12790,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     meta?: NullableJsonNullValueInput | InputJsonValue
     user?: UserUpdateOneRequiredWithoutStatementsNestedInput
+    bankAccount?: BankAccountUpdateOneWithoutStatementsNestedInput
     transactions?: TransactionUpdateManyWithoutStatementNestedInput
   }
 
@@ -10849,6 +12802,7 @@ export namespace Prisma {
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     meta?: NullableJsonNullValueInput | InputJsonValue
+    bankAccountId?: NullableStringFieldUpdateOperationsInput | string | null
     transactions?: TransactionUncheckedUpdateManyWithoutStatementNestedInput
   }
 
@@ -10859,6 +12813,7 @@ export namespace Prisma {
     uploadedAt?: Date | string
     status?: string
     meta?: NullableJsonNullValueInput | InputJsonValue
+    bankAccountId?: string | null
   }
 
   export type TransactionCreateManyUserInput = {
@@ -10891,6 +12846,16 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type BankAccountCreateManyUserInput = {
+    id?: string
+    accountHolderName: string
+    accountNumber: string
+    ifscCode?: string | null
+    bankName: string
+    branch?: string | null
+    createdAt?: Date | string
+  }
+
   export type StatementUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     filePath?: StringFieldUpdateOperationsInput | string
@@ -10898,6 +12863,7 @@ export namespace Prisma {
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     meta?: NullableJsonNullValueInput | InputJsonValue
+    bankAccount?: BankAccountUpdateOneWithoutStatementsNestedInput
     transactions?: TransactionUpdateManyWithoutStatementNestedInput
     insights?: InsightUpdateManyWithoutStatementNestedInput
   }
@@ -10909,6 +12875,7 @@ export namespace Prisma {
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     meta?: NullableJsonNullValueInput | InputJsonValue
+    bankAccountId?: NullableStringFieldUpdateOperationsInput | string | null
     transactions?: TransactionUncheckedUpdateManyWithoutStatementNestedInput
     insights?: InsightUncheckedUpdateManyWithoutStatementNestedInput
   }
@@ -10920,6 +12887,7 @@ export namespace Prisma {
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     meta?: NullableJsonNullValueInput | InputJsonValue
+    bankAccountId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TransactionUpdateWithoutUserInput = {
@@ -11010,6 +12978,82 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BankAccountUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    accountHolderName?: StringFieldUpdateOperationsInput | string
+    accountNumber?: StringFieldUpdateOperationsInput | string
+    ifscCode?: NullableStringFieldUpdateOperationsInput | string | null
+    bankName?: StringFieldUpdateOperationsInput | string
+    branch?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    statements?: StatementUpdateManyWithoutBankAccountNestedInput
+  }
+
+  export type BankAccountUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    accountHolderName?: StringFieldUpdateOperationsInput | string
+    accountNumber?: StringFieldUpdateOperationsInput | string
+    ifscCode?: NullableStringFieldUpdateOperationsInput | string | null
+    bankName?: StringFieldUpdateOperationsInput | string
+    branch?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    statements?: StatementUncheckedUpdateManyWithoutBankAccountNestedInput
+  }
+
+  export type BankAccountUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    accountHolderName?: StringFieldUpdateOperationsInput | string
+    accountNumber?: StringFieldUpdateOperationsInput | string
+    ifscCode?: NullableStringFieldUpdateOperationsInput | string | null
+    bankName?: StringFieldUpdateOperationsInput | string
+    branch?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StatementCreateManyBankAccountInput = {
+    id?: string
+    userId: string
+    filePath: string
+    originalFilename: string
+    uploadedAt?: Date | string
+    status?: string
+    meta?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type StatementUpdateWithoutBankAccountInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    originalFilename?: StringFieldUpdateOperationsInput | string
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    meta?: NullableJsonNullValueInput | InputJsonValue
+    user?: UserUpdateOneRequiredWithoutStatementsNestedInput
+    transactions?: TransactionUpdateManyWithoutStatementNestedInput
+    insights?: InsightUpdateManyWithoutStatementNestedInput
+  }
+
+  export type StatementUncheckedUpdateWithoutBankAccountInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    originalFilename?: StringFieldUpdateOperationsInput | string
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    meta?: NullableJsonNullValueInput | InputJsonValue
+    transactions?: TransactionUncheckedUpdateManyWithoutStatementNestedInput
+    insights?: InsightUncheckedUpdateManyWithoutStatementNestedInput
+  }
+
+  export type StatementUncheckedUpdateManyWithoutBankAccountInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    filePath?: StringFieldUpdateOperationsInput | string
+    originalFilename?: StringFieldUpdateOperationsInput | string
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    meta?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type TransactionCreateManyStatementInput = {

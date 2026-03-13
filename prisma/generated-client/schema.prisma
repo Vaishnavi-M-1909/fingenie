@@ -17,6 +17,7 @@ model User {
   transactions Transaction[]
   insights     Insight[]
   chats        Chat[]
+  bankAccounts BankAccount[]
 
   @@map("users")
 }
@@ -34,6 +35,23 @@ model Chat {
   @@map("chat_messages")
 }
 
+model BankAccount {
+  id                String      @id @default(cuid())
+  userId            String      @map("user_id")
+  accountHolderName String      @map("account_holder_name")
+  accountNumber     String      @map("account_number")
+  ifscCode          String?     @map("ifsc_code")
+  bankName          String      @map("bank_name")
+  branch            String?
+  createdAt         DateTime    @default(now()) @map("created_at")
+  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  statements        Statement[]
+
+  @@unique([userId, accountNumber])
+  @@index([userId])
+  @@map("bank_accounts")
+}
+
 model Statement {
   id               String        @id @default(cuid())
   userId           String        @map("user_id")
@@ -42,11 +60,14 @@ model Statement {
   uploadedAt       DateTime      @default(now()) @map("uploaded_at")
   status           String        @default("queued") // queued | parsing | done | failed
   meta             Json?
+  bankAccountId    String?       @map("bank_account_id")
   user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bankAccount      BankAccount?  @relation(fields: [bankAccountId], references: [id], onDelete: SetNull)
   transactions     Transaction[]
   insights         Insight[]
 
   @@index([userId])
+  @@index([bankAccountId])
   @@map("statements")
 }
 
