@@ -137,7 +137,10 @@ export default function DashboardPage() {
               <div style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 4vw, 3.5rem)", fontWeight: 800, color: "var(--text-primary)", lineHeight: 1, letterSpacing: "-0.03em" }}>
                 {formatCurrency(data?.totalSpent || 0)}
               </div>
-              <div style={{ marginTop: "auto", paddingTop: "24px", display: "flex", alignItems: "center", gap: "8px", fontFamily: "var(--font-display)", fontSize: "14px", fontWeight: 700, color: "var(--accent-coral)", textTransform: "uppercase" }}>
+              <div style={{ fontSize: "0.85rem", color: "var(--text-tertiary)", marginTop: "8px", fontFamily: "var(--font-body)", fontWeight: 500 }}>
+                Sum of all expenditures for {getMonthLabel(currentMonth)}
+              </div>
+              <div style={{ marginTop: "auto", paddingTop: "16px", display: "flex", alignItems: "center", gap: "8px", fontFamily: "var(--font-display)", fontSize: "14px", fontWeight: 700, color: "var(--accent-coral)", textTransform: "uppercase" }}>
                 <TrendingDown size={18} /> {data?.transactionCount || 0} Event Vectors
               </div>
             </div>
@@ -148,7 +151,10 @@ export default function DashboardPage() {
               <div style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 3vw, 2.5rem)", fontWeight: 800, color: "var(--text-primary)", lineHeight: 1.1, wordBreak: "break-word" }}>
                 {pieData[0]?.name || "UNKNOWN"}
               </div>
-              <div style={{ marginTop: "auto", paddingTop: "24px", fontFamily: "var(--font-body)", fontSize: "1.25rem", fontWeight: 700, color: "var(--brand-primary)" }}>
+              <div style={{ fontSize: "0.85rem", color: "var(--text-tertiary)", marginTop: "8px", fontFamily: "var(--font-body)", fontWeight: 500 }}>
+                Your highest spending category this month
+              </div>
+              <div style={{ marginTop: "auto", paddingTop: "16px", fontFamily: "var(--font-body)", fontSize: "1.25rem", fontWeight: 700, color: "var(--brand-primary)" }}>
                 {pieData[0] ? formatCurrency(pieData[0].value as number) : "—"}
               </div>
             </div>
@@ -159,14 +165,20 @@ export default function DashboardPage() {
               <div style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 4vw, 3.5rem)", fontWeight: 800, color: "var(--text-primary)", lineHeight: 1 }}>
                 {data?.recurring?.length || 0}
               </div>
-              <div style={{ marginTop: "auto", paddingTop: "24px", display: "flex", alignItems: "center", gap: "8px", fontFamily: "var(--font-display)", fontSize: "14px", fontWeight: 700, color: "var(--accent-coral)", textTransform: "uppercase" }}>
+              <div style={{ fontSize: "0.85rem", color: "var(--text-tertiary)", marginTop: "8px", fontFamily: "var(--font-body)", fontWeight: 500 }}>
+                Detected recurring patterns & subscriptions
+              </div>
+              <div style={{ marginTop: "auto", paddingTop: "16px", display: "flex", alignItems: "center", gap: "8px", fontFamily: "var(--font-display)", fontSize: "14px", fontWeight: 700, color: "var(--accent-coral)", textTransform: "uppercase" }}>
                 <RefreshCw size={16} /> {formatCurrency(data?.recurring?.reduce((s: number, r: { amount: number }) => s + r.amount, 0) || 0)} / CYC
               </div>
             </div>
 
             {/* Health Status */}
-            <div className="editorial-card editorial-card-hover">
+            <div className="editorial-card editorial-card-hover" style={{ display: "flex", flexDirection: "column" }}>
               <BrutalistStatusBar score={data?.healthScore} />
+              <div style={{ fontSize: "0.8rem", color: "var(--text-tertiary)", marginTop: "12px", fontFamily: "var(--font-body)", lineHeight: 1.4 }}>
+                Composite: Diversity (30%) + Strategy (40%) + Consistency (30%)
+              </div>
             </div>
           </div>
 
@@ -194,12 +206,12 @@ export default function DashboardPage() {
                       tickLine={{ stroke: "var(--border-light)", strokeWidth: 1 }}
                     />
                     <YAxis
-                      tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`}
+                      tickFormatter={(v) => `₹${v.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`}
                       stroke="var(--text-tertiary)"
-                      tick={{ fill: "var(--text-secondary)", fontSize: 12, fontWeight: 600, fontFamily: "var(--font-body)" }}
+                      tick={{ fill: "var(--text-secondary)", fontSize: 10, fontWeight: 600, fontFamily: "var(--font-body)" }}
                       axisLine={{ stroke: "var(--border-light)", strokeWidth: 1 }}
                       tickLine={{ stroke: "var(--border-light)", strokeWidth: 1 }}
-                      width={50}
+                      width={65}
                     />
                     <Tooltip
                       cursor={{ stroke: "var(--border-heavy)", strokeWidth: 1, strokeDasharray: "none" }}
@@ -280,11 +292,12 @@ export default function DashboardPage() {
                             cx="50%"
                             cy="50%"
                             innerRadius={70}
-                            outerRadius={110}
-                            paddingAngle={2}
+                            outerRadius={100}
+                            paddingAngle={4}
                             dataKey="value"
                             stroke="var(--bg-secondary)"
-                            strokeWidth={2}
+                            strokeWidth={3}
+                            label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
                           >
                             {pieData.map((_, index) => (
                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

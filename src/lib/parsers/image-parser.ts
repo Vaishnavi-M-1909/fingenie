@@ -22,7 +22,26 @@ export async function parseImage(base64Image: string, mimeType: string) {
           content: [
             {
               type: "text",
-              text: "Extract all visible line-item transaction details from this receipt or statement image. Respond with a valid CSV format containing exactly the following columns, and no other text: Date, Merchant, Amount, Category, Description. \n\nCRITICAL INSTRUCTIONS:\n- Date: MUST be in YYYY-MM-DD format. Assume 2026 if year is missing.\n- Category: Assign a short, generic category. \n  * Fruits, Vegetables, Meat, Dairy, Bread -> 'Groceries'\n  * Fast food, Restaurants, Cafes -> 'Food & Dining'\n  * Books, Electronics, Clothing -> 'Shopping'\n  * Bus, Taxi, Fuel, Metro -> 'Transport'\n  * Apps, Streaming, Internet -> 'Subscriptions'\n- If not a receipt/statement, output empty CSV."
+              text: `Extract all visible line-item transaction details from this receipt or statement image. Respond with a valid CSV format containing exactly the following columns, and no other text: Date, Merchant, Amount, Category, Description.
+
+CRITICAL INSTRUCTIONS:
+- Date: MUST be in YYYY-MM-DD format. Assume 2026 if year is missing.
+- Merchant: Extract the store or service name.
+- Amount: MUST be negative for expenditures.
+- Category: Assign ONE of these specific categories:
+  * Groceries: Supermarkets, fruits, dairy, meat, bread.
+  * Food & Dining: Restaurants, cafes, fast food, delivery.
+  * Shopping: Clothing, electronics, home goods, books.
+  * Transport: Fuel, taxi, bus, train, metro.
+  * Subscriptions: Apps, streaming services, gym.
+  * Utilities: Electricity, water, gas, internet, phone bill.
+  * Healthcare: Pharmacy, hospitals, clinic, medicine.
+  * Entertainment: Cinema, events, games, hobbies.
+  * Education: Courses, books, tuition.
+  * Personal Care: Salon, spa, skincare, hygiene.
+  * Travel: Flights, hotels, luggage.
+- Description: provide a brief detail (e.g., "Grocery items", "Monthly Internet", "Coffee with friend"). DO NOT just repeat the Merchant name here.
+- If not a receipt/statement, output empty CSV.`
             },
             {
               type: "image_url",

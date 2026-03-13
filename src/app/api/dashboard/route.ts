@@ -43,8 +43,22 @@ export async function GET(request: Request) {
     }
 
     // Compute analytics
-    const expenses = transactions.filter((t: { amount: number }) => t.amount < 0);
-    const totalSpent = expenses.reduce((sum: number, t: { amount: number }) => sum + Math.abs(t.amount), 0);
+    const EXPENSE_CATEGORIES = [
+      "Food & Dining", "Shopping", "Transport", "Subscriptions", "Utilities",
+      "Healthcare", "Education", "Entertainment", "Other", "Uncategorized"
+    ];
+
+    const expenses = transactions.filter((t: { amount: number; category: string | null }) => {
+      // If it's already negative, it's definitely an expense
+      if (t.amount < 0) return true;
+      // If it's positive but in an expense category, treat it as an expense (legacy data or mis-signed)
+      if (t.amount > 0 && t.category && EXPENSE_CATEGORIES.includes(t.category)) return true;
+      return false;
+    });
+
+    const totalSpent = expenses.reduce((sum: number, t: { amount: number; category: string | null }) => {
+      return sum + Math.abs(t.amount);
+    }, 0);
 
     // Category totals
     const categoryMap = new Map<string, number>();
