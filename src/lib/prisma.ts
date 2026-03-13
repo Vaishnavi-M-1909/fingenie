@@ -2,7 +2,7 @@ import { PrismaClient } from "../../prisma/generated-client"; // v2 schema updat
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+  prismaV3: PrismaClient | undefined;
 };
 
 function createPrismaClient() {
@@ -10,7 +10,9 @@ function createPrismaClient() {
   return new PrismaClient({ adapter });
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
+// Singleton pattern to prevent connection leaks during hot reload
+// Using V3 suffix to force-bust stale caches from previous schema versions
+export const prisma = globalForPrisma.prismaV3 ?? createPrismaClient();
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== "production") globalForPrisma.prismaV3 = prisma;
 

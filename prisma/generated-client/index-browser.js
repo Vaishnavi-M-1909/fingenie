@@ -134,6 +134,7 @@ exports.Prisma.ChatScalarFieldEnum = {
   role: 'role',
   content: 'content',
   imageUrl: 'imageUrl',
+  recommendations: 'recommendations',
   createdAt: 'createdAt'
 };
 
@@ -190,6 +191,27 @@ exports.Prisma.MerchantMapScalarFieldEnum = {
   createdBy: 'createdBy'
 };
 
+exports.Prisma.LearningResourceScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  type: 'type',
+  category: 'category',
+  url: 'url',
+  thumbnailUrl: 'thumbnailUrl',
+  author: 'author',
+  tags: 'tags',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ResourceInteractionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  resourceId: 'resourceId',
+  type: 'type',
+  interactedAt: 'interactedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -224,7 +246,9 @@ exports.Prisma.ModelName = {
   Statement: 'Statement',
   Transaction: 'Transaction',
   Insight: 'Insight',
-  MerchantMap: 'MerchantMap'
+  MerchantMap: 'MerchantMap',
+  LearningResource: 'LearningResource',
+  ResourceInteraction: 'ResourceInteraction'
 };
 
 /**

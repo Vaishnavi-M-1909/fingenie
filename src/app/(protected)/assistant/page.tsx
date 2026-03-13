@@ -4,12 +4,22 @@ import { useState, useRef, useEffect } from "react";
 import { MoveRight, Sparkles, Loader2, Image as ImageIcon, X, Copy, Pencil, Check } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import RecommendationCards from "@/components/RecommendationCards";
 
 interface Message {
   id?: string;
   role: "user" | "assistant";
   content: string;
   imageUrl?: string;
+  recommendations?: Array<{
+    id: string;
+    title: string;
+    type: string;
+    url: string;
+    author: string | null;
+    description: string;
+    thumbnailUrl: string | null;
+  }>;
 }
 
 export default function AssistantPage() {
@@ -31,7 +41,11 @@ export default function AssistantPage() {
     { id: "insights", label: "Latest Insights", description: "Inject your latest AI financial analysis" },
     { id: "transactions", label: "Recent Transactions", description: "Inject your last 10 transactions" },
     { id: "statements", label: "Statement Summary", description: "Inject your recent upload history" },
-    { id: "summary", label: "Financial Summary", description: "Inject a top-down view of your finances" }
+    { id: "summary", label: "Financial Summary", description: "Inject a top-down view of your finances" },
+    { id: "tax", label: "Tax Resources", description: "Get AI-curated tax saving videos & articles" },
+    { id: "investing", label: "Investing Resources", description: "Get videos & articles on investing" },
+    { id: "budgeting", label: "Budgeting Resources", description: "Get tips on managing your budget" },
+    { id: "savings", label: "Savings Resources", description: "Learn smart saving strategies" },
   ];
 
   useEffect(() => {
@@ -162,8 +176,13 @@ export default function AssistantPage() {
         if (idx !== -1) {
           next[idx] = { ...next[idx], id: data.userMessageId };
         }
-        // Add AI response
-        next.push({ id: data.aiMessageId, role: "assistant", content: data.message });
+        // Add AI response with recommendations
+        next.push({
+          id: data.aiMessageId,
+          role: "assistant",
+          content: data.message,
+          recommendations: data.recommendations,
+        });
         return next;
       });
     } catch (error) {
@@ -204,7 +223,12 @@ export default function AssistantPage() {
       const data = await response.json();
       
       // Append the new AI response generated from the branched history
-      setMessages(prev => [...prev, { id: data.aiMessageId, role: "assistant", content: data.message }]);
+      setMessages(prev => [...prev, { 
+        id: data.aiMessageId, 
+        role: "assistant", 
+        content: data.message,
+        recommendations: data.recommendations
+      }]);
     } catch (err) {
       console.error(err);
       setMessages(prev => [...prev, { role: "assistant", content: "System Error. Edit failed." }]);
@@ -345,6 +369,18 @@ export default function AssistantPage() {
                   </>
                 )}
               </div>
+
+              {!isUser && m.recommendations && m.recommendations.length > 0 && (
+                <div style={{ 
+                  marginTop: "8px", 
+                  width: "100%", 
+                  maxWidth: "900px",
+                  alignSelf: "flex-start",
+                  animation: "revealUp 0.4s ease-out forwards"
+                }}>
+                  <RecommendationCards recommendations={m.recommendations} />
+                </div>
+              )}
 
               {/* Action Buttons Below Bubble */}
               {!isEditing && isHovered && (
@@ -553,7 +589,7 @@ export default function AssistantPage() {
           </div>
           
           <div style={{ margin: "12px 0 0 60px", display: "flex", gap: "12px", flexWrap: "wrap", opacity: (!input.trim() && !isLoading) ? 1 : 0, transition: "opacity 0.2s" }}>
-            {["Analyze spending", "Savings strategy"].map(text => (
+            {["Analyze spending", "Savings strategy", "Help me with @tax", "Learn about @investing"].map(text => (
               <button 
                 key={text}
                 onClick={() => { setInput(text); }}

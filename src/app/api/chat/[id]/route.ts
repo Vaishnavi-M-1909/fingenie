@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { generateChatResponse } from "@/lib/openrouter";
+import { getUser } from "@/lib/auth";
 
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createSupabaseServerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const user = await getUser();
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -34,6 +33,59 @@ export async function PUT(
 
     if (existingMessage.userId !== user.id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    // 2. Detect @flags in the message for recommendations
+    const flagPattern = /@(tax|finance|spending|investing|budgeting|savings|insurance|money|mutual[-\s]?funds?|stocks?|budget|save|invest)/gi;
+    const detectedFlags = [...(content || "").matchAll(flagPattern)].map((m: RegExpMatchArray) => m[1].toLowerCase());
+
+    const categoryMap: Record<string, string> = {
+      tax: "Tax", finance: "Finance", money: "Finance", spending: "Spending",
+      investing: "Investing", invest: "Investing", stocks: "Investing", stock: "Investing",
+      "mutual-funds": "Investing", "mutual funds": "Investing", "mutualfunds": "Investing",
+      budgeting: "Budgeting", budget: "Budgeting", savings: "Savings", save: "Savings",
+      insurance: "Insurance",
+    };
+
+    const categories = [...new Set(detectedFlags.map((f: string) => categoryMap[f] || "Finance"))];
+
+    // 3. Query recommendations if @flags detected
+    let recommendations: any[] = [];
+    let recommendationContext = "";
+
+    if (categories.length > 0) {
+      const watchedIds = await prisma.resourceInteraction.findMany({
+        where: { userId: user.id, type: { in: ["VIEW", "COMPLETE"] } },
+        select: { resourceId: true },
+        distinct: ["resourceId"],
+      });
+      const watchedSet = new Set(watchedIds.map((w: any) => w.resourceId));
+
+      const resources = await prisma.learningResource.findMany({
+        where: { category: { in: categories } },
+        take: 6,
+        orderBy: { createdAt: "desc" },
+      });
+
+      const sorted = resources.sort((a, b) => {
+        const aWatched = watchedSet.has(a.id) ? 1 : 0;
+        const bWatched = watchedSet.has(b.id) ? 1 : 0;
+        return aWatched - bWatched;
+      });
+
+      recommendations = sorted.slice(0, 4).map((r) => ({
+        id: r.id,
+        title: r.title,
+        type: r.type,
+        url: r.url,
+        author: r.author,
+        description: r.description,
+        thumbnailUrl: r.thumbnailUrl,
+      }));
+
+      if (recommendations.length > 0) {
+        recommendationContext = `\n\n--- Curated Learning Resources (MUST include in your response) ---\nThe user asked about ${categories.join(", ")}. Here are verified resources from our library. You MUST recommend 1-3 of these in your response with their exact titles.\n${recommendations.map((r, i) => `${i + 1}. [${r.type}] "${r.title}" by ${r.author || "Unknown"} — ${r.description}`).join("\n")}`;
+      }
     }
 
     // Update message
@@ -93,9 +145,14 @@ export async function PUT(
       Your goal is to help them understand their spending, save better, and learn about finance.
       
       ${contextStr}
+      ${recommendationContext}
 
       Be concise, insightful, and friendly. If they ask about specific spending, refer to the transaction data provided above.
-      Always format currency as ₹ (INR).
+      
+      --- RECOMMENDATION GUIDELINES ---
+      1. When recommending resources (videos/articles/books), mention them naturally in your response.
+      2. DO NOT create a numbered list or use rigid "[VIDEO]" prefixes in your text response, as interactive cards will be shown separately.
+      3. Always format currency as ₹ (INR).
     `;
 
     // Construct user content block
@@ -119,13 +176,15 @@ export async function PUT(
       data: {
         userId: user.id,
         role: "assistant",
-        content: aiResponse
+        content: aiResponse,
+        recommendations: recommendations.length > 0 ? recommendations : undefined
       }
     });
 
     return NextResponse.json({ 
       message: aiResponse,
-      aiMessageId: aiMsg.id
+      aiMessageId: aiMsg.id,
+      recommendations: recommendations.length > 0 ? recommendations : undefined
     });
   } catch (error) {
     console.error("[CHAT_PUT_ERROR]", error);

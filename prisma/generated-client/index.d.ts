@@ -48,6 +48,16 @@ export type Insight = $Result.DefaultSelection<Prisma.$InsightPayload>
  * 
  */
 export type MerchantMap = $Result.DefaultSelection<Prisma.$MerchantMapPayload>
+/**
+ * Model LearningResource
+ * 
+ */
+export type LearningResource = $Result.DefaultSelection<Prisma.$LearningResourcePayload>
+/**
+ * Model ResourceInteraction
+ * 
+ */
+export type ResourceInteraction = $Result.DefaultSelection<Prisma.$ResourceInteractionPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -239,6 +249,26 @@ export class PrismaClient<
     * ```
     */
   get merchantMap(): Prisma.MerchantMapDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.learningResource`: Exposes CRUD operations for the **LearningResource** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more LearningResources
+    * const learningResources = await prisma.learningResource.findMany()
+    * ```
+    */
+  get learningResource(): Prisma.LearningResourceDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.resourceInteraction`: Exposes CRUD operations for the **ResourceInteraction** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ResourceInteractions
+    * const resourceInteractions = await prisma.resourceInteraction.findMany()
+    * ```
+    */
+  get resourceInteraction(): Prisma.ResourceInteractionDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -679,7 +709,9 @@ export namespace Prisma {
     Statement: 'Statement',
     Transaction: 'Transaction',
     Insight: 'Insight',
-    MerchantMap: 'MerchantMap'
+    MerchantMap: 'MerchantMap',
+    LearningResource: 'LearningResource',
+    ResourceInteraction: 'ResourceInteraction'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -695,7 +727,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "chat" | "bankAccount" | "statement" | "transaction" | "insight" | "merchantMap"
+      modelProps: "user" | "chat" | "bankAccount" | "statement" | "transaction" | "insight" | "merchantMap" | "learningResource" | "resourceInteraction"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1217,6 +1249,154 @@ export namespace Prisma {
           }
         }
       }
+      LearningResource: {
+        payload: Prisma.$LearningResourcePayload<ExtArgs>
+        fields: Prisma.LearningResourceFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LearningResourceFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningResourcePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LearningResourceFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningResourcePayload>
+          }
+          findFirst: {
+            args: Prisma.LearningResourceFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningResourcePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LearningResourceFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningResourcePayload>
+          }
+          findMany: {
+            args: Prisma.LearningResourceFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningResourcePayload>[]
+          }
+          create: {
+            args: Prisma.LearningResourceCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningResourcePayload>
+          }
+          createMany: {
+            args: Prisma.LearningResourceCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.LearningResourceCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningResourcePayload>[]
+          }
+          delete: {
+            args: Prisma.LearningResourceDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningResourcePayload>
+          }
+          update: {
+            args: Prisma.LearningResourceUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningResourcePayload>
+          }
+          deleteMany: {
+            args: Prisma.LearningResourceDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LearningResourceUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.LearningResourceUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningResourcePayload>[]
+          }
+          upsert: {
+            args: Prisma.LearningResourceUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningResourcePayload>
+          }
+          aggregate: {
+            args: Prisma.LearningResourceAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLearningResource>
+          }
+          groupBy: {
+            args: Prisma.LearningResourceGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LearningResourceGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LearningResourceCountArgs<ExtArgs>
+            result: $Utils.Optional<LearningResourceCountAggregateOutputType> | number
+          }
+        }
+      }
+      ResourceInteraction: {
+        payload: Prisma.$ResourceInteractionPayload<ExtArgs>
+        fields: Prisma.ResourceInteractionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ResourceInteractionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResourceInteractionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ResourceInteractionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResourceInteractionPayload>
+          }
+          findFirst: {
+            args: Prisma.ResourceInteractionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResourceInteractionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ResourceInteractionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResourceInteractionPayload>
+          }
+          findMany: {
+            args: Prisma.ResourceInteractionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResourceInteractionPayload>[]
+          }
+          create: {
+            args: Prisma.ResourceInteractionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResourceInteractionPayload>
+          }
+          createMany: {
+            args: Prisma.ResourceInteractionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ResourceInteractionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResourceInteractionPayload>[]
+          }
+          delete: {
+            args: Prisma.ResourceInteractionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResourceInteractionPayload>
+          }
+          update: {
+            args: Prisma.ResourceInteractionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResourceInteractionPayload>
+          }
+          deleteMany: {
+            args: Prisma.ResourceInteractionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ResourceInteractionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ResourceInteractionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResourceInteractionPayload>[]
+          }
+          upsert: {
+            args: Prisma.ResourceInteractionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResourceInteractionPayload>
+          }
+          aggregate: {
+            args: Prisma.ResourceInteractionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateResourceInteraction>
+          }
+          groupBy: {
+            args: Prisma.ResourceInteractionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ResourceInteractionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ResourceInteractionCountArgs<ExtArgs>
+            result: $Utils.Optional<ResourceInteractionCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1332,6 +1512,8 @@ export namespace Prisma {
     transaction?: TransactionOmit
     insight?: InsightOmit
     merchantMap?: MerchantMapOmit
+    learningResource?: LearningResourceOmit
+    resourceInteraction?: ResourceInteractionOmit
   }
 
   /* Types for Logging */
@@ -1417,6 +1599,7 @@ export namespace Prisma {
     insights: number
     chats: number
     bankAccounts: number
+    resourceInteractions: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1425,6 +1608,7 @@ export namespace Prisma {
     insights?: boolean | UserCountOutputTypeCountInsightsArgs
     chats?: boolean | UserCountOutputTypeCountChatsArgs
     bankAccounts?: boolean | UserCountOutputTypeCountBankAccountsArgs
+    resourceInteractions?: boolean | UserCountOutputTypeCountResourceInteractionsArgs
   }
 
   // Custom InputTypes
@@ -1471,6 +1655,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountBankAccountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: BankAccountWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountResourceInteractionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ResourceInteractionWhereInput
   }
 
 
@@ -1542,6 +1733,37 @@ export namespace Prisma {
    */
   export type StatementCountOutputTypeCountInsightsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: InsightWhereInput
+  }
+
+
+  /**
+   * Count Type LearningResourceCountOutputType
+   */
+
+  export type LearningResourceCountOutputType = {
+    interactions: number
+  }
+
+  export type LearningResourceCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    interactions?: boolean | LearningResourceCountOutputTypeCountInteractionsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * LearningResourceCountOutputType without action
+   */
+  export type LearningResourceCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningResourceCountOutputType
+     */
+    select?: LearningResourceCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * LearningResourceCountOutputType without action
+   */
+  export type LearningResourceCountOutputTypeCountInteractionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ResourceInteractionWhereInput
   }
 
 
@@ -1718,6 +1940,7 @@ export namespace Prisma {
     insights?: boolean | User$insightsArgs<ExtArgs>
     chats?: boolean | User$chatsArgs<ExtArgs>
     bankAccounts?: boolean | User$bankAccountsArgs<ExtArgs>
+    resourceInteractions?: boolean | User$resourceInteractionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1752,6 +1975,7 @@ export namespace Prisma {
     insights?: boolean | User$insightsArgs<ExtArgs>
     chats?: boolean | User$chatsArgs<ExtArgs>
     bankAccounts?: boolean | User$bankAccountsArgs<ExtArgs>
+    resourceInteractions?: boolean | User$resourceInteractionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1765,6 +1989,7 @@ export namespace Prisma {
       insights: Prisma.$InsightPayload<ExtArgs>[]
       chats: Prisma.$ChatPayload<ExtArgs>[]
       bankAccounts: Prisma.$BankAccountPayload<ExtArgs>[]
+      resourceInteractions: Prisma.$ResourceInteractionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2171,6 +2396,7 @@ export namespace Prisma {
     insights<T extends User$insightsArgs<ExtArgs> = {}>(args?: Subset<T, User$insightsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InsightPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     chats<T extends User$chatsArgs<ExtArgs> = {}>(args?: Subset<T, User$chatsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     bankAccounts<T extends User$bankAccountsArgs<ExtArgs> = {}>(args?: Subset<T, User$bankAccountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BankAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    resourceInteractions<T extends User$resourceInteractionsArgs<ExtArgs> = {}>(args?: Subset<T, User$resourceInteractionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResourceInteractionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2718,6 +2944,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.resourceInteractions
+   */
+  export type User$resourceInteractionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResourceInteraction
+     */
+    select?: ResourceInteractionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResourceInteraction
+     */
+    omit?: ResourceInteractionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResourceInteractionInclude<ExtArgs> | null
+    where?: ResourceInteractionWhereInput
+    orderBy?: ResourceInteractionOrderByWithRelationInput | ResourceInteractionOrderByWithRelationInput[]
+    cursor?: ResourceInteractionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ResourceInteractionScalarFieldEnum | ResourceInteractionScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2770,6 +3020,7 @@ export namespace Prisma {
     role: number
     content: number
     imageUrl: number
+    recommendations: number
     createdAt: number
     _all: number
   }
@@ -2799,6 +3050,7 @@ export namespace Prisma {
     role?: true
     content?: true
     imageUrl?: true
+    recommendations?: true
     createdAt?: true
     _all?: true
   }
@@ -2881,6 +3133,7 @@ export namespace Prisma {
     role: string
     content: string
     imageUrl: string | null
+    recommendations: JsonValue | null
     createdAt: Date
     _count: ChatCountAggregateOutputType | null
     _min: ChatMinAggregateOutputType | null
@@ -2907,6 +3160,7 @@ export namespace Prisma {
     role?: boolean
     content?: boolean
     imageUrl?: boolean
+    recommendations?: boolean
     createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["chat"]>
@@ -2917,6 +3171,7 @@ export namespace Prisma {
     role?: boolean
     content?: boolean
     imageUrl?: boolean
+    recommendations?: boolean
     createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["chat"]>
@@ -2927,6 +3182,7 @@ export namespace Prisma {
     role?: boolean
     content?: boolean
     imageUrl?: boolean
+    recommendations?: boolean
     createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["chat"]>
@@ -2937,10 +3193,11 @@ export namespace Prisma {
     role?: boolean
     content?: boolean
     imageUrl?: boolean
+    recommendations?: boolean
     createdAt?: boolean
   }
 
-  export type ChatOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "role" | "content" | "imageUrl" | "createdAt", ExtArgs["result"]["chat"]>
+  export type ChatOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "role" | "content" | "imageUrl" | "recommendations" | "createdAt", ExtArgs["result"]["chat"]>
   export type ChatInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -2962,6 +3219,7 @@ export namespace Prisma {
       role: string
       content: string
       imageUrl: string | null
+      recommendations: Prisma.JsonValue | null
       createdAt: Date
     }, ExtArgs["result"]["chat"]>
     composites: {}
@@ -3392,6 +3650,7 @@ export namespace Prisma {
     readonly role: FieldRef<"Chat", 'String'>
     readonly content: FieldRef<"Chat", 'String'>
     readonly imageUrl: FieldRef<"Chat", 'String'>
+    readonly recommendations: FieldRef<"Chat", 'Json'>
     readonly createdAt: FieldRef<"Chat", 'DateTime'>
   }
     
@@ -9463,6 +9722,2213 @@ export namespace Prisma {
 
 
   /**
+   * Model LearningResource
+   */
+
+  export type AggregateLearningResource = {
+    _count: LearningResourceCountAggregateOutputType | null
+    _min: LearningResourceMinAggregateOutputType | null
+    _max: LearningResourceMaxAggregateOutputType | null
+  }
+
+  export type LearningResourceMinAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    type: string | null
+    category: string | null
+    url: string | null
+    thumbnailUrl: string | null
+    author: string | null
+    createdAt: Date | null
+  }
+
+  export type LearningResourceMaxAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    type: string | null
+    category: string | null
+    url: string | null
+    thumbnailUrl: string | null
+    author: string | null
+    createdAt: Date | null
+  }
+
+  export type LearningResourceCountAggregateOutputType = {
+    id: number
+    title: number
+    description: number
+    type: number
+    category: number
+    url: number
+    thumbnailUrl: number
+    author: number
+    tags: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type LearningResourceMinAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    type?: true
+    category?: true
+    url?: true
+    thumbnailUrl?: true
+    author?: true
+    createdAt?: true
+  }
+
+  export type LearningResourceMaxAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    type?: true
+    category?: true
+    url?: true
+    thumbnailUrl?: true
+    author?: true
+    createdAt?: true
+  }
+
+  export type LearningResourceCountAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    type?: true
+    category?: true
+    url?: true
+    thumbnailUrl?: true
+    author?: true
+    tags?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type LearningResourceAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LearningResource to aggregate.
+     */
+    where?: LearningResourceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningResources to fetch.
+     */
+    orderBy?: LearningResourceOrderByWithRelationInput | LearningResourceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LearningResourceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningResources from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningResources.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned LearningResources
+    **/
+    _count?: true | LearningResourceCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LearningResourceMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LearningResourceMaxAggregateInputType
+  }
+
+  export type GetLearningResourceAggregateType<T extends LearningResourceAggregateArgs> = {
+        [P in keyof T & keyof AggregateLearningResource]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLearningResource[P]>
+      : GetScalarType<T[P], AggregateLearningResource[P]>
+  }
+
+
+
+
+  export type LearningResourceGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LearningResourceWhereInput
+    orderBy?: LearningResourceOrderByWithAggregationInput | LearningResourceOrderByWithAggregationInput[]
+    by: LearningResourceScalarFieldEnum[] | LearningResourceScalarFieldEnum
+    having?: LearningResourceScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LearningResourceCountAggregateInputType | true
+    _min?: LearningResourceMinAggregateInputType
+    _max?: LearningResourceMaxAggregateInputType
+  }
+
+  export type LearningResourceGroupByOutputType = {
+    id: string
+    title: string
+    description: string
+    type: string
+    category: string
+    url: string
+    thumbnailUrl: string | null
+    author: string | null
+    tags: string[]
+    createdAt: Date
+    _count: LearningResourceCountAggregateOutputType | null
+    _min: LearningResourceMinAggregateOutputType | null
+    _max: LearningResourceMaxAggregateOutputType | null
+  }
+
+  type GetLearningResourceGroupByPayload<T extends LearningResourceGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LearningResourceGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LearningResourceGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LearningResourceGroupByOutputType[P]>
+            : GetScalarType<T[P], LearningResourceGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LearningResourceSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    type?: boolean
+    category?: boolean
+    url?: boolean
+    thumbnailUrl?: boolean
+    author?: boolean
+    tags?: boolean
+    createdAt?: boolean
+    interactions?: boolean | LearningResource$interactionsArgs<ExtArgs>
+    _count?: boolean | LearningResourceCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["learningResource"]>
+
+  export type LearningResourceSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    type?: boolean
+    category?: boolean
+    url?: boolean
+    thumbnailUrl?: boolean
+    author?: boolean
+    tags?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["learningResource"]>
+
+  export type LearningResourceSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    type?: boolean
+    category?: boolean
+    url?: boolean
+    thumbnailUrl?: boolean
+    author?: boolean
+    tags?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["learningResource"]>
+
+  export type LearningResourceSelectScalar = {
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    type?: boolean
+    category?: boolean
+    url?: boolean
+    thumbnailUrl?: boolean
+    author?: boolean
+    tags?: boolean
+    createdAt?: boolean
+  }
+
+  export type LearningResourceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "type" | "category" | "url" | "thumbnailUrl" | "author" | "tags" | "createdAt", ExtArgs["result"]["learningResource"]>
+  export type LearningResourceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    interactions?: boolean | LearningResource$interactionsArgs<ExtArgs>
+    _count?: boolean | LearningResourceCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type LearningResourceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type LearningResourceIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $LearningResourcePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "LearningResource"
+    objects: {
+      interactions: Prisma.$ResourceInteractionPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      title: string
+      description: string
+      type: string
+      category: string
+      url: string
+      thumbnailUrl: string | null
+      author: string | null
+      tags: string[]
+      createdAt: Date
+    }, ExtArgs["result"]["learningResource"]>
+    composites: {}
+  }
+
+  type LearningResourceGetPayload<S extends boolean | null | undefined | LearningResourceDefaultArgs> = $Result.GetResult<Prisma.$LearningResourcePayload, S>
+
+  type LearningResourceCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<LearningResourceFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: LearningResourceCountAggregateInputType | true
+    }
+
+  export interface LearningResourceDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['LearningResource'], meta: { name: 'LearningResource' } }
+    /**
+     * Find zero or one LearningResource that matches the filter.
+     * @param {LearningResourceFindUniqueArgs} args - Arguments to find a LearningResource
+     * @example
+     * // Get one LearningResource
+     * const learningResource = await prisma.learningResource.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LearningResourceFindUniqueArgs>(args: SelectSubset<T, LearningResourceFindUniqueArgs<ExtArgs>>): Prisma__LearningResourceClient<$Result.GetResult<Prisma.$LearningResourcePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one LearningResource that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {LearningResourceFindUniqueOrThrowArgs} args - Arguments to find a LearningResource
+     * @example
+     * // Get one LearningResource
+     * const learningResource = await prisma.learningResource.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LearningResourceFindUniqueOrThrowArgs>(args: SelectSubset<T, LearningResourceFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LearningResourceClient<$Result.GetResult<Prisma.$LearningResourcePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LearningResource that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningResourceFindFirstArgs} args - Arguments to find a LearningResource
+     * @example
+     * // Get one LearningResource
+     * const learningResource = await prisma.learningResource.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LearningResourceFindFirstArgs>(args?: SelectSubset<T, LearningResourceFindFirstArgs<ExtArgs>>): Prisma__LearningResourceClient<$Result.GetResult<Prisma.$LearningResourcePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LearningResource that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningResourceFindFirstOrThrowArgs} args - Arguments to find a LearningResource
+     * @example
+     * // Get one LearningResource
+     * const learningResource = await prisma.learningResource.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LearningResourceFindFirstOrThrowArgs>(args?: SelectSubset<T, LearningResourceFindFirstOrThrowArgs<ExtArgs>>): Prisma__LearningResourceClient<$Result.GetResult<Prisma.$LearningResourcePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more LearningResources that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningResourceFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all LearningResources
+     * const learningResources = await prisma.learningResource.findMany()
+     * 
+     * // Get first 10 LearningResources
+     * const learningResources = await prisma.learningResource.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const learningResourceWithIdOnly = await prisma.learningResource.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LearningResourceFindManyArgs>(args?: SelectSubset<T, LearningResourceFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LearningResourcePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a LearningResource.
+     * @param {LearningResourceCreateArgs} args - Arguments to create a LearningResource.
+     * @example
+     * // Create one LearningResource
+     * const LearningResource = await prisma.learningResource.create({
+     *   data: {
+     *     // ... data to create a LearningResource
+     *   }
+     * })
+     * 
+     */
+    create<T extends LearningResourceCreateArgs>(args: SelectSubset<T, LearningResourceCreateArgs<ExtArgs>>): Prisma__LearningResourceClient<$Result.GetResult<Prisma.$LearningResourcePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many LearningResources.
+     * @param {LearningResourceCreateManyArgs} args - Arguments to create many LearningResources.
+     * @example
+     * // Create many LearningResources
+     * const learningResource = await prisma.learningResource.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LearningResourceCreateManyArgs>(args?: SelectSubset<T, LearningResourceCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many LearningResources and returns the data saved in the database.
+     * @param {LearningResourceCreateManyAndReturnArgs} args - Arguments to create many LearningResources.
+     * @example
+     * // Create many LearningResources
+     * const learningResource = await prisma.learningResource.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many LearningResources and only return the `id`
+     * const learningResourceWithIdOnly = await prisma.learningResource.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends LearningResourceCreateManyAndReturnArgs>(args?: SelectSubset<T, LearningResourceCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LearningResourcePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a LearningResource.
+     * @param {LearningResourceDeleteArgs} args - Arguments to delete one LearningResource.
+     * @example
+     * // Delete one LearningResource
+     * const LearningResource = await prisma.learningResource.delete({
+     *   where: {
+     *     // ... filter to delete one LearningResource
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LearningResourceDeleteArgs>(args: SelectSubset<T, LearningResourceDeleteArgs<ExtArgs>>): Prisma__LearningResourceClient<$Result.GetResult<Prisma.$LearningResourcePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one LearningResource.
+     * @param {LearningResourceUpdateArgs} args - Arguments to update one LearningResource.
+     * @example
+     * // Update one LearningResource
+     * const learningResource = await prisma.learningResource.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LearningResourceUpdateArgs>(args: SelectSubset<T, LearningResourceUpdateArgs<ExtArgs>>): Prisma__LearningResourceClient<$Result.GetResult<Prisma.$LearningResourcePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more LearningResources.
+     * @param {LearningResourceDeleteManyArgs} args - Arguments to filter LearningResources to delete.
+     * @example
+     * // Delete a few LearningResources
+     * const { count } = await prisma.learningResource.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LearningResourceDeleteManyArgs>(args?: SelectSubset<T, LearningResourceDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LearningResources.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningResourceUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many LearningResources
+     * const learningResource = await prisma.learningResource.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LearningResourceUpdateManyArgs>(args: SelectSubset<T, LearningResourceUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LearningResources and returns the data updated in the database.
+     * @param {LearningResourceUpdateManyAndReturnArgs} args - Arguments to update many LearningResources.
+     * @example
+     * // Update many LearningResources
+     * const learningResource = await prisma.learningResource.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more LearningResources and only return the `id`
+     * const learningResourceWithIdOnly = await prisma.learningResource.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends LearningResourceUpdateManyAndReturnArgs>(args: SelectSubset<T, LearningResourceUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LearningResourcePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one LearningResource.
+     * @param {LearningResourceUpsertArgs} args - Arguments to update or create a LearningResource.
+     * @example
+     * // Update or create a LearningResource
+     * const learningResource = await prisma.learningResource.upsert({
+     *   create: {
+     *     // ... data to create a LearningResource
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the LearningResource we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LearningResourceUpsertArgs>(args: SelectSubset<T, LearningResourceUpsertArgs<ExtArgs>>): Prisma__LearningResourceClient<$Result.GetResult<Prisma.$LearningResourcePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of LearningResources.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningResourceCountArgs} args - Arguments to filter LearningResources to count.
+     * @example
+     * // Count the number of LearningResources
+     * const count = await prisma.learningResource.count({
+     *   where: {
+     *     // ... the filter for the LearningResources we want to count
+     *   }
+     * })
+    **/
+    count<T extends LearningResourceCountArgs>(
+      args?: Subset<T, LearningResourceCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LearningResourceCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a LearningResource.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningResourceAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LearningResourceAggregateArgs>(args: Subset<T, LearningResourceAggregateArgs>): Prisma.PrismaPromise<GetLearningResourceAggregateType<T>>
+
+    /**
+     * Group by LearningResource.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningResourceGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LearningResourceGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LearningResourceGroupByArgs['orderBy'] }
+        : { orderBy?: LearningResourceGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LearningResourceGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLearningResourceGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the LearningResource model
+   */
+  readonly fields: LearningResourceFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for LearningResource.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LearningResourceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    interactions<T extends LearningResource$interactionsArgs<ExtArgs> = {}>(args?: Subset<T, LearningResource$interactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResourceInteractionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the LearningResource model
+   */
+  interface LearningResourceFieldRefs {
+    readonly id: FieldRef<"LearningResource", 'String'>
+    readonly title: FieldRef<"LearningResource", 'String'>
+    readonly description: FieldRef<"LearningResource", 'String'>
+    readonly type: FieldRef<"LearningResource", 'String'>
+    readonly category: FieldRef<"LearningResource", 'String'>
+    readonly url: FieldRef<"LearningResource", 'String'>
+    readonly thumbnailUrl: FieldRef<"LearningResource", 'String'>
+    readonly author: FieldRef<"LearningResource", 'String'>
+    readonly tags: FieldRef<"LearningResource", 'String[]'>
+    readonly createdAt: FieldRef<"LearningResource", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * LearningResource findUnique
+   */
+  export type LearningResourceFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningResource
+     */
+    select?: LearningResourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LearningResource
+     */
+    omit?: LearningResourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LearningResourceInclude<ExtArgs> | null
+    /**
+     * Filter, which LearningResource to fetch.
+     */
+    where: LearningResourceWhereUniqueInput
+  }
+
+  /**
+   * LearningResource findUniqueOrThrow
+   */
+  export type LearningResourceFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningResource
+     */
+    select?: LearningResourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LearningResource
+     */
+    omit?: LearningResourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LearningResourceInclude<ExtArgs> | null
+    /**
+     * Filter, which LearningResource to fetch.
+     */
+    where: LearningResourceWhereUniqueInput
+  }
+
+  /**
+   * LearningResource findFirst
+   */
+  export type LearningResourceFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningResource
+     */
+    select?: LearningResourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LearningResource
+     */
+    omit?: LearningResourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LearningResourceInclude<ExtArgs> | null
+    /**
+     * Filter, which LearningResource to fetch.
+     */
+    where?: LearningResourceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningResources to fetch.
+     */
+    orderBy?: LearningResourceOrderByWithRelationInput | LearningResourceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LearningResources.
+     */
+    cursor?: LearningResourceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningResources from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningResources.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LearningResources.
+     */
+    distinct?: LearningResourceScalarFieldEnum | LearningResourceScalarFieldEnum[]
+  }
+
+  /**
+   * LearningResource findFirstOrThrow
+   */
+  export type LearningResourceFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningResource
+     */
+    select?: LearningResourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LearningResource
+     */
+    omit?: LearningResourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LearningResourceInclude<ExtArgs> | null
+    /**
+     * Filter, which LearningResource to fetch.
+     */
+    where?: LearningResourceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningResources to fetch.
+     */
+    orderBy?: LearningResourceOrderByWithRelationInput | LearningResourceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LearningResources.
+     */
+    cursor?: LearningResourceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningResources from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningResources.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LearningResources.
+     */
+    distinct?: LearningResourceScalarFieldEnum | LearningResourceScalarFieldEnum[]
+  }
+
+  /**
+   * LearningResource findMany
+   */
+  export type LearningResourceFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningResource
+     */
+    select?: LearningResourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LearningResource
+     */
+    omit?: LearningResourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LearningResourceInclude<ExtArgs> | null
+    /**
+     * Filter, which LearningResources to fetch.
+     */
+    where?: LearningResourceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningResources to fetch.
+     */
+    orderBy?: LearningResourceOrderByWithRelationInput | LearningResourceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing LearningResources.
+     */
+    cursor?: LearningResourceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningResources from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningResources.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LearningResources.
+     */
+    distinct?: LearningResourceScalarFieldEnum | LearningResourceScalarFieldEnum[]
+  }
+
+  /**
+   * LearningResource create
+   */
+  export type LearningResourceCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningResource
+     */
+    select?: LearningResourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LearningResource
+     */
+    omit?: LearningResourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LearningResourceInclude<ExtArgs> | null
+    /**
+     * The data needed to create a LearningResource.
+     */
+    data: XOR<LearningResourceCreateInput, LearningResourceUncheckedCreateInput>
+  }
+
+  /**
+   * LearningResource createMany
+   */
+  export type LearningResourceCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many LearningResources.
+     */
+    data: LearningResourceCreateManyInput | LearningResourceCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * LearningResource createManyAndReturn
+   */
+  export type LearningResourceCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningResource
+     */
+    select?: LearningResourceSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LearningResource
+     */
+    omit?: LearningResourceOmit<ExtArgs> | null
+    /**
+     * The data used to create many LearningResources.
+     */
+    data: LearningResourceCreateManyInput | LearningResourceCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * LearningResource update
+   */
+  export type LearningResourceUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningResource
+     */
+    select?: LearningResourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LearningResource
+     */
+    omit?: LearningResourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LearningResourceInclude<ExtArgs> | null
+    /**
+     * The data needed to update a LearningResource.
+     */
+    data: XOR<LearningResourceUpdateInput, LearningResourceUncheckedUpdateInput>
+    /**
+     * Choose, which LearningResource to update.
+     */
+    where: LearningResourceWhereUniqueInput
+  }
+
+  /**
+   * LearningResource updateMany
+   */
+  export type LearningResourceUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update LearningResources.
+     */
+    data: XOR<LearningResourceUpdateManyMutationInput, LearningResourceUncheckedUpdateManyInput>
+    /**
+     * Filter which LearningResources to update
+     */
+    where?: LearningResourceWhereInput
+    /**
+     * Limit how many LearningResources to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * LearningResource updateManyAndReturn
+   */
+  export type LearningResourceUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningResource
+     */
+    select?: LearningResourceSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LearningResource
+     */
+    omit?: LearningResourceOmit<ExtArgs> | null
+    /**
+     * The data used to update LearningResources.
+     */
+    data: XOR<LearningResourceUpdateManyMutationInput, LearningResourceUncheckedUpdateManyInput>
+    /**
+     * Filter which LearningResources to update
+     */
+    where?: LearningResourceWhereInput
+    /**
+     * Limit how many LearningResources to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * LearningResource upsert
+   */
+  export type LearningResourceUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningResource
+     */
+    select?: LearningResourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LearningResource
+     */
+    omit?: LearningResourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LearningResourceInclude<ExtArgs> | null
+    /**
+     * The filter to search for the LearningResource to update in case it exists.
+     */
+    where: LearningResourceWhereUniqueInput
+    /**
+     * In case the LearningResource found by the `where` argument doesn't exist, create a new LearningResource with this data.
+     */
+    create: XOR<LearningResourceCreateInput, LearningResourceUncheckedCreateInput>
+    /**
+     * In case the LearningResource was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LearningResourceUpdateInput, LearningResourceUncheckedUpdateInput>
+  }
+
+  /**
+   * LearningResource delete
+   */
+  export type LearningResourceDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningResource
+     */
+    select?: LearningResourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LearningResource
+     */
+    omit?: LearningResourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LearningResourceInclude<ExtArgs> | null
+    /**
+     * Filter which LearningResource to delete.
+     */
+    where: LearningResourceWhereUniqueInput
+  }
+
+  /**
+   * LearningResource deleteMany
+   */
+  export type LearningResourceDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LearningResources to delete
+     */
+    where?: LearningResourceWhereInput
+    /**
+     * Limit how many LearningResources to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * LearningResource.interactions
+   */
+  export type LearningResource$interactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResourceInteraction
+     */
+    select?: ResourceInteractionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResourceInteraction
+     */
+    omit?: ResourceInteractionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResourceInteractionInclude<ExtArgs> | null
+    where?: ResourceInteractionWhereInput
+    orderBy?: ResourceInteractionOrderByWithRelationInput | ResourceInteractionOrderByWithRelationInput[]
+    cursor?: ResourceInteractionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ResourceInteractionScalarFieldEnum | ResourceInteractionScalarFieldEnum[]
+  }
+
+  /**
+   * LearningResource without action
+   */
+  export type LearningResourceDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningResource
+     */
+    select?: LearningResourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LearningResource
+     */
+    omit?: LearningResourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LearningResourceInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ResourceInteraction
+   */
+
+  export type AggregateResourceInteraction = {
+    _count: ResourceInteractionCountAggregateOutputType | null
+    _min: ResourceInteractionMinAggregateOutputType | null
+    _max: ResourceInteractionMaxAggregateOutputType | null
+  }
+
+  export type ResourceInteractionMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    resourceId: string | null
+    type: string | null
+    interactedAt: Date | null
+  }
+
+  export type ResourceInteractionMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    resourceId: string | null
+    type: string | null
+    interactedAt: Date | null
+  }
+
+  export type ResourceInteractionCountAggregateOutputType = {
+    id: number
+    userId: number
+    resourceId: number
+    type: number
+    interactedAt: number
+    _all: number
+  }
+
+
+  export type ResourceInteractionMinAggregateInputType = {
+    id?: true
+    userId?: true
+    resourceId?: true
+    type?: true
+    interactedAt?: true
+  }
+
+  export type ResourceInteractionMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    resourceId?: true
+    type?: true
+    interactedAt?: true
+  }
+
+  export type ResourceInteractionCountAggregateInputType = {
+    id?: true
+    userId?: true
+    resourceId?: true
+    type?: true
+    interactedAt?: true
+    _all?: true
+  }
+
+  export type ResourceInteractionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ResourceInteraction to aggregate.
+     */
+    where?: ResourceInteractionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ResourceInteractions to fetch.
+     */
+    orderBy?: ResourceInteractionOrderByWithRelationInput | ResourceInteractionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ResourceInteractionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ResourceInteractions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ResourceInteractions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ResourceInteractions
+    **/
+    _count?: true | ResourceInteractionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ResourceInteractionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ResourceInteractionMaxAggregateInputType
+  }
+
+  export type GetResourceInteractionAggregateType<T extends ResourceInteractionAggregateArgs> = {
+        [P in keyof T & keyof AggregateResourceInteraction]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateResourceInteraction[P]>
+      : GetScalarType<T[P], AggregateResourceInteraction[P]>
+  }
+
+
+
+
+  export type ResourceInteractionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ResourceInteractionWhereInput
+    orderBy?: ResourceInteractionOrderByWithAggregationInput | ResourceInteractionOrderByWithAggregationInput[]
+    by: ResourceInteractionScalarFieldEnum[] | ResourceInteractionScalarFieldEnum
+    having?: ResourceInteractionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ResourceInteractionCountAggregateInputType | true
+    _min?: ResourceInteractionMinAggregateInputType
+    _max?: ResourceInteractionMaxAggregateInputType
+  }
+
+  export type ResourceInteractionGroupByOutputType = {
+    id: string
+    userId: string
+    resourceId: string
+    type: string
+    interactedAt: Date
+    _count: ResourceInteractionCountAggregateOutputType | null
+    _min: ResourceInteractionMinAggregateOutputType | null
+    _max: ResourceInteractionMaxAggregateOutputType | null
+  }
+
+  type GetResourceInteractionGroupByPayload<T extends ResourceInteractionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ResourceInteractionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ResourceInteractionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ResourceInteractionGroupByOutputType[P]>
+            : GetScalarType<T[P], ResourceInteractionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ResourceInteractionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    resourceId?: boolean
+    type?: boolean
+    interactedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    resource?: boolean | LearningResourceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["resourceInteraction"]>
+
+  export type ResourceInteractionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    resourceId?: boolean
+    type?: boolean
+    interactedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    resource?: boolean | LearningResourceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["resourceInteraction"]>
+
+  export type ResourceInteractionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    resourceId?: boolean
+    type?: boolean
+    interactedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    resource?: boolean | LearningResourceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["resourceInteraction"]>
+
+  export type ResourceInteractionSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    resourceId?: boolean
+    type?: boolean
+    interactedAt?: boolean
+  }
+
+  export type ResourceInteractionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "resourceId" | "type" | "interactedAt", ExtArgs["result"]["resourceInteraction"]>
+  export type ResourceInteractionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    resource?: boolean | LearningResourceDefaultArgs<ExtArgs>
+  }
+  export type ResourceInteractionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    resource?: boolean | LearningResourceDefaultArgs<ExtArgs>
+  }
+  export type ResourceInteractionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    resource?: boolean | LearningResourceDefaultArgs<ExtArgs>
+  }
+
+  export type $ResourceInteractionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ResourceInteraction"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      resource: Prisma.$LearningResourcePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      resourceId: string
+      type: string
+      interactedAt: Date
+    }, ExtArgs["result"]["resourceInteraction"]>
+    composites: {}
+  }
+
+  type ResourceInteractionGetPayload<S extends boolean | null | undefined | ResourceInteractionDefaultArgs> = $Result.GetResult<Prisma.$ResourceInteractionPayload, S>
+
+  type ResourceInteractionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ResourceInteractionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ResourceInteractionCountAggregateInputType | true
+    }
+
+  export interface ResourceInteractionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ResourceInteraction'], meta: { name: 'ResourceInteraction' } }
+    /**
+     * Find zero or one ResourceInteraction that matches the filter.
+     * @param {ResourceInteractionFindUniqueArgs} args - Arguments to find a ResourceInteraction
+     * @example
+     * // Get one ResourceInteraction
+     * const resourceInteraction = await prisma.resourceInteraction.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ResourceInteractionFindUniqueArgs>(args: SelectSubset<T, ResourceInteractionFindUniqueArgs<ExtArgs>>): Prisma__ResourceInteractionClient<$Result.GetResult<Prisma.$ResourceInteractionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ResourceInteraction that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ResourceInteractionFindUniqueOrThrowArgs} args - Arguments to find a ResourceInteraction
+     * @example
+     * // Get one ResourceInteraction
+     * const resourceInteraction = await prisma.resourceInteraction.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ResourceInteractionFindUniqueOrThrowArgs>(args: SelectSubset<T, ResourceInteractionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ResourceInteractionClient<$Result.GetResult<Prisma.$ResourceInteractionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ResourceInteraction that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ResourceInteractionFindFirstArgs} args - Arguments to find a ResourceInteraction
+     * @example
+     * // Get one ResourceInteraction
+     * const resourceInteraction = await prisma.resourceInteraction.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ResourceInteractionFindFirstArgs>(args?: SelectSubset<T, ResourceInteractionFindFirstArgs<ExtArgs>>): Prisma__ResourceInteractionClient<$Result.GetResult<Prisma.$ResourceInteractionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ResourceInteraction that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ResourceInteractionFindFirstOrThrowArgs} args - Arguments to find a ResourceInteraction
+     * @example
+     * // Get one ResourceInteraction
+     * const resourceInteraction = await prisma.resourceInteraction.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ResourceInteractionFindFirstOrThrowArgs>(args?: SelectSubset<T, ResourceInteractionFindFirstOrThrowArgs<ExtArgs>>): Prisma__ResourceInteractionClient<$Result.GetResult<Prisma.$ResourceInteractionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ResourceInteractions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ResourceInteractionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ResourceInteractions
+     * const resourceInteractions = await prisma.resourceInteraction.findMany()
+     * 
+     * // Get first 10 ResourceInteractions
+     * const resourceInteractions = await prisma.resourceInteraction.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const resourceInteractionWithIdOnly = await prisma.resourceInteraction.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ResourceInteractionFindManyArgs>(args?: SelectSubset<T, ResourceInteractionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResourceInteractionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ResourceInteraction.
+     * @param {ResourceInteractionCreateArgs} args - Arguments to create a ResourceInteraction.
+     * @example
+     * // Create one ResourceInteraction
+     * const ResourceInteraction = await prisma.resourceInteraction.create({
+     *   data: {
+     *     // ... data to create a ResourceInteraction
+     *   }
+     * })
+     * 
+     */
+    create<T extends ResourceInteractionCreateArgs>(args: SelectSubset<T, ResourceInteractionCreateArgs<ExtArgs>>): Prisma__ResourceInteractionClient<$Result.GetResult<Prisma.$ResourceInteractionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ResourceInteractions.
+     * @param {ResourceInteractionCreateManyArgs} args - Arguments to create many ResourceInteractions.
+     * @example
+     * // Create many ResourceInteractions
+     * const resourceInteraction = await prisma.resourceInteraction.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ResourceInteractionCreateManyArgs>(args?: SelectSubset<T, ResourceInteractionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ResourceInteractions and returns the data saved in the database.
+     * @param {ResourceInteractionCreateManyAndReturnArgs} args - Arguments to create many ResourceInteractions.
+     * @example
+     * // Create many ResourceInteractions
+     * const resourceInteraction = await prisma.resourceInteraction.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ResourceInteractions and only return the `id`
+     * const resourceInteractionWithIdOnly = await prisma.resourceInteraction.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ResourceInteractionCreateManyAndReturnArgs>(args?: SelectSubset<T, ResourceInteractionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResourceInteractionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ResourceInteraction.
+     * @param {ResourceInteractionDeleteArgs} args - Arguments to delete one ResourceInteraction.
+     * @example
+     * // Delete one ResourceInteraction
+     * const ResourceInteraction = await prisma.resourceInteraction.delete({
+     *   where: {
+     *     // ... filter to delete one ResourceInteraction
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ResourceInteractionDeleteArgs>(args: SelectSubset<T, ResourceInteractionDeleteArgs<ExtArgs>>): Prisma__ResourceInteractionClient<$Result.GetResult<Prisma.$ResourceInteractionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ResourceInteraction.
+     * @param {ResourceInteractionUpdateArgs} args - Arguments to update one ResourceInteraction.
+     * @example
+     * // Update one ResourceInteraction
+     * const resourceInteraction = await prisma.resourceInteraction.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ResourceInteractionUpdateArgs>(args: SelectSubset<T, ResourceInteractionUpdateArgs<ExtArgs>>): Prisma__ResourceInteractionClient<$Result.GetResult<Prisma.$ResourceInteractionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ResourceInteractions.
+     * @param {ResourceInteractionDeleteManyArgs} args - Arguments to filter ResourceInteractions to delete.
+     * @example
+     * // Delete a few ResourceInteractions
+     * const { count } = await prisma.resourceInteraction.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ResourceInteractionDeleteManyArgs>(args?: SelectSubset<T, ResourceInteractionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ResourceInteractions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ResourceInteractionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ResourceInteractions
+     * const resourceInteraction = await prisma.resourceInteraction.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ResourceInteractionUpdateManyArgs>(args: SelectSubset<T, ResourceInteractionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ResourceInteractions and returns the data updated in the database.
+     * @param {ResourceInteractionUpdateManyAndReturnArgs} args - Arguments to update many ResourceInteractions.
+     * @example
+     * // Update many ResourceInteractions
+     * const resourceInteraction = await prisma.resourceInteraction.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ResourceInteractions and only return the `id`
+     * const resourceInteractionWithIdOnly = await prisma.resourceInteraction.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ResourceInteractionUpdateManyAndReturnArgs>(args: SelectSubset<T, ResourceInteractionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResourceInteractionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ResourceInteraction.
+     * @param {ResourceInteractionUpsertArgs} args - Arguments to update or create a ResourceInteraction.
+     * @example
+     * // Update or create a ResourceInteraction
+     * const resourceInteraction = await prisma.resourceInteraction.upsert({
+     *   create: {
+     *     // ... data to create a ResourceInteraction
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ResourceInteraction we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ResourceInteractionUpsertArgs>(args: SelectSubset<T, ResourceInteractionUpsertArgs<ExtArgs>>): Prisma__ResourceInteractionClient<$Result.GetResult<Prisma.$ResourceInteractionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ResourceInteractions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ResourceInteractionCountArgs} args - Arguments to filter ResourceInteractions to count.
+     * @example
+     * // Count the number of ResourceInteractions
+     * const count = await prisma.resourceInteraction.count({
+     *   where: {
+     *     // ... the filter for the ResourceInteractions we want to count
+     *   }
+     * })
+    **/
+    count<T extends ResourceInteractionCountArgs>(
+      args?: Subset<T, ResourceInteractionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ResourceInteractionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ResourceInteraction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ResourceInteractionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ResourceInteractionAggregateArgs>(args: Subset<T, ResourceInteractionAggregateArgs>): Prisma.PrismaPromise<GetResourceInteractionAggregateType<T>>
+
+    /**
+     * Group by ResourceInteraction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ResourceInteractionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ResourceInteractionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ResourceInteractionGroupByArgs['orderBy'] }
+        : { orderBy?: ResourceInteractionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ResourceInteractionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetResourceInteractionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ResourceInteraction model
+   */
+  readonly fields: ResourceInteractionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ResourceInteraction.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ResourceInteractionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    resource<T extends LearningResourceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, LearningResourceDefaultArgs<ExtArgs>>): Prisma__LearningResourceClient<$Result.GetResult<Prisma.$LearningResourcePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ResourceInteraction model
+   */
+  interface ResourceInteractionFieldRefs {
+    readonly id: FieldRef<"ResourceInteraction", 'String'>
+    readonly userId: FieldRef<"ResourceInteraction", 'String'>
+    readonly resourceId: FieldRef<"ResourceInteraction", 'String'>
+    readonly type: FieldRef<"ResourceInteraction", 'String'>
+    readonly interactedAt: FieldRef<"ResourceInteraction", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ResourceInteraction findUnique
+   */
+  export type ResourceInteractionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResourceInteraction
+     */
+    select?: ResourceInteractionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResourceInteraction
+     */
+    omit?: ResourceInteractionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResourceInteractionInclude<ExtArgs> | null
+    /**
+     * Filter, which ResourceInteraction to fetch.
+     */
+    where: ResourceInteractionWhereUniqueInput
+  }
+
+  /**
+   * ResourceInteraction findUniqueOrThrow
+   */
+  export type ResourceInteractionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResourceInteraction
+     */
+    select?: ResourceInteractionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResourceInteraction
+     */
+    omit?: ResourceInteractionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResourceInteractionInclude<ExtArgs> | null
+    /**
+     * Filter, which ResourceInteraction to fetch.
+     */
+    where: ResourceInteractionWhereUniqueInput
+  }
+
+  /**
+   * ResourceInteraction findFirst
+   */
+  export type ResourceInteractionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResourceInteraction
+     */
+    select?: ResourceInteractionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResourceInteraction
+     */
+    omit?: ResourceInteractionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResourceInteractionInclude<ExtArgs> | null
+    /**
+     * Filter, which ResourceInteraction to fetch.
+     */
+    where?: ResourceInteractionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ResourceInteractions to fetch.
+     */
+    orderBy?: ResourceInteractionOrderByWithRelationInput | ResourceInteractionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ResourceInteractions.
+     */
+    cursor?: ResourceInteractionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ResourceInteractions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ResourceInteractions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ResourceInteractions.
+     */
+    distinct?: ResourceInteractionScalarFieldEnum | ResourceInteractionScalarFieldEnum[]
+  }
+
+  /**
+   * ResourceInteraction findFirstOrThrow
+   */
+  export type ResourceInteractionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResourceInteraction
+     */
+    select?: ResourceInteractionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResourceInteraction
+     */
+    omit?: ResourceInteractionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResourceInteractionInclude<ExtArgs> | null
+    /**
+     * Filter, which ResourceInteraction to fetch.
+     */
+    where?: ResourceInteractionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ResourceInteractions to fetch.
+     */
+    orderBy?: ResourceInteractionOrderByWithRelationInput | ResourceInteractionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ResourceInteractions.
+     */
+    cursor?: ResourceInteractionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ResourceInteractions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ResourceInteractions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ResourceInteractions.
+     */
+    distinct?: ResourceInteractionScalarFieldEnum | ResourceInteractionScalarFieldEnum[]
+  }
+
+  /**
+   * ResourceInteraction findMany
+   */
+  export type ResourceInteractionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResourceInteraction
+     */
+    select?: ResourceInteractionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResourceInteraction
+     */
+    omit?: ResourceInteractionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResourceInteractionInclude<ExtArgs> | null
+    /**
+     * Filter, which ResourceInteractions to fetch.
+     */
+    where?: ResourceInteractionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ResourceInteractions to fetch.
+     */
+    orderBy?: ResourceInteractionOrderByWithRelationInput | ResourceInteractionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ResourceInteractions.
+     */
+    cursor?: ResourceInteractionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ResourceInteractions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ResourceInteractions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ResourceInteractions.
+     */
+    distinct?: ResourceInteractionScalarFieldEnum | ResourceInteractionScalarFieldEnum[]
+  }
+
+  /**
+   * ResourceInteraction create
+   */
+  export type ResourceInteractionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResourceInteraction
+     */
+    select?: ResourceInteractionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResourceInteraction
+     */
+    omit?: ResourceInteractionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResourceInteractionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ResourceInteraction.
+     */
+    data: XOR<ResourceInteractionCreateInput, ResourceInteractionUncheckedCreateInput>
+  }
+
+  /**
+   * ResourceInteraction createMany
+   */
+  export type ResourceInteractionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ResourceInteractions.
+     */
+    data: ResourceInteractionCreateManyInput | ResourceInteractionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ResourceInteraction createManyAndReturn
+   */
+  export type ResourceInteractionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResourceInteraction
+     */
+    select?: ResourceInteractionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResourceInteraction
+     */
+    omit?: ResourceInteractionOmit<ExtArgs> | null
+    /**
+     * The data used to create many ResourceInteractions.
+     */
+    data: ResourceInteractionCreateManyInput | ResourceInteractionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResourceInteractionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ResourceInteraction update
+   */
+  export type ResourceInteractionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResourceInteraction
+     */
+    select?: ResourceInteractionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResourceInteraction
+     */
+    omit?: ResourceInteractionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResourceInteractionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ResourceInteraction.
+     */
+    data: XOR<ResourceInteractionUpdateInput, ResourceInteractionUncheckedUpdateInput>
+    /**
+     * Choose, which ResourceInteraction to update.
+     */
+    where: ResourceInteractionWhereUniqueInput
+  }
+
+  /**
+   * ResourceInteraction updateMany
+   */
+  export type ResourceInteractionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ResourceInteractions.
+     */
+    data: XOR<ResourceInteractionUpdateManyMutationInput, ResourceInteractionUncheckedUpdateManyInput>
+    /**
+     * Filter which ResourceInteractions to update
+     */
+    where?: ResourceInteractionWhereInput
+    /**
+     * Limit how many ResourceInteractions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ResourceInteraction updateManyAndReturn
+   */
+  export type ResourceInteractionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResourceInteraction
+     */
+    select?: ResourceInteractionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResourceInteraction
+     */
+    omit?: ResourceInteractionOmit<ExtArgs> | null
+    /**
+     * The data used to update ResourceInteractions.
+     */
+    data: XOR<ResourceInteractionUpdateManyMutationInput, ResourceInteractionUncheckedUpdateManyInput>
+    /**
+     * Filter which ResourceInteractions to update
+     */
+    where?: ResourceInteractionWhereInput
+    /**
+     * Limit how many ResourceInteractions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResourceInteractionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ResourceInteraction upsert
+   */
+  export type ResourceInteractionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResourceInteraction
+     */
+    select?: ResourceInteractionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResourceInteraction
+     */
+    omit?: ResourceInteractionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResourceInteractionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ResourceInteraction to update in case it exists.
+     */
+    where: ResourceInteractionWhereUniqueInput
+    /**
+     * In case the ResourceInteraction found by the `where` argument doesn't exist, create a new ResourceInteraction with this data.
+     */
+    create: XOR<ResourceInteractionCreateInput, ResourceInteractionUncheckedCreateInput>
+    /**
+     * In case the ResourceInteraction was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ResourceInteractionUpdateInput, ResourceInteractionUncheckedUpdateInput>
+  }
+
+  /**
+   * ResourceInteraction delete
+   */
+  export type ResourceInteractionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResourceInteraction
+     */
+    select?: ResourceInteractionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResourceInteraction
+     */
+    omit?: ResourceInteractionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResourceInteractionInclude<ExtArgs> | null
+    /**
+     * Filter which ResourceInteraction to delete.
+     */
+    where: ResourceInteractionWhereUniqueInput
+  }
+
+  /**
+   * ResourceInteraction deleteMany
+   */
+  export type ResourceInteractionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ResourceInteractions to delete
+     */
+    where?: ResourceInteractionWhereInput
+    /**
+     * Limit how many ResourceInteractions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ResourceInteraction without action
+   */
+  export type ResourceInteractionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResourceInteraction
+     */
+    select?: ResourceInteractionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResourceInteraction
+     */
+    omit?: ResourceInteractionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResourceInteractionInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -9493,6 +11959,7 @@ export namespace Prisma {
     role: 'role',
     content: 'content',
     imageUrl: 'imageUrl',
+    recommendations: 'recommendations',
     createdAt: 'createdAt'
   };
 
@@ -9565,6 +12032,33 @@ export namespace Prisma {
   };
 
   export type MerchantMapScalarFieldEnum = (typeof MerchantMapScalarFieldEnum)[keyof typeof MerchantMapScalarFieldEnum]
+
+
+  export const LearningResourceScalarFieldEnum: {
+    id: 'id',
+    title: 'title',
+    description: 'description',
+    type: 'type',
+    category: 'category',
+    url: 'url',
+    thumbnailUrl: 'thumbnailUrl',
+    author: 'author',
+    tags: 'tags',
+    createdAt: 'createdAt'
+  };
+
+  export type LearningResourceScalarFieldEnum = (typeof LearningResourceScalarFieldEnum)[keyof typeof LearningResourceScalarFieldEnum]
+
+
+  export const ResourceInteractionScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    resourceId: 'resourceId',
+    type: 'type',
+    interactedAt: 'interactedAt'
+  };
+
+  export type ResourceInteractionScalarFieldEnum = (typeof ResourceInteractionScalarFieldEnum)[keyof typeof ResourceInteractionScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -9700,6 +12194,7 @@ export namespace Prisma {
     insights?: InsightListRelationFilter
     chats?: ChatListRelationFilter
     bankAccounts?: BankAccountListRelationFilter
+    resourceInteractions?: ResourceInteractionListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -9713,6 +12208,7 @@ export namespace Prisma {
     insights?: InsightOrderByRelationAggregateInput
     chats?: ChatOrderByRelationAggregateInput
     bankAccounts?: BankAccountOrderByRelationAggregateInput
+    resourceInteractions?: ResourceInteractionOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -9729,6 +12225,7 @@ export namespace Prisma {
     insights?: InsightListRelationFilter
     chats?: ChatListRelationFilter
     bankAccounts?: BankAccountListRelationFilter
+    resourceInteractions?: ResourceInteractionListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -9762,6 +12259,7 @@ export namespace Prisma {
     role?: StringFilter<"Chat"> | string
     content?: StringFilter<"Chat"> | string
     imageUrl?: StringNullableFilter<"Chat"> | string | null
+    recommendations?: JsonNullableFilter<"Chat">
     createdAt?: DateTimeFilter<"Chat"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -9772,6 +12270,7 @@ export namespace Prisma {
     role?: SortOrder
     content?: SortOrder
     imageUrl?: SortOrderInput | SortOrder
+    recommendations?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     user?: UserOrderByWithRelationInput
   }
@@ -9785,6 +12284,7 @@ export namespace Prisma {
     role?: StringFilter<"Chat"> | string
     content?: StringFilter<"Chat"> | string
     imageUrl?: StringNullableFilter<"Chat"> | string | null
+    recommendations?: JsonNullableFilter<"Chat">
     createdAt?: DateTimeFilter<"Chat"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
@@ -9795,6 +12295,7 @@ export namespace Prisma {
     role?: SortOrder
     content?: SortOrder
     imageUrl?: SortOrderInput | SortOrder
+    recommendations?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: ChatCountOrderByAggregateInput
     _max?: ChatMaxOrderByAggregateInput
@@ -9810,6 +12311,7 @@ export namespace Prisma {
     role?: StringWithAggregatesFilter<"Chat"> | string
     content?: StringWithAggregatesFilter<"Chat"> | string
     imageUrl?: StringNullableWithAggregatesFilter<"Chat"> | string | null
+    recommendations?: JsonNullableWithAggregatesFilter<"Chat">
     createdAt?: DateTimeWithAggregatesFilter<"Chat"> | Date | string
   }
 
@@ -10173,6 +12675,144 @@ export namespace Prisma {
     createdBy?: StringWithAggregatesFilter<"MerchantMap"> | string
   }
 
+  export type LearningResourceWhereInput = {
+    AND?: LearningResourceWhereInput | LearningResourceWhereInput[]
+    OR?: LearningResourceWhereInput[]
+    NOT?: LearningResourceWhereInput | LearningResourceWhereInput[]
+    id?: StringFilter<"LearningResource"> | string
+    title?: StringFilter<"LearningResource"> | string
+    description?: StringFilter<"LearningResource"> | string
+    type?: StringFilter<"LearningResource"> | string
+    category?: StringFilter<"LearningResource"> | string
+    url?: StringFilter<"LearningResource"> | string
+    thumbnailUrl?: StringNullableFilter<"LearningResource"> | string | null
+    author?: StringNullableFilter<"LearningResource"> | string | null
+    tags?: StringNullableListFilter<"LearningResource">
+    createdAt?: DateTimeFilter<"LearningResource"> | Date | string
+    interactions?: ResourceInteractionListRelationFilter
+  }
+
+  export type LearningResourceOrderByWithRelationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    type?: SortOrder
+    category?: SortOrder
+    url?: SortOrder
+    thumbnailUrl?: SortOrderInput | SortOrder
+    author?: SortOrderInput | SortOrder
+    tags?: SortOrder
+    createdAt?: SortOrder
+    interactions?: ResourceInteractionOrderByRelationAggregateInput
+  }
+
+  export type LearningResourceWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: LearningResourceWhereInput | LearningResourceWhereInput[]
+    OR?: LearningResourceWhereInput[]
+    NOT?: LearningResourceWhereInput | LearningResourceWhereInput[]
+    title?: StringFilter<"LearningResource"> | string
+    description?: StringFilter<"LearningResource"> | string
+    type?: StringFilter<"LearningResource"> | string
+    category?: StringFilter<"LearningResource"> | string
+    url?: StringFilter<"LearningResource"> | string
+    thumbnailUrl?: StringNullableFilter<"LearningResource"> | string | null
+    author?: StringNullableFilter<"LearningResource"> | string | null
+    tags?: StringNullableListFilter<"LearningResource">
+    createdAt?: DateTimeFilter<"LearningResource"> | Date | string
+    interactions?: ResourceInteractionListRelationFilter
+  }, "id">
+
+  export type LearningResourceOrderByWithAggregationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    type?: SortOrder
+    category?: SortOrder
+    url?: SortOrder
+    thumbnailUrl?: SortOrderInput | SortOrder
+    author?: SortOrderInput | SortOrder
+    tags?: SortOrder
+    createdAt?: SortOrder
+    _count?: LearningResourceCountOrderByAggregateInput
+    _max?: LearningResourceMaxOrderByAggregateInput
+    _min?: LearningResourceMinOrderByAggregateInput
+  }
+
+  export type LearningResourceScalarWhereWithAggregatesInput = {
+    AND?: LearningResourceScalarWhereWithAggregatesInput | LearningResourceScalarWhereWithAggregatesInput[]
+    OR?: LearningResourceScalarWhereWithAggregatesInput[]
+    NOT?: LearningResourceScalarWhereWithAggregatesInput | LearningResourceScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"LearningResource"> | string
+    title?: StringWithAggregatesFilter<"LearningResource"> | string
+    description?: StringWithAggregatesFilter<"LearningResource"> | string
+    type?: StringWithAggregatesFilter<"LearningResource"> | string
+    category?: StringWithAggregatesFilter<"LearningResource"> | string
+    url?: StringWithAggregatesFilter<"LearningResource"> | string
+    thumbnailUrl?: StringNullableWithAggregatesFilter<"LearningResource"> | string | null
+    author?: StringNullableWithAggregatesFilter<"LearningResource"> | string | null
+    tags?: StringNullableListFilter<"LearningResource">
+    createdAt?: DateTimeWithAggregatesFilter<"LearningResource"> | Date | string
+  }
+
+  export type ResourceInteractionWhereInput = {
+    AND?: ResourceInteractionWhereInput | ResourceInteractionWhereInput[]
+    OR?: ResourceInteractionWhereInput[]
+    NOT?: ResourceInteractionWhereInput | ResourceInteractionWhereInput[]
+    id?: StringFilter<"ResourceInteraction"> | string
+    userId?: StringFilter<"ResourceInteraction"> | string
+    resourceId?: StringFilter<"ResourceInteraction"> | string
+    type?: StringFilter<"ResourceInteraction"> | string
+    interactedAt?: DateTimeFilter<"ResourceInteraction"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    resource?: XOR<LearningResourceScalarRelationFilter, LearningResourceWhereInput>
+  }
+
+  export type ResourceInteractionOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    resourceId?: SortOrder
+    type?: SortOrder
+    interactedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    resource?: LearningResourceOrderByWithRelationInput
+  }
+
+  export type ResourceInteractionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ResourceInteractionWhereInput | ResourceInteractionWhereInput[]
+    OR?: ResourceInteractionWhereInput[]
+    NOT?: ResourceInteractionWhereInput | ResourceInteractionWhereInput[]
+    userId?: StringFilter<"ResourceInteraction"> | string
+    resourceId?: StringFilter<"ResourceInteraction"> | string
+    type?: StringFilter<"ResourceInteraction"> | string
+    interactedAt?: DateTimeFilter<"ResourceInteraction"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    resource?: XOR<LearningResourceScalarRelationFilter, LearningResourceWhereInput>
+  }, "id">
+
+  export type ResourceInteractionOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    resourceId?: SortOrder
+    type?: SortOrder
+    interactedAt?: SortOrder
+    _count?: ResourceInteractionCountOrderByAggregateInput
+    _max?: ResourceInteractionMaxOrderByAggregateInput
+    _min?: ResourceInteractionMinOrderByAggregateInput
+  }
+
+  export type ResourceInteractionScalarWhereWithAggregatesInput = {
+    AND?: ResourceInteractionScalarWhereWithAggregatesInput | ResourceInteractionScalarWhereWithAggregatesInput[]
+    OR?: ResourceInteractionScalarWhereWithAggregatesInput[]
+    NOT?: ResourceInteractionScalarWhereWithAggregatesInput | ResourceInteractionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ResourceInteraction"> | string
+    userId?: StringWithAggregatesFilter<"ResourceInteraction"> | string
+    resourceId?: StringWithAggregatesFilter<"ResourceInteraction"> | string
+    type?: StringWithAggregatesFilter<"ResourceInteraction"> | string
+    interactedAt?: DateTimeWithAggregatesFilter<"ResourceInteraction"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -10184,6 +12824,7 @@ export namespace Prisma {
     insights?: InsightCreateNestedManyWithoutUserInput
     chats?: ChatCreateNestedManyWithoutUserInput
     bankAccounts?: BankAccountCreateNestedManyWithoutUserInput
+    resourceInteractions?: ResourceInteractionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -10197,6 +12838,7 @@ export namespace Prisma {
     insights?: InsightUncheckedCreateNestedManyWithoutUserInput
     chats?: ChatUncheckedCreateNestedManyWithoutUserInput
     bankAccounts?: BankAccountUncheckedCreateNestedManyWithoutUserInput
+    resourceInteractions?: ResourceInteractionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -10210,6 +12852,7 @@ export namespace Prisma {
     insights?: InsightUpdateManyWithoutUserNestedInput
     chats?: ChatUpdateManyWithoutUserNestedInput
     bankAccounts?: BankAccountUpdateManyWithoutUserNestedInput
+    resourceInteractions?: ResourceInteractionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -10223,6 +12866,7 @@ export namespace Prisma {
     insights?: InsightUncheckedUpdateManyWithoutUserNestedInput
     chats?: ChatUncheckedUpdateManyWithoutUserNestedInput
     bankAccounts?: BankAccountUncheckedUpdateManyWithoutUserNestedInput
+    resourceInteractions?: ResourceInteractionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -10254,6 +12898,7 @@ export namespace Prisma {
     role: string
     content: string
     imageUrl?: string | null
+    recommendations?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     user: UserCreateNestedOneWithoutChatsInput
   }
@@ -10264,6 +12909,7 @@ export namespace Prisma {
     role: string
     content: string
     imageUrl?: string | null
+    recommendations?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
   }
 
@@ -10272,6 +12918,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    recommendations?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutChatsNestedInput
   }
@@ -10282,6 +12929,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    recommendations?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -10291,6 +12939,7 @@ export namespace Prisma {
     role: string
     content: string
     imageUrl?: string | null
+    recommendations?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
   }
 
@@ -10299,6 +12948,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    recommendations?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -10308,6 +12958,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    recommendations?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -10687,6 +13338,155 @@ export namespace Prisma {
     createdBy?: StringFieldUpdateOperationsInput | string
   }
 
+  export type LearningResourceCreateInput = {
+    id?: string
+    title: string
+    description: string
+    type: string
+    category: string
+    url: string
+    thumbnailUrl?: string | null
+    author?: string | null
+    tags?: LearningResourceCreatetagsInput | string[]
+    createdAt?: Date | string
+    interactions?: ResourceInteractionCreateNestedManyWithoutResourceInput
+  }
+
+  export type LearningResourceUncheckedCreateInput = {
+    id?: string
+    title: string
+    description: string
+    type: string
+    category: string
+    url: string
+    thumbnailUrl?: string | null
+    author?: string | null
+    tags?: LearningResourceCreatetagsInput | string[]
+    createdAt?: Date | string
+    interactions?: ResourceInteractionUncheckedCreateNestedManyWithoutResourceInput
+  }
+
+  export type LearningResourceUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    author?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: LearningResourceUpdatetagsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    interactions?: ResourceInteractionUpdateManyWithoutResourceNestedInput
+  }
+
+  export type LearningResourceUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    author?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: LearningResourceUpdatetagsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    interactions?: ResourceInteractionUncheckedUpdateManyWithoutResourceNestedInput
+  }
+
+  export type LearningResourceCreateManyInput = {
+    id?: string
+    title: string
+    description: string
+    type: string
+    category: string
+    url: string
+    thumbnailUrl?: string | null
+    author?: string | null
+    tags?: LearningResourceCreatetagsInput | string[]
+    createdAt?: Date | string
+  }
+
+  export type LearningResourceUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    author?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: LearningResourceUpdatetagsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LearningResourceUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    author?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: LearningResourceUpdatetagsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ResourceInteractionCreateInput = {
+    id?: string
+    type: string
+    interactedAt?: Date | string
+    user: UserCreateNestedOneWithoutResourceInteractionsInput
+    resource: LearningResourceCreateNestedOneWithoutInteractionsInput
+  }
+
+  export type ResourceInteractionUncheckedCreateInput = {
+    id?: string
+    userId: string
+    resourceId: string
+    type: string
+    interactedAt?: Date | string
+  }
+
+  export type ResourceInteractionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    interactedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutResourceInteractionsNestedInput
+    resource?: LearningResourceUpdateOneRequiredWithoutInteractionsNestedInput
+  }
+
+  export type ResourceInteractionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    resourceId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    interactedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ResourceInteractionCreateManyInput = {
+    id?: string
+    userId: string
+    resourceId: string
+    type: string
+    interactedAt?: Date | string
+  }
+
+  export type ResourceInteractionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    interactedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ResourceInteractionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    resourceId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    interactedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -10758,6 +13558,12 @@ export namespace Prisma {
     none?: BankAccountWhereInput
   }
 
+  export type ResourceInteractionListRelationFilter = {
+    every?: ResourceInteractionWhereInput
+    some?: ResourceInteractionWhereInput
+    none?: ResourceInteractionWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -10780,6 +13586,10 @@ export namespace Prisma {
   }
 
   export type BankAccountOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ResourceInteractionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -10856,6 +13666,29 @@ export namespace Prisma {
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
@@ -10868,6 +13701,7 @@ export namespace Prisma {
     role?: SortOrder
     content?: SortOrder
     imageUrl?: SortOrder
+    recommendations?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -10887,6 +13721,32 @@ export namespace Prisma {
     content?: SortOrder
     imageUrl?: SortOrder
     createdAt?: SortOrder
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
   export type BankAccountUserIdAccountNumberCompoundUniqueInput = {
@@ -10926,29 +13786,6 @@ export namespace Prisma {
     branch?: SortOrder
     createdAt?: SortOrder
   }
-  export type JsonNullableFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-  }
 
   export type BankAccountNullableScalarRelationFilter = {
     is?: BankAccountWhereInput | null
@@ -10984,32 +13821,6 @@ export namespace Prisma {
     uploadedAt?: SortOrder
     status?: SortOrder
     bankAccountId?: SortOrder
-  }
-  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedJsonNullableFilter<$PrismaModel>
-    _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
   export type FloatFilter<$PrismaModel = never> = {
@@ -11178,6 +13989,80 @@ export namespace Prisma {
     createdBy?: SortOrder
   }
 
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type LearningResourceCountOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    type?: SortOrder
+    category?: SortOrder
+    url?: SortOrder
+    thumbnailUrl?: SortOrder
+    author?: SortOrder
+    tags?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LearningResourceMaxOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    type?: SortOrder
+    category?: SortOrder
+    url?: SortOrder
+    thumbnailUrl?: SortOrder
+    author?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LearningResourceMinOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    type?: SortOrder
+    category?: SortOrder
+    url?: SortOrder
+    thumbnailUrl?: SortOrder
+    author?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LearningResourceScalarRelationFilter = {
+    is?: LearningResourceWhereInput
+    isNot?: LearningResourceWhereInput
+  }
+
+  export type ResourceInteractionCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    resourceId?: SortOrder
+    type?: SortOrder
+    interactedAt?: SortOrder
+  }
+
+  export type ResourceInteractionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    resourceId?: SortOrder
+    type?: SortOrder
+    interactedAt?: SortOrder
+  }
+
+  export type ResourceInteractionMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    resourceId?: SortOrder
+    type?: SortOrder
+    interactedAt?: SortOrder
+  }
+
   export type StatementCreateNestedManyWithoutUserInput = {
     create?: XOR<StatementCreateWithoutUserInput, StatementUncheckedCreateWithoutUserInput> | StatementCreateWithoutUserInput[] | StatementUncheckedCreateWithoutUserInput[]
     connectOrCreate?: StatementCreateOrConnectWithoutUserInput | StatementCreateOrConnectWithoutUserInput[]
@@ -11213,6 +14098,13 @@ export namespace Prisma {
     connect?: BankAccountWhereUniqueInput | BankAccountWhereUniqueInput[]
   }
 
+  export type ResourceInteractionCreateNestedManyWithoutUserInput = {
+    create?: XOR<ResourceInteractionCreateWithoutUserInput, ResourceInteractionUncheckedCreateWithoutUserInput> | ResourceInteractionCreateWithoutUserInput[] | ResourceInteractionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ResourceInteractionCreateOrConnectWithoutUserInput | ResourceInteractionCreateOrConnectWithoutUserInput[]
+    createMany?: ResourceInteractionCreateManyUserInputEnvelope
+    connect?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+  }
+
   export type StatementUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<StatementCreateWithoutUserInput, StatementUncheckedCreateWithoutUserInput> | StatementCreateWithoutUserInput[] | StatementUncheckedCreateWithoutUserInput[]
     connectOrCreate?: StatementCreateOrConnectWithoutUserInput | StatementCreateOrConnectWithoutUserInput[]
@@ -11246,6 +14138,13 @@ export namespace Prisma {
     connectOrCreate?: BankAccountCreateOrConnectWithoutUserInput | BankAccountCreateOrConnectWithoutUserInput[]
     createMany?: BankAccountCreateManyUserInputEnvelope
     connect?: BankAccountWhereUniqueInput | BankAccountWhereUniqueInput[]
+  }
+
+  export type ResourceInteractionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<ResourceInteractionCreateWithoutUserInput, ResourceInteractionUncheckedCreateWithoutUserInput> | ResourceInteractionCreateWithoutUserInput[] | ResourceInteractionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ResourceInteractionCreateOrConnectWithoutUserInput | ResourceInteractionCreateOrConnectWithoutUserInput[]
+    createMany?: ResourceInteractionCreateManyUserInputEnvelope
+    connect?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -11330,6 +14229,20 @@ export namespace Prisma {
     deleteMany?: BankAccountScalarWhereInput | BankAccountScalarWhereInput[]
   }
 
+  export type ResourceInteractionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ResourceInteractionCreateWithoutUserInput, ResourceInteractionUncheckedCreateWithoutUserInput> | ResourceInteractionCreateWithoutUserInput[] | ResourceInteractionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ResourceInteractionCreateOrConnectWithoutUserInput | ResourceInteractionCreateOrConnectWithoutUserInput[]
+    upsert?: ResourceInteractionUpsertWithWhereUniqueWithoutUserInput | ResourceInteractionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ResourceInteractionCreateManyUserInputEnvelope
+    set?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+    disconnect?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+    delete?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+    connect?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+    update?: ResourceInteractionUpdateWithWhereUniqueWithoutUserInput | ResourceInteractionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ResourceInteractionUpdateManyWithWhereWithoutUserInput | ResourceInteractionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ResourceInteractionScalarWhereInput | ResourceInteractionScalarWhereInput[]
+  }
+
   export type StatementUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<StatementCreateWithoutUserInput, StatementUncheckedCreateWithoutUserInput> | StatementCreateWithoutUserInput[] | StatementUncheckedCreateWithoutUserInput[]
     connectOrCreate?: StatementCreateOrConnectWithoutUserInput | StatementCreateOrConnectWithoutUserInput[]
@@ -11398,6 +14311,20 @@ export namespace Prisma {
     update?: BankAccountUpdateWithWhereUniqueWithoutUserInput | BankAccountUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: BankAccountUpdateManyWithWhereWithoutUserInput | BankAccountUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: BankAccountScalarWhereInput | BankAccountScalarWhereInput[]
+  }
+
+  export type ResourceInteractionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ResourceInteractionCreateWithoutUserInput, ResourceInteractionUncheckedCreateWithoutUserInput> | ResourceInteractionCreateWithoutUserInput[] | ResourceInteractionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ResourceInteractionCreateOrConnectWithoutUserInput | ResourceInteractionCreateOrConnectWithoutUserInput[]
+    upsert?: ResourceInteractionUpsertWithWhereUniqueWithoutUserInput | ResourceInteractionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ResourceInteractionCreateManyUserInputEnvelope
+    set?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+    disconnect?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+    delete?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+    connect?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+    update?: ResourceInteractionUpdateWithWhereUniqueWithoutUserInput | ResourceInteractionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ResourceInteractionUpdateManyWithWhereWithoutUserInput | ResourceInteractionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ResourceInteractionScalarWhereInput | ResourceInteractionScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutChatsInput = {
@@ -11658,6 +14585,85 @@ export namespace Prisma {
     delete?: StatementWhereInput | boolean
     connect?: StatementWhereUniqueInput
     update?: XOR<XOR<StatementUpdateToOneWithWhereWithoutInsightsInput, StatementUpdateWithoutInsightsInput>, StatementUncheckedUpdateWithoutInsightsInput>
+  }
+
+  export type LearningResourceCreatetagsInput = {
+    set: string[]
+  }
+
+  export type ResourceInteractionCreateNestedManyWithoutResourceInput = {
+    create?: XOR<ResourceInteractionCreateWithoutResourceInput, ResourceInteractionUncheckedCreateWithoutResourceInput> | ResourceInteractionCreateWithoutResourceInput[] | ResourceInteractionUncheckedCreateWithoutResourceInput[]
+    connectOrCreate?: ResourceInteractionCreateOrConnectWithoutResourceInput | ResourceInteractionCreateOrConnectWithoutResourceInput[]
+    createMany?: ResourceInteractionCreateManyResourceInputEnvelope
+    connect?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+  }
+
+  export type ResourceInteractionUncheckedCreateNestedManyWithoutResourceInput = {
+    create?: XOR<ResourceInteractionCreateWithoutResourceInput, ResourceInteractionUncheckedCreateWithoutResourceInput> | ResourceInteractionCreateWithoutResourceInput[] | ResourceInteractionUncheckedCreateWithoutResourceInput[]
+    connectOrCreate?: ResourceInteractionCreateOrConnectWithoutResourceInput | ResourceInteractionCreateOrConnectWithoutResourceInput[]
+    createMany?: ResourceInteractionCreateManyResourceInputEnvelope
+    connect?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+  }
+
+  export type LearningResourceUpdatetagsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type ResourceInteractionUpdateManyWithoutResourceNestedInput = {
+    create?: XOR<ResourceInteractionCreateWithoutResourceInput, ResourceInteractionUncheckedCreateWithoutResourceInput> | ResourceInteractionCreateWithoutResourceInput[] | ResourceInteractionUncheckedCreateWithoutResourceInput[]
+    connectOrCreate?: ResourceInteractionCreateOrConnectWithoutResourceInput | ResourceInteractionCreateOrConnectWithoutResourceInput[]
+    upsert?: ResourceInteractionUpsertWithWhereUniqueWithoutResourceInput | ResourceInteractionUpsertWithWhereUniqueWithoutResourceInput[]
+    createMany?: ResourceInteractionCreateManyResourceInputEnvelope
+    set?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+    disconnect?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+    delete?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+    connect?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+    update?: ResourceInteractionUpdateWithWhereUniqueWithoutResourceInput | ResourceInteractionUpdateWithWhereUniqueWithoutResourceInput[]
+    updateMany?: ResourceInteractionUpdateManyWithWhereWithoutResourceInput | ResourceInteractionUpdateManyWithWhereWithoutResourceInput[]
+    deleteMany?: ResourceInteractionScalarWhereInput | ResourceInteractionScalarWhereInput[]
+  }
+
+  export type ResourceInteractionUncheckedUpdateManyWithoutResourceNestedInput = {
+    create?: XOR<ResourceInteractionCreateWithoutResourceInput, ResourceInteractionUncheckedCreateWithoutResourceInput> | ResourceInteractionCreateWithoutResourceInput[] | ResourceInteractionUncheckedCreateWithoutResourceInput[]
+    connectOrCreate?: ResourceInteractionCreateOrConnectWithoutResourceInput | ResourceInteractionCreateOrConnectWithoutResourceInput[]
+    upsert?: ResourceInteractionUpsertWithWhereUniqueWithoutResourceInput | ResourceInteractionUpsertWithWhereUniqueWithoutResourceInput[]
+    createMany?: ResourceInteractionCreateManyResourceInputEnvelope
+    set?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+    disconnect?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+    delete?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+    connect?: ResourceInteractionWhereUniqueInput | ResourceInteractionWhereUniqueInput[]
+    update?: ResourceInteractionUpdateWithWhereUniqueWithoutResourceInput | ResourceInteractionUpdateWithWhereUniqueWithoutResourceInput[]
+    updateMany?: ResourceInteractionUpdateManyWithWhereWithoutResourceInput | ResourceInteractionUpdateManyWithWhereWithoutResourceInput[]
+    deleteMany?: ResourceInteractionScalarWhereInput | ResourceInteractionScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutResourceInteractionsInput = {
+    create?: XOR<UserCreateWithoutResourceInteractionsInput, UserUncheckedCreateWithoutResourceInteractionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutResourceInteractionsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type LearningResourceCreateNestedOneWithoutInteractionsInput = {
+    create?: XOR<LearningResourceCreateWithoutInteractionsInput, LearningResourceUncheckedCreateWithoutInteractionsInput>
+    connectOrCreate?: LearningResourceCreateOrConnectWithoutInteractionsInput
+    connect?: LearningResourceWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutResourceInteractionsNestedInput = {
+    create?: XOR<UserCreateWithoutResourceInteractionsInput, UserUncheckedCreateWithoutResourceInteractionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutResourceInteractionsInput
+    upsert?: UserUpsertWithoutResourceInteractionsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutResourceInteractionsInput, UserUpdateWithoutResourceInteractionsInput>, UserUncheckedUpdateWithoutResourceInteractionsInput>
+  }
+
+  export type LearningResourceUpdateOneRequiredWithoutInteractionsNestedInput = {
+    create?: XOR<LearningResourceCreateWithoutInteractionsInput, LearningResourceUncheckedCreateWithoutInteractionsInput>
+    connectOrCreate?: LearningResourceCreateOrConnectWithoutInteractionsInput
+    upsert?: LearningResourceUpsertWithoutInteractionsInput
+    connect?: LearningResourceWhereUniqueInput
+    update?: XOR<XOR<LearningResourceUpdateToOneWithWhereWithoutInteractionsInput, LearningResourceUpdateWithoutInteractionsInput>, LearningResourceUncheckedUpdateWithoutInteractionsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -11949,6 +14955,7 @@ export namespace Prisma {
     role: string
     content: string
     imageUrl?: string | null
+    recommendations?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
   }
 
@@ -11957,6 +14964,7 @@ export namespace Prisma {
     role: string
     content: string
     imageUrl?: string | null
+    recommendations?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
   }
 
@@ -11999,6 +15007,30 @@ export namespace Prisma {
 
   export type BankAccountCreateManyUserInputEnvelope = {
     data: BankAccountCreateManyUserInput | BankAccountCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ResourceInteractionCreateWithoutUserInput = {
+    id?: string
+    type: string
+    interactedAt?: Date | string
+    resource: LearningResourceCreateNestedOneWithoutInteractionsInput
+  }
+
+  export type ResourceInteractionUncheckedCreateWithoutUserInput = {
+    id?: string
+    resourceId: string
+    type: string
+    interactedAt?: Date | string
+  }
+
+  export type ResourceInteractionCreateOrConnectWithoutUserInput = {
+    where: ResourceInteractionWhereUniqueInput
+    create: XOR<ResourceInteractionCreateWithoutUserInput, ResourceInteractionUncheckedCreateWithoutUserInput>
+  }
+
+  export type ResourceInteractionCreateManyUserInputEnvelope = {
+    data: ResourceInteractionCreateManyUserInput | ResourceInteractionCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -12119,6 +15151,7 @@ export namespace Prisma {
     role?: StringFilter<"Chat"> | string
     content?: StringFilter<"Chat"> | string
     imageUrl?: StringNullableFilter<"Chat"> | string | null
+    recommendations?: JsonNullableFilter<"Chat">
     createdAt?: DateTimeFilter<"Chat"> | Date | string
   }
 
@@ -12152,6 +15185,33 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"BankAccount"> | Date | string
   }
 
+  export type ResourceInteractionUpsertWithWhereUniqueWithoutUserInput = {
+    where: ResourceInteractionWhereUniqueInput
+    update: XOR<ResourceInteractionUpdateWithoutUserInput, ResourceInteractionUncheckedUpdateWithoutUserInput>
+    create: XOR<ResourceInteractionCreateWithoutUserInput, ResourceInteractionUncheckedCreateWithoutUserInput>
+  }
+
+  export type ResourceInteractionUpdateWithWhereUniqueWithoutUserInput = {
+    where: ResourceInteractionWhereUniqueInput
+    data: XOR<ResourceInteractionUpdateWithoutUserInput, ResourceInteractionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ResourceInteractionUpdateManyWithWhereWithoutUserInput = {
+    where: ResourceInteractionScalarWhereInput
+    data: XOR<ResourceInteractionUpdateManyMutationInput, ResourceInteractionUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type ResourceInteractionScalarWhereInput = {
+    AND?: ResourceInteractionScalarWhereInput | ResourceInteractionScalarWhereInput[]
+    OR?: ResourceInteractionScalarWhereInput[]
+    NOT?: ResourceInteractionScalarWhereInput | ResourceInteractionScalarWhereInput[]
+    id?: StringFilter<"ResourceInteraction"> | string
+    userId?: StringFilter<"ResourceInteraction"> | string
+    resourceId?: StringFilter<"ResourceInteraction"> | string
+    type?: StringFilter<"ResourceInteraction"> | string
+    interactedAt?: DateTimeFilter<"ResourceInteraction"> | Date | string
+  }
+
   export type UserCreateWithoutChatsInput = {
     id?: string
     email: string
@@ -12162,6 +15222,7 @@ export namespace Prisma {
     transactions?: TransactionCreateNestedManyWithoutUserInput
     insights?: InsightCreateNestedManyWithoutUserInput
     bankAccounts?: BankAccountCreateNestedManyWithoutUserInput
+    resourceInteractions?: ResourceInteractionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutChatsInput = {
@@ -12174,6 +15235,7 @@ export namespace Prisma {
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
     insights?: InsightUncheckedCreateNestedManyWithoutUserInput
     bankAccounts?: BankAccountUncheckedCreateNestedManyWithoutUserInput
+    resourceInteractions?: ResourceInteractionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutChatsInput = {
@@ -12202,6 +15264,7 @@ export namespace Prisma {
     transactions?: TransactionUpdateManyWithoutUserNestedInput
     insights?: InsightUpdateManyWithoutUserNestedInput
     bankAccounts?: BankAccountUpdateManyWithoutUserNestedInput
+    resourceInteractions?: ResourceInteractionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutChatsInput = {
@@ -12214,6 +15277,7 @@ export namespace Prisma {
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     insights?: InsightUncheckedUpdateManyWithoutUserNestedInput
     bankAccounts?: BankAccountUncheckedUpdateManyWithoutUserNestedInput
+    resourceInteractions?: ResourceInteractionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutBankAccountsInput = {
@@ -12226,6 +15290,7 @@ export namespace Prisma {
     transactions?: TransactionCreateNestedManyWithoutUserInput
     insights?: InsightCreateNestedManyWithoutUserInput
     chats?: ChatCreateNestedManyWithoutUserInput
+    resourceInteractions?: ResourceInteractionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutBankAccountsInput = {
@@ -12238,6 +15303,7 @@ export namespace Prisma {
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
     insights?: InsightUncheckedCreateNestedManyWithoutUserInput
     chats?: ChatUncheckedCreateNestedManyWithoutUserInput
+    resourceInteractions?: ResourceInteractionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutBankAccountsInput = {
@@ -12300,6 +15366,7 @@ export namespace Prisma {
     transactions?: TransactionUpdateManyWithoutUserNestedInput
     insights?: InsightUpdateManyWithoutUserNestedInput
     chats?: ChatUpdateManyWithoutUserNestedInput
+    resourceInteractions?: ResourceInteractionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBankAccountsInput = {
@@ -12312,6 +15379,7 @@ export namespace Prisma {
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     insights?: InsightUncheckedUpdateManyWithoutUserNestedInput
     chats?: ChatUncheckedUpdateManyWithoutUserNestedInput
+    resourceInteractions?: ResourceInteractionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StatementUpsertWithWhereUniqueWithoutBankAccountInput = {
@@ -12340,6 +15408,7 @@ export namespace Prisma {
     insights?: InsightCreateNestedManyWithoutUserInput
     chats?: ChatCreateNestedManyWithoutUserInput
     bankAccounts?: BankAccountCreateNestedManyWithoutUserInput
+    resourceInteractions?: ResourceInteractionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutStatementsInput = {
@@ -12352,6 +15421,7 @@ export namespace Prisma {
     insights?: InsightUncheckedCreateNestedManyWithoutUserInput
     chats?: ChatUncheckedCreateNestedManyWithoutUserInput
     bankAccounts?: BankAccountUncheckedCreateNestedManyWithoutUserInput
+    resourceInteractions?: ResourceInteractionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutStatementsInput = {
@@ -12471,6 +15541,7 @@ export namespace Prisma {
     insights?: InsightUpdateManyWithoutUserNestedInput
     chats?: ChatUpdateManyWithoutUserNestedInput
     bankAccounts?: BankAccountUpdateManyWithoutUserNestedInput
+    resourceInteractions?: ResourceInteractionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStatementsInput = {
@@ -12483,6 +15554,7 @@ export namespace Prisma {
     insights?: InsightUncheckedUpdateManyWithoutUserNestedInput
     chats?: ChatUncheckedUpdateManyWithoutUserNestedInput
     bankAccounts?: BankAccountUncheckedUpdateManyWithoutUserNestedInput
+    resourceInteractions?: ResourceInteractionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type BankAccountUpsertWithoutStatementsInput = {
@@ -12560,6 +15632,7 @@ export namespace Prisma {
     insights?: InsightCreateNestedManyWithoutUserInput
     chats?: ChatCreateNestedManyWithoutUserInput
     bankAccounts?: BankAccountCreateNestedManyWithoutUserInput
+    resourceInteractions?: ResourceInteractionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTransactionsInput = {
@@ -12572,6 +15645,7 @@ export namespace Prisma {
     insights?: InsightUncheckedCreateNestedManyWithoutUserInput
     chats?: ChatUncheckedCreateNestedManyWithoutUserInput
     bankAccounts?: BankAccountUncheckedCreateNestedManyWithoutUserInput
+    resourceInteractions?: ResourceInteractionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTransactionsInput = {
@@ -12629,6 +15703,7 @@ export namespace Prisma {
     insights?: InsightUpdateManyWithoutUserNestedInput
     chats?: ChatUpdateManyWithoutUserNestedInput
     bankAccounts?: BankAccountUpdateManyWithoutUserNestedInput
+    resourceInteractions?: ResourceInteractionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTransactionsInput = {
@@ -12641,6 +15716,7 @@ export namespace Prisma {
     insights?: InsightUncheckedUpdateManyWithoutUserNestedInput
     chats?: ChatUncheckedUpdateManyWithoutUserNestedInput
     bankAccounts?: BankAccountUncheckedUpdateManyWithoutUserNestedInput
+    resourceInteractions?: ResourceInteractionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StatementUpsertWithoutTransactionsInput = {
@@ -12688,6 +15764,7 @@ export namespace Prisma {
     transactions?: TransactionCreateNestedManyWithoutUserInput
     chats?: ChatCreateNestedManyWithoutUserInput
     bankAccounts?: BankAccountCreateNestedManyWithoutUserInput
+    resourceInteractions?: ResourceInteractionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutInsightsInput = {
@@ -12700,6 +15777,7 @@ export namespace Prisma {
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
     chats?: ChatUncheckedCreateNestedManyWithoutUserInput
     bankAccounts?: BankAccountUncheckedCreateNestedManyWithoutUserInput
+    resourceInteractions?: ResourceInteractionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutInsightsInput = {
@@ -12757,6 +15835,7 @@ export namespace Prisma {
     transactions?: TransactionUpdateManyWithoutUserNestedInput
     chats?: ChatUpdateManyWithoutUserNestedInput
     bankAccounts?: BankAccountUpdateManyWithoutUserNestedInput
+    resourceInteractions?: ResourceInteractionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutInsightsInput = {
@@ -12769,6 +15848,7 @@ export namespace Prisma {
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     chats?: ChatUncheckedUpdateManyWithoutUserNestedInput
     bankAccounts?: BankAccountUncheckedUpdateManyWithoutUserNestedInput
+    resourceInteractions?: ResourceInteractionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StatementUpsertWithoutInsightsInput = {
@@ -12804,6 +15884,182 @@ export namespace Prisma {
     meta?: NullableJsonNullValueInput | InputJsonValue
     bankAccountId?: NullableStringFieldUpdateOperationsInput | string | null
     transactions?: TransactionUncheckedUpdateManyWithoutStatementNestedInput
+  }
+
+  export type ResourceInteractionCreateWithoutResourceInput = {
+    id?: string
+    type: string
+    interactedAt?: Date | string
+    user: UserCreateNestedOneWithoutResourceInteractionsInput
+  }
+
+  export type ResourceInteractionUncheckedCreateWithoutResourceInput = {
+    id?: string
+    userId: string
+    type: string
+    interactedAt?: Date | string
+  }
+
+  export type ResourceInteractionCreateOrConnectWithoutResourceInput = {
+    where: ResourceInteractionWhereUniqueInput
+    create: XOR<ResourceInteractionCreateWithoutResourceInput, ResourceInteractionUncheckedCreateWithoutResourceInput>
+  }
+
+  export type ResourceInteractionCreateManyResourceInputEnvelope = {
+    data: ResourceInteractionCreateManyResourceInput | ResourceInteractionCreateManyResourceInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ResourceInteractionUpsertWithWhereUniqueWithoutResourceInput = {
+    where: ResourceInteractionWhereUniqueInput
+    update: XOR<ResourceInteractionUpdateWithoutResourceInput, ResourceInteractionUncheckedUpdateWithoutResourceInput>
+    create: XOR<ResourceInteractionCreateWithoutResourceInput, ResourceInteractionUncheckedCreateWithoutResourceInput>
+  }
+
+  export type ResourceInteractionUpdateWithWhereUniqueWithoutResourceInput = {
+    where: ResourceInteractionWhereUniqueInput
+    data: XOR<ResourceInteractionUpdateWithoutResourceInput, ResourceInteractionUncheckedUpdateWithoutResourceInput>
+  }
+
+  export type ResourceInteractionUpdateManyWithWhereWithoutResourceInput = {
+    where: ResourceInteractionScalarWhereInput
+    data: XOR<ResourceInteractionUpdateManyMutationInput, ResourceInteractionUncheckedUpdateManyWithoutResourceInput>
+  }
+
+  export type UserCreateWithoutResourceInteractionsInput = {
+    id?: string
+    email: string
+    name?: string | null
+    avatarUrl?: string | null
+    createdAt?: Date | string
+    statements?: StatementCreateNestedManyWithoutUserInput
+    transactions?: TransactionCreateNestedManyWithoutUserInput
+    insights?: InsightCreateNestedManyWithoutUserInput
+    chats?: ChatCreateNestedManyWithoutUserInput
+    bankAccounts?: BankAccountCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutResourceInteractionsInput = {
+    id?: string
+    email: string
+    name?: string | null
+    avatarUrl?: string | null
+    createdAt?: Date | string
+    statements?: StatementUncheckedCreateNestedManyWithoutUserInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    insights?: InsightUncheckedCreateNestedManyWithoutUserInput
+    chats?: ChatUncheckedCreateNestedManyWithoutUserInput
+    bankAccounts?: BankAccountUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutResourceInteractionsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutResourceInteractionsInput, UserUncheckedCreateWithoutResourceInteractionsInput>
+  }
+
+  export type LearningResourceCreateWithoutInteractionsInput = {
+    id?: string
+    title: string
+    description: string
+    type: string
+    category: string
+    url: string
+    thumbnailUrl?: string | null
+    author?: string | null
+    tags?: LearningResourceCreatetagsInput | string[]
+    createdAt?: Date | string
+  }
+
+  export type LearningResourceUncheckedCreateWithoutInteractionsInput = {
+    id?: string
+    title: string
+    description: string
+    type: string
+    category: string
+    url: string
+    thumbnailUrl?: string | null
+    author?: string | null
+    tags?: LearningResourceCreatetagsInput | string[]
+    createdAt?: Date | string
+  }
+
+  export type LearningResourceCreateOrConnectWithoutInteractionsInput = {
+    where: LearningResourceWhereUniqueInput
+    create: XOR<LearningResourceCreateWithoutInteractionsInput, LearningResourceUncheckedCreateWithoutInteractionsInput>
+  }
+
+  export type UserUpsertWithoutResourceInteractionsInput = {
+    update: XOR<UserUpdateWithoutResourceInteractionsInput, UserUncheckedUpdateWithoutResourceInteractionsInput>
+    create: XOR<UserCreateWithoutResourceInteractionsInput, UserUncheckedCreateWithoutResourceInteractionsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutResourceInteractionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutResourceInteractionsInput, UserUncheckedUpdateWithoutResourceInteractionsInput>
+  }
+
+  export type UserUpdateWithoutResourceInteractionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    statements?: StatementUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    insights?: InsightUpdateManyWithoutUserNestedInput
+    chats?: ChatUpdateManyWithoutUserNestedInput
+    bankAccounts?: BankAccountUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutResourceInteractionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    statements?: StatementUncheckedUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    insights?: InsightUncheckedUpdateManyWithoutUserNestedInput
+    chats?: ChatUncheckedUpdateManyWithoutUserNestedInput
+    bankAccounts?: BankAccountUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type LearningResourceUpsertWithoutInteractionsInput = {
+    update: XOR<LearningResourceUpdateWithoutInteractionsInput, LearningResourceUncheckedUpdateWithoutInteractionsInput>
+    create: XOR<LearningResourceCreateWithoutInteractionsInput, LearningResourceUncheckedCreateWithoutInteractionsInput>
+    where?: LearningResourceWhereInput
+  }
+
+  export type LearningResourceUpdateToOneWithWhereWithoutInteractionsInput = {
+    where?: LearningResourceWhereInput
+    data: XOR<LearningResourceUpdateWithoutInteractionsInput, LearningResourceUncheckedUpdateWithoutInteractionsInput>
+  }
+
+  export type LearningResourceUpdateWithoutInteractionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    author?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: LearningResourceUpdatetagsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LearningResourceUncheckedUpdateWithoutInteractionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    author?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: LearningResourceUpdatetagsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StatementCreateManyUserInput = {
@@ -12843,6 +16099,7 @@ export namespace Prisma {
     role: string
     content: string
     imageUrl?: string | null
+    recommendations?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
   }
 
@@ -12854,6 +16111,13 @@ export namespace Prisma {
     bankName: string
     branch?: string | null
     createdAt?: Date | string
+  }
+
+  export type ResourceInteractionCreateManyUserInput = {
+    id?: string
+    resourceId: string
+    type: string
+    interactedAt?: Date | string
   }
 
   export type StatementUpdateWithoutUserInput = {
@@ -12961,6 +16225,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    recommendations?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -12969,6 +16234,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    recommendations?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -12977,6 +16243,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    recommendations?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -13010,6 +16277,27 @@ export namespace Prisma {
     bankName?: StringFieldUpdateOperationsInput | string
     branch?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ResourceInteractionUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    interactedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resource?: LearningResourceUpdateOneRequiredWithoutInteractionsNestedInput
+  }
+
+  export type ResourceInteractionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resourceId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    interactedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ResourceInteractionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resourceId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    interactedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StatementCreateManyBankAccountInput = {
@@ -13142,6 +16430,34 @@ export namespace Prisma {
     summary?: StringFieldUpdateOperationsInput | string
     recommendations?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ResourceInteractionCreateManyResourceInput = {
+    id?: string
+    userId: string
+    type: string
+    interactedAt?: Date | string
+  }
+
+  export type ResourceInteractionUpdateWithoutResourceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    interactedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutResourceInteractionsNestedInput
+  }
+
+  export type ResourceInteractionUncheckedUpdateWithoutResourceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    interactedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ResourceInteractionUncheckedUpdateManyWithoutResourceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    interactedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

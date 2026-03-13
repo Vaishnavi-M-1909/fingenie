@@ -8,28 +8,30 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(cuid())
-  email        String        @unique
-  name         String?
-  avatarUrl    String?
-  createdAt    DateTime      @default(now()) @map("created_at")
-  statements   Statement[]
-  transactions Transaction[]
-  insights     Insight[]
-  chats        Chat[]
-  bankAccounts BankAccount[]
+  id                   String                @id @default(cuid())
+  email                String                @unique
+  name                 String?
+  avatarUrl            String?
+  createdAt            DateTime              @default(now()) @map("created_at")
+  statements           Statement[]
+  transactions         Transaction[]
+  insights             Insight[]
+  chats                Chat[]
+  bankAccounts         BankAccount[]
+  resourceInteractions ResourceInteraction[]
 
   @@map("users")
 }
 
 model Chat {
-  id        String   @id @default(cuid())
-  userId    String   @map("user_id")
-  role      String // user | assistant
-  content   String
-  imageUrl  String?  @map("image_url")
-  createdAt DateTime @default(now()) @map("created_at")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  role            String // user | assistant
+  content         String
+  imageUrl        String?  @map("image_url")
+  recommendations Json?
+  createdAt       DateTime @default(now()) @map("created_at")
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("chat_messages")
@@ -115,4 +117,36 @@ model MerchantMap {
   createdBy      String @default("system") @map("created_by") // "system" | userId
 
   @@map("merchant_maps")
+}
+
+model LearningResource {
+  id           String                @id @default(cuid())
+  title        String
+  description  String
+  type         String // VIDEO | ARTICLE | BOOK
+  category     String // Tax, Finance, Spending, Investing, Budgeting, Insurance, Savings
+  url          String
+  thumbnailUrl String?               @map("thumbnail_url")
+  author       String?
+  tags         String[]              @default([])
+  createdAt    DateTime              @default(now()) @map("created_at")
+  interactions ResourceInteraction[]
+
+  @@index([category])
+  @@index([type])
+  @@map("learning_resources")
+}
+
+model ResourceInteraction {
+  id           String           @id @default(cuid())
+  userId       String           @map("user_id")
+  resourceId   String           @map("resource_id")
+  type         String // CLICK | VIEW | COMPLETE
+  interactedAt DateTime         @default(now()) @map("interacted_at")
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resource     LearningResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([resourceId])
+  @@map("resource_interactions")
 }

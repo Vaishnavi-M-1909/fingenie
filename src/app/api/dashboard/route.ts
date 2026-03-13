@@ -140,6 +140,43 @@ export async function GET(request: Request) {
       variabilityScore * 0.3 + diversityScore * 0.3 + subscriptionScore * 0.4
     );
 
+    // Fetch recommendations based on top category or general finance
+    const topCategory = Object.keys(categoryTotals)[0] || "Finance";
+    
+    // Get watched resources to deprioritize them
+    const watchedIds = await prisma.resourceInteraction.findMany({
+      where: { userId: user.id, type: { in: ["VIEW", "COMPLETE"] } },
+      select: { resourceId: true },
+      distinct: ["resourceId"],
+    });
+    const watchedSet = new Set(watchedIds.map((w: { resourceId: string }) => w.resourceId));
+
+    const resources = await prisma.learningResource.findMany({
+      where: {
+        OR: [
+          { category: topCategory },
+          { category: "Finance" }
+        ]
+      },
+      take: 6,
+      orderBy: { createdAt: "desc" },
+    });
+
+    // Prioritize unwatched
+    const recommendedResources = resources
+      .sort((a, b) => (watchedSet.has(a.id) ? 1 : 0) - (watchedSet.has(b.id) ? 1 : 0))
+      .slice(0, 3);
+
+    // Fetch user's interaction history (last 6 items)
+    const interactionHistory = await prisma.resourceInteraction.findMany({
+      where: { userId: user.id },
+      orderBy: { interactedAt: "desc" },
+      take: 6,
+      include: {
+        resource: true
+      }
+    });
+
     return NextResponse.json({
       month: targetMonth,
       accountHolderName,
@@ -152,6 +189,8 @@ export async function GET(request: Request) {
       recurring,
       healthScore: Math.max(0, Math.min(100, healthScore)),
       transactionCount: transactions.length,
+      recommendations: recommendedResources,
+      interactionHistory: interactionHistory.map(i => i.resource),
     });
   } catch (error) {
     console.error("Dashboard error:", error);

@@ -132,7 +132,7 @@ export async function generateChatResponse(messages: OpenRouterMessage[]): Promi
       "X-Title": "FinGenie",
     },
     body: JSON.stringify({
-      model: "nvidia/nemotron-nano-12b-v2-vl:free",
+      model: "arcee-ai/trinity-large-preview:free",
       messages,
       max_tokens: 1024, // Increased for vision responses
       temperature: 0.7,

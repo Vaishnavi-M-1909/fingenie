@@ -49,6 +49,13 @@ export async function GET(request: Request) {
         });
         break;
 
+      case "tax":
+      case "investing":
+      case "budgeting":
+      case "savings":
+        data = { info: "Learning resources for this topic will be automatically provided below the response." };
+        break;
+
       case "summary":
         const [recentInsights, recentTransactions] = await Promise.all([
           prisma.insight.findMany({

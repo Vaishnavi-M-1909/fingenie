@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { generateChatResponse } from "@/lib/openrouter";
+import { getUser } from "@/lib/auth";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function GET() {
   try {
-    const supabase = await createSupabaseServerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const user = await getUser();
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -20,6 +20,7 @@ export async function GET() {
         role: true,
         content: true,
         imageUrl: true,
+        recommendations: true,
       },
     });
 
@@ -32,8 +33,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createSupabaseServerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const user = await getUser();
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -50,11 +50,80 @@ export async function POST(req: NextRequest) {
     if (image) {
       userContent.push({
         type: "image_url",
-        image_url: { url: image } // Already expected to be data:image/...;base64,...
+        image_url: { url: image }
       });
     }
 
-    // 1. Fetch recent transactions for context
+    // 2. Detect @flags in the message for recommendations
+    const flagPattern = /@(tax|finance|spending|investing|budgeting|savings|insurance|money|mutual[-\s]?funds?|stocks?|budget|save|invest)/gi;
+    const detectedFlags = [...(message || "").matchAll(flagPattern)].map((m: RegExpMatchArray) => m[1].toLowerCase());
+
+    // Map common synonyms to database categories
+    const categoryMap: Record<string, string> = {
+      tax: "Tax",
+      finance: "Finance",
+      money: "Finance",
+      spending: "Spending",
+      investing: "Investing",
+      invest: "Investing",
+      stocks: "Investing",
+      stock: "Investing",
+      "mutual-funds": "Investing",
+      "mutual funds": "Investing",
+      "mutualfunds": "Investing",
+      budgeting: "Budgeting",
+      budget: "Budgeting",
+      savings: "Savings",
+      save: "Savings",
+      insurance: "Insurance",
+    };
+
+    const categories = [...new Set(detectedFlags.map((f: string) => categoryMap[f] || "Finance"))];
+
+    // 3. Query recommendations if @flags detected
+    let recommendations: Array<{ id: string; title: string; type: string; url: string; author: string | null; description: string; thumbnailUrl: string | null }> = [];
+    let recommendationContext = "";
+
+    if (categories.length > 0) {
+      // Get user's watch history to avoid repeats
+      const watchedIds = await prisma.resourceInteraction.findMany({
+        where: { userId: user.id, type: { in: ["VIEW", "COMPLETE"] } },
+        select: { resourceId: true },
+        distinct: ["resourceId"],
+      });
+      const watchedSet = new Set(watchedIds.map((w: { resourceId: string }) => w.resourceId));
+
+      const resources = await prisma.learningResource.findMany({
+        where: {
+          category: { in: categories },
+        },
+        take: 6,
+        orderBy: { createdAt: "desc" },
+      });
+
+      // Prioritize unwatched content
+      const sorted = resources.sort((a, b) => {
+        const aWatched = watchedSet.has(a.id) ? 1 : 0;
+        const bWatched = watchedSet.has(b.id) ? 1 : 0;
+        return aWatched - bWatched;
+      });
+
+      recommendations = sorted.slice(0, 4).map((r) => ({
+        id: r.id,
+        title: r.title,
+        type: r.type,
+        url: r.url,
+        author: r.author,
+        description: r.description,
+        thumbnailUrl: r.thumbnailUrl,
+      }));
+
+      if (recommendations.length > 0) {
+        recommendationContext = `\n\n--- Curated Learning Resources (MUST include in your response) ---\nThe user asked about ${categories.join(", ")}. Here are verified resources from our library. You MUST recommend 1-3 of these in your response with their exact titles. Format each recommendation clearly.\n${recommendations.map((r, i) => `${i + 1}. [${r.type}] "${r.title}" by ${r.author || "Unknown"} — ${r.description}`).join("\n")}`;
+      }
+    }
+
+    // 4. Fetch recent transactions for context
     const transactions = await prisma.transaction.findMany({
       where: { userId: user.id },
       orderBy: { date: 'desc' },
@@ -68,7 +137,7 @@ export async function POST(req: NextRequest) {
       }
     });
 
-    // 2. Prepare context string
+    // 5. Prepare context string
     const context = transactions.length > 0 
       ? `User's recent transactions:\n${transactions.map(t => 
           `- ${t.date.toISOString().split('T')[0]}: ${t.merchant} (₹${t.amount}) in ${t.category}`
@@ -84,15 +153,22 @@ export async function POST(req: NextRequest) {
 
       --- Specifically Requested Context (@mentions) ---
       ${injectedContext || "No specific entities mentioned."}
+      ${recommendationContext}
 
       Be concise, insightful, and friendly. If they ask about specific spending, refer to the transaction data provided above.
-      Always format currency as ₹ (INR).
+      
+      --- RECOMMENDATION GUIDELINES ---
+      1. When recommending resources (videos/articles/books), mention them naturally in your response (e.g., "You might find this video on tax saving helpful...").
+      2. DO NOT create a numbered list or use rigid "[VIDEO]" prefixes in your text response, as interactive cards will be shown separately.
+      3. Your tone should be that of a helpful coach, not a search engine.
+      4. Always format currency as ₹ (INR).
     `;
 
     // 3. Handle Image Persistence if present
     let savedImageUrl: string | undefined;
     if (image && image.startsWith("data:image")) {
       try {
+        const supabase = await createSupabaseServerClient();
         const base64Data = image.split(",")[1];
         const buffer = Buffer.from(base64Data, "base64");
         const mimeType = image.split(";")[0].split(":")[1];
@@ -135,17 +211,24 @@ export async function POST(req: NextRequest) {
       data: {
         userId: user.id,
         role: "assistant",
-        content: aiResponse
+        content: aiResponse,
+        recommendations: recommendations.length > 0 ? recommendations : undefined,
       }
     });
 
     return NextResponse.json({ 
       message: aiResponse,
       userMessageId: userMsg.id,
-      aiMessageId: aiMsg.id
+      aiMessageId: aiMsg.id,
+      recommendations: recommendations.length > 0 ? recommendations : undefined,
     });
-  } catch (error) {
-    console.error("[CHAT_POST_ERROR]", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  } catch (error: any) {
+    console.error("[CHAT_POST_ERROR] Full details:");
+    console.dir(error, { depth: null });
+    return NextResponse.json({ 
+      error: "Internal server error",
+      code: error.code,
+      meta: error.meta
+    }, { status: 500 });
   }
 }

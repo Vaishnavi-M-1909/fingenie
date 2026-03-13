@@ -8,8 +8,10 @@ import {
 import {
   TrendingDown, RefreshCw,
   ArrowUpRight, ChevronLeft, ChevronRight,
+  BookOpen,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import RecommendationCards from "@/components/RecommendationCards";
 
 const COLORS = [
   "var(--brand-primary)", "#FF3B00", "#00E57A", "#FFC700", "#00F0FF",
@@ -347,6 +349,48 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
+
+          {/* Recommended for You Section */}
+          {data?.recommendations && data.recommendations.length > 0 && (
+            <section className="animate-reveal delay-200" style={{ marginBottom: "80px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "24px" }}>
+                <div style={{ background: "var(--brand-primary)", borderRadius: "var(--radius-sm)", padding: "8px", color: "#fff" }}>
+                  <TrendingDown size={20} />
+                </div>
+                <div>
+                  <h3 className="eyebrow" style={{ color: "var(--text-primary)", marginBottom: "2px" }}>Recommended for You</h3>
+                  <div style={{ fontSize: "0.85rem", color: "var(--text-tertiary)", fontWeight: 500 }}>
+                    Curated financial logic based on your {pieData[0]?.name || "spending"} signatures
+                  </div>
+                </div>
+              </div>
+              
+              <div className="rule-horizontal" style={{ marginBottom: "24px", opacity: 0.5 }} />
+              
+              <RecommendationCards recommendations={data.recommendations} />
+            </section>
+          )}
+
+          {/* Your Learning Journey (History) */}
+          {data?.interactionHistory && data.interactionHistory.length > 0 && (
+            <section className="animate-reveal delay-300" style={{ marginBottom: "80px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "24px" }}>
+                <div style={{ background: "#00E57A", borderRadius: "var(--radius-sm)", padding: "8px", color: "#fff" }}>
+                  <RefreshCw size={20} />
+                </div>
+                <div>
+                  <h3 className="eyebrow" style={{ color: "var(--text-primary)", marginBottom: "2px" }}>Your Learning Journey</h3>
+                  <div style={{ fontSize: "0.85rem", color: "var(--text-tertiary)", fontWeight: 500 }}>
+                    Recall previously processed financial intelligence
+                  </div>
+                </div>
+              </div>
+              
+              <div className="rule-horizontal" style={{ marginBottom: "24px", opacity: 0.5 }} />
+              
+              <RecommendationCards recommendations={data.interactionHistory} />
+            </section>
+          )}
         </>
       )}
     </div>
