@@ -13,6 +13,7 @@ import {
   LogOut,
   Menu,
   X,
+  Database,
 } from "lucide-react";
 import { useState, useEffect, type ReactNode } from "react";
 import Logo from "@/components/Logo";
@@ -22,6 +23,7 @@ const navItems = [
   { href: "/assistant", label: "Intelligence", icon: Lightbulb },
   { href: "/upload", label: "Registry", icon: Upload },
   { href: "/transactions", label: "Ledger", icon: Receipt },
+  { href: "/vault", label: "Vault", icon: Database },
   { href: "/settings/privacy", label: "Config", icon: Settings },
 ];
 
