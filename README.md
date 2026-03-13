@@ -15,7 +15,7 @@ FinGenie is a comprehensive financial operating system designed for young profes
 - **Framework**: Next.js 15 (App Router, Turbopack)
 - **Database**: PostgreSQL (Prisma ORM)
 - **Authentication**: Supabase Auth
-- **AI Engine**: OpenRouter (Claude/GPT-4o) for document parsing and chat intelligence
+- **AI Engine**: OpenRouter (opensource models) for document parsing and chat intelligence
 - **Storage**: Supabase Storage for encrypted document handling
 
 ## Getting Started
