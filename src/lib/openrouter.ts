@@ -117,3 +117,39 @@ Recurring Subscriptions: ${data.recurringCount} (total: ₹${data.recurringTotal
 Ask: produce (1) 3-point plain English summary of spending, (2) 3 concrete actions to reduce spending, (3) 2-3 learning resources with title + url targeted at this user's top spending categories.
 Provide output as JSON with keys: summary, actions[], resources[{title, url}].`;
 }
+export async function generateChatResponse(messages: OpenRouterMessage[]): Promise<string> {
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) {
+    throw new Error("OPENROUTER_API_KEY is not set");
+  }
+
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey.trim()}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": process.env.NEXT_PUBLIC_SUPABASE_URL || "http://localhost:3000",
+      "X-Title": "FinGenie",
+    },
+    body: JSON.stringify({
+      model: "arcee-ai/trinity-large-preview:free",
+      messages,
+      max_tokens: 512,
+      temperature: 0.7,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`OpenRouter API error: ${response.status} - ${errorText}`);
+  }
+
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content;
+
+  if (!content) {
+    throw new Error("Empty response from OpenRouter");
+  }
+
+  return content;
+}

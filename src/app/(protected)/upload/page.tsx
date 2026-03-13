@@ -81,38 +81,40 @@ export default function UploadPage() {
   };
 
   return (
-    <div style={{ maxWidth: "640px", width: "100%" }}>
-      <h1
-        style={{
-          fontFamily: "var(--font-display)",
-          fontSize: "clamp(22px, 3vw, 28px)",
-          fontWeight: 700,
-          letterSpacing: "-1px",
-          marginBottom: "8px",
-        }}
-      >
-        Upload Statement
-      </h1>
-      <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "36px" }}>
-        Upload your bank statement (PDF or CSV) to analyze your spending.
-      </p>
+    <div className="container-editorial animate-reveal" style={{ maxWidth: "800px" }}>
+      <header style={{ marginBottom: "40px" }}>
+        <h1 className="display-large" style={{ color: "var(--text-primary)", marginBottom: "8px" }}>
+          Upload
+        </h1>
+        <p className="eyebrow" style={{ color: "var(--brand-primary)", textTransform: "none", fontFamily: "var(--font-body)", fontSize: "1.05rem" }}>
+          Upload bank statements or receipts for processing
+        </p>
+      </header>
+
+      <div className="rule-horizontal" style={{ marginBottom: "40px" }} />
 
       {state === "idle" && (
         <div
           onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
-          className="animate-fade-in-up"
+          className="animate-fade-in-up editorial-card"
           style={{
-            border: `2px dashed ${dragOver ? "var(--mint-primary)" : "var(--border)"}`,
-            borderRadius: "var(--radius-lg)",
+            border: `2px dashed ${dragOver ? "var(--brand-primary)" : "var(--border-heavy)"}`,
             padding: "clamp(40px, 8vw, 80px) clamp(20px, 4vw, 40px)",
             textAlign: "center",
-            background: dragOver ? "var(--mint-dim)" : "var(--bg-card)",
-            transition: "all 0.3s",
+            background: dragOver ? "var(--brand-dim)" : "var(--bg-secondary)",
+            transition: "all 0.2s",
             cursor: "pointer",
+            position: "relative",
           }}
           onClick={() => document.getElementById("file-input")?.click()}
+          onMouseOver={(e) => {
+            if(!dragOver) e.currentTarget.style.borderColor = "var(--text-tertiary)";
+          }}
+          onMouseOut={(e) => {
+            if(!dragOver) e.currentTarget.style.borderColor = "var(--border-heavy)";
+          }}
         >
           <input
             id="file-input"
@@ -121,68 +123,70 @@ export default function UploadPage() {
             style={{ display: "none" }}
             onChange={handleFileInput}
           />
+          <div style={{ position: "absolute", top: "16px", left: "16px", transform: "rotate(-90deg)", transformOrigin: "bottom left" }}>
+             <span className="eyebrow" style={{ color: "var(--text-tertiary)" }}>DROP_ZONE</span>
+          </div>
+          
           <div
             style={{
               width: "64px",
               height: "64px",
-              borderRadius: "16px",
-              background: "var(--mint-dim)",
+              background: "var(--bg-primary)",
+              color: "var(--text-primary)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              margin: "0 auto 20px",
+              margin: "0 auto 24px",
+              border: "1px solid var(--border-light)",
+              borderRadius: "50%",
+              boxShadow: "var(--shadow-hover)"
             }}
           >
-            <Upload size={28} color="var(--mint-primary)" />
+            <Upload size={28} />
           </div>
-          <h3
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "18px",
-              fontWeight: 600,
-              marginBottom: "8px",
-            }}
-          >
-            Drag & drop your file here
+          <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.75rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "12px" }}>
+            Select a file to upload
           </h3>
-          <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "20px" }}>
-            or click to browse • Supports PDF and CSV
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "1.05rem", fontWeight: 500, color: "var(--text-secondary)", marginBottom: "24px" }}>
+            Drag and drop your file here, or click to browse
           </p>
-          <p style={{ fontSize: "12px", color: "var(--text-dim)" }}>Max file size: 5MB</p>
+          <div style={{ display: "inline-flex", gap: "8px", padding: "6px 12px", border: "1px solid var(--border-light)", background: "var(--bg-primary)", borderRadius: "var(--radius-sm)" }}>
+            <span style={{ fontSize: "0.8rem", fontWeight: 700, fontFamily: "var(--font-body)", color: "var(--brand-primary)" }}>CSV</span>
+            <span style={{ fontSize: "0.8rem", color: "var(--border-heavy)" }}>|</span>
+            <span style={{ fontSize: "0.8rem", fontWeight: 700, fontFamily: "var(--font-body)", color: "var(--accent-coral)" }}>PDF</span>
+            <span style={{ fontSize: "0.8rem", color: "var(--text-tertiary)", marginLeft: "8px", fontWeight: 500 }}>Max 5MB</span>
+          </div>
         </div>
       )}
 
       {state === "uploading" && (
-        <div className="glass-card animate-scale-in" style={{ padding: "40px", textAlign: "center" }}>
-          <FileText size={40} color="var(--mint-primary)" style={{ marginBottom: "16px" }} />
-          <h3
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "18px",
-              fontWeight: 600,
-              marginBottom: "8px",
-            }}
-          >
-            Processing {fileName}
+        <div className="editorial-card animate-scale-in" style={{ padding: "60px 40px", textAlign: "center" }}>
+          <FileText size={48} style={{ color: "var(--brand-primary)", marginBottom: "24px", margin: "0 auto" }} />
+          <h3 className="display-large" style={{ fontSize: "2rem", marginBottom: "12px" }}>
+            Processing Data...
           </h3>
-          <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
-            Uploading and parsing your statement...
-          </p>
+          <div style={{ color: "var(--text-secondary)", fontFamily: "var(--font-body)", marginBottom: "40px" }}>
+            Extracting components from: {fileName}
+          </div>
           <div
             style={{
-              height: "6px",
-              background: "var(--border)",
-              borderRadius: "3px",
-              overflow: "hidden",
+              height: "8px",
+              background: "var(--bg-secondary)",
+              border: "1px solid var(--border-light)",
+              borderRadius: "8px",
+              width: "100%",
+              maxWidth: "400px",
+              margin: "0 auto",
+              position: "relative",
+              overflow: "hidden"
             }}
           >
             <div
               style={{
                 height: "100%",
-                background: "linear-gradient(90deg, var(--mint-primary), var(--emerald))",
-                borderRadius: "3px",
+                background: "var(--brand-primary)",
                 width: `${progress}%`,
-                transition: "width 0.5s ease",
+                transition: "width 0.2s linear"
               }}
             />
           </div>
@@ -190,49 +194,38 @@ export default function UploadPage() {
       )}
 
       {state === "done" && result && (
-        <div className="glass-card animate-scale-in" style={{ padding: "40px", textAlign: "center" }}>
-          <CheckCircle size={48} color="var(--mint-primary)" style={{ marginBottom: "16px" }} />
-          <h3
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "20px",
-              fontWeight: 600,
-              marginBottom: "12px",
-            }}
-          >
-            Successfully Parsed!
+        <div className="editorial-card animate-scale-in" style={{ padding: "60px 40px", textAlign: "center", borderTop: "4px solid var(--brand-primary)" }}>
+          <CheckCircle size={56} style={{ color: "var(--brand-primary)", marginBottom: "24px", margin: "0 auto" }} />
+          <h3 className="display-large" style={{ fontSize: "2.5rem", marginBottom: "32px", color: "var(--brand-primary)", lineHeight: 1 }}>
+            Upload Successful
           </h3>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              gap: "32px",
-              marginBottom: "28px",
-              fontSize: "14px",
-            }}
-          >
-            <div>
-              <div style={{ fontSize: "24px", fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--mint-primary)" }}>
+          
+          <div style={{ display: "flex", justifyContent: "center", gap: "16px", marginBottom: "40px" }}>
+            <div style={{ background: "var(--bg-secondary)", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)", padding: "20px", flex: 1 }}>
+              <div style={{ fontSize: "2.5rem", fontWeight: 800, fontFamily: "var(--font-display)", color: "var(--text-primary)", lineHeight: 1, marginBottom: "8px" }}>
                 {result.parsed}
               </div>
-              <div style={{ color: "var(--text-dim)" }}>Parsed</div>
+              <div style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase" }}>Parsed Rows</div>
             </div>
             {result.failed > 0 && (
-              <div>
-                <div style={{ fontSize: "24px", fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--amber)" }}>
+              <div style={{ background: "var(--bg-secondary)", border: "1px solid var(--accent-coral)", borderRadius: "var(--radius-sm)", padding: "20px", flex: 1 }}>
+                <div style={{ fontSize: "2.5rem", fontWeight: 800, fontFamily: "var(--font-display)", color: "var(--accent-coral)", lineHeight: 1, marginBottom: "8px" }}>
                   {result.failed}
                 </div>
-                <div style={{ color: "var(--text-dim)" }}>Skipped</div>
+                <div style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase" }}>Errors</div>
               </div>
             )}
-            <div>
-              <div style={{ fontSize: "24px", fontWeight: 700, fontFamily: "var(--font-display)" }}>{result.total}</div>
-              <div style={{ color: "var(--text-dim)" }}>Total Rows</div>
+            <div style={{ background: "var(--bg-secondary)", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)", padding: "20px", flex: 1 }}>
+              <div style={{ fontSize: "2.5rem", fontWeight: 800, fontFamily: "var(--font-display)", color: "var(--text-primary)", lineHeight: 1, marginBottom: "8px" }}>
+                {result.total}
+              </div>
+              <div style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase" }}>Total Rows</div>
             </div>
           </div>
-          <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+
+          <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/dashboard" className="btn btn-primary">
-              View Dashboard <ArrowRight size={16} />
+              View Dashboard <ArrowRight size={18} />
             </Link>
             <button className="btn btn-secondary" onClick={reset}>
               Upload Another
@@ -242,20 +235,13 @@ export default function UploadPage() {
       )}
 
       {state === "failed" && (
-        <div className="glass-card animate-scale-in" style={{ padding: "40px", textAlign: "center" }}>
-          <XCircle size={48} color="var(--coral)" style={{ marginBottom: "16px" }} />
-          <h3
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "20px",
-              fontWeight: 600,
-              marginBottom: "12px",
-            }}
-          >
-            Parsing Failed
+        <div className="editorial-card animate-scale-in" style={{ padding: "60px 40px", textAlign: "center", borderTop: "4px solid var(--accent-coral)", background: "var(--bg-secondary)" }}>
+          <XCircle size={56} color="var(--accent-coral)" style={{ marginBottom: "24px", margin: "0 auto" }} />
+          <h3 className="display-large" style={{ fontSize: "2.5rem", marginBottom: "16px", color: "var(--text-primary)" }}>
+            Upload Failed
           </h3>
-          <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
-            {result?.error || "We couldn't extract transactions from this file."}
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", fontWeight: 500, color: "var(--text-secondary)", marginBottom: "40px" }}>
+            {result?.error || "We couldn't process this file. Please ensure it's a supported format."}
           </p>
           <button className="btn btn-primary" onClick={reset}>
             Try Again
@@ -263,23 +249,18 @@ export default function UploadPage() {
         </div>
       )}
 
-      {/* Supported banks */}
-      <div
-        className="animate-fade-in-up delay-300"
-        style={{ marginTop: "40px" }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
-          <AlertTriangle size={14} color="var(--amber)" />
-          <span style={{ fontSize: "13px", fontFamily: "var(--font-display)", color: "var(--text-secondary)" }}>
-            Supported formats
-          </span>
-        </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-          {["SBI", "HDFC", "ICICI", "Axis", "Kotak", "PNB", "CSV (any bank)"].map((bank) => (
-            <span key={bank} className="badge badge-mint">
-              {bank}
-            </span>
-          ))}
+      {/* Support Info */}
+      <div className="animate-fade-in-up delay-300" style={{ marginTop: "60px", padding: "24px", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)", background: "var(--bg-secondary)", display: "flex", alignItems: "flex-start", gap: "16px" }}>
+        <AlertTriangle size={24} style={{ color: "var(--text-tertiary)", flexShrink: 0 }} />
+        <div>
+          <h4 style={{ fontFamily: "var(--font-body)", fontSize: "0.9rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "12px", textTransform: "uppercase" }}>Supported Formats</h4>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+            {["SBI [PDF]", "HDFC [PDF]", "ICICI [PDF]", "AXIS [PDF]", "KOTAK [PDF]", "PNB [PDF]", "GLOBAL [CSV]"].map((bank) => (
+              <span key={bank} style={{ padding: "6px 10px", background: "var(--bg-primary)", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)", fontFamily: "var(--font-body)", fontSize: "0.8rem", fontWeight: 600, color: "var(--text-secondary)" }}>
+                {bank}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </div>

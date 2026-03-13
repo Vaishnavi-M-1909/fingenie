@@ -1,0 +1,237 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import { MoveRight, Sparkles, Loader2, Image as ImageIcon } from "lucide-react";
+
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export default function AssistantPage() {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    async function fetchHistory() {
+      try {
+        const res = await fetch("/api/chat");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.messages && data.messages.length > 0) {
+            setMessages(data.messages);
+          } else {
+            setMessages([
+              { role: "assistant", content: "I am FinGenie. How can I assist you with your finances today?" }
+            ]);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch chat history:", err);
+      }
+    }
+    fetchHistory();
+  }, []);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isLoading]);
+
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
+
+    const userMessage = input.trim();
+    setInput("");
+    setMessages(prev => [...prev, { role: "user", content: userMessage }]);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: userMessage,
+          history: messages.slice(-5)
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to get response");
+      
+      const data = await response.json();
+      setMessages(prev => [...prev, { role: "assistant", content: data.message }]);
+    } catch (error) {
+      console.error(error);
+      setMessages(prev => [...prev, { role: "assistant", content: "System Error. Protocol failed." }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div style={{ 
+      minHeight: "100vh", 
+      display: "flex", 
+      flexDirection: "column",
+      paddingBottom: "140px" // Space for fixed input
+    }}>
+      
+      {/* Immersive Header */}
+      <header className="animate-reveal" style={{ padding: "4rem 4vw 2rem", maxWidth: "900px", margin: "0 auto", width: "100%" }}>
+        <h1 className="display-large" style={{ color: "var(--text-primary)" }}>
+          Intelligence.
+        </h1>
+        <div className="rule-thick" style={{ width: "40px", marginTop: "1rem" }} />
+      </header>
+
+      {/* Editorial Chat Flow */}
+      <main style={{ flex: 1, padding: "0 4vw", maxWidth: "900px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "column", gap: "3rem" }}>
+        {messages.map((m, i) => (
+          <div key={i} className="animate-reveal" style={{ animationDelay: "0.1s" }}>
+            <div className="eyebrow" style={{ 
+              color: m.role === "user" ? "var(--text-tertiary)" : "var(--brand-primary)",
+              marginBottom: "1rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px"
+            }}>
+              {m.role === "assistant" && <Sparkles size={14} />}
+              {m.role === "user" ? "QUERY" : "FINGENIE"}
+            </div>
+            
+            <div style={{
+              fontFamily: m.role === "user" ? "var(--font-display)" : "var(--font-body)",
+              fontSize: m.role === "user" ? "clamp(1.15rem, 2vw, 1.25rem)" : "1rem",
+              fontWeight: m.role === "user" ? 600 : 400,
+              lineHeight: 1.6,
+              color: m.role === "user" ? "var(--text-primary)" : "var(--text-secondary)",
+              letterSpacing: m.role === "user" ? "-0.01em" : "0",
+            }}>
+              {m.content}
+            </div>
+            
+            {/* Minimal separator after assistant messages */}
+            {m.role === "assistant" && i < messages.length - 1 && (
+              <div className="rule-horizontal" style={{ opacity: 0.2, marginTop: "3rem", marginBottom: 0 }} />
+            )}
+          </div>
+        ))}
+
+        {isLoading && (
+          <div className="animate-reveal" style={{ animationDelay: "0.1s" }}>
+            <div className="eyebrow" style={{ color: "var(--brand-primary)", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "8px" }}>
+              <Loader2 size={14} className="animate-spin" />
+              PROCESSING
+            </div>
+            <div style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "1rem",
+              color: "var(--text-tertiary)",
+            }}>
+              Analyzing financial vectors...
+            </div>
+          </div>
+        )}
+        <div ref={scrollRef} style={{ height: "1px" }} />
+      </main>
+
+      {/* Floating Soft Input */}
+      <div className="animate-fade-in-up" style={{
+        position: "fixed",
+        bottom: "24px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        width: "calc(100% - 48px)",
+        maxWidth: "800px",
+        background: "var(--bg-secondary)",
+        border: "1px solid var(--border-light)",
+        borderRadius: "var(--radius-lg)",
+        padding: "16px",
+        boxShadow: "var(--shadow-hover)",
+        zIndex: 50,
+      }}>
+        <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+          <input type="file" id="chat-image-upload" accept="image/*" style={{ display: "none" }} onChange={(e) => { if (e.target.files?.length) alert("Image upload functionality is active but processing requires visual model integration coming in the next update."); e.target.value = ''; }} />
+          <button 
+            style={{ 
+              background: "var(--bg-primary)",
+              border: "1px solid var(--border-light)",
+              padding: "12px",
+              borderRadius: "var(--radius-md)",
+              color: "var(--text-secondary)",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.2s"
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.color = "var(--brand-primary)"; e.currentTarget.style.borderColor = "var(--brand-primary)"; }}
+            onMouseOut={(e) => { e.currentTarget.style.color = "var(--text-secondary)"; e.currentTarget.style.borderColor = "var(--border-light)"; }}
+            onClick={() => document.getElementById("chat-image-upload")?.click()}
+            title="Attach Image"
+          >
+            <ImageIcon size={20} />
+          </button>
+          
+          <input 
+            className="input"
+            style={{ 
+              flex: 1,
+              backgroundColor: "var(--bg-primary)",
+              border: "1px solid var(--border-light)",
+              borderRadius: "var(--radius-md)",
+              padding: "12px 16px",
+              fontSize: "1rem",
+              fontFamily: "var(--font-body)",
+            }}
+            placeholder="Ask about your finances..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSend()}
+          />
+          <button 
+            className="btn btn-primary"
+            onClick={handleSend}
+            disabled={!input.trim() || isLoading}
+            style={{ 
+              borderRadius: "var(--radius-md)",
+              padding: "0 20px",
+              height: "46px",
+              opacity: !input.trim() || isLoading ? 0.3 : 1
+            }}
+          >
+            <MoveRight size={20} />
+          </button>
+        </div>
+        
+        {/* Soft Suggested Actions */}
+        <div style={{ margin: "12px 0 0 60px", display: "flex", gap: "12px", flexWrap: "wrap", opacity: (!input.trim() && !isLoading) ? 1 : 0, transition: "opacity 0.2s" }}>
+          {["Analyze my spending", "How can I improve my savings?", "What are my biggest expenses?"].map(text => (
+            <button 
+              key={text}
+              onClick={() => { setInput(text); }}
+              style={{ 
+                background: "var(--bg-primary)", 
+                border: "1px solid var(--border-light)", 
+                borderRadius: "var(--radius-sm)",
+                cursor: "pointer",
+                padding: "6px 12px",
+                color: "var(--text-tertiary)",
+                fontFamily: "var(--font-body)",
+                fontSize: "0.85rem",
+                transition: "all 0.2s"
+              }}
+              onMouseOver={(e) => { e.currentTarget.style.color = "var(--text-primary)"; e.currentTarget.style.borderColor = "var(--text-secondary)"; }}
+              onMouseOut={(e) => { e.currentTarget.style.color = "var(--text-tertiary)"; e.currentTarget.style.borderColor = "var(--border-light)"; }}
+            >
+              {text}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

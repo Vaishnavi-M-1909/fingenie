@@ -27,35 +27,20 @@ export default function LoginPage() {
         alignItems: "center",
         justifyContent: "center",
         position: "relative",
-        overflow: "hidden",
+        background: "var(--bg-primary)",
         padding: "20px",
       }}
     >
-      {/* Background */}
       <div
-        style={{
-          position: "fixed",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "min(700px, 90vw)",
-          height: "min(700px, 90vw)",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, var(--mint-glow) 0%, transparent 70%)",
-          filter: "blur(100px)",
-          zIndex: 0,
-        }}
-      />
-
-      <div
-        className="glass-card animate-scale-in"
+        className="editorial-card animate-scale-in"
         style={{
           position: "relative",
           zIndex: 10,
-          padding: "clamp(28px, 5vw, 48px)",
-          maxWidth: "420px",
+          padding: "clamp(32px, 5vw, 48px)",
+          maxWidth: "440px",
           width: "100%",
           textAlign: "center",
+          borderTop: "4px solid var(--brand-primary)",
         }}
       >
         {/* Logo */}
@@ -64,7 +49,7 @@ export default function LoginPage() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: "10px",
+            gap: "12px",
             marginBottom: "32px",
           }}
         >
@@ -72,8 +57,8 @@ export default function LoginPage() {
           <span
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "28px",
-              fontWeight: 700,
+              fontSize: "1.75rem",
+              fontWeight: 800,
               letterSpacing: "-0.5px",
             }}
           >
@@ -81,41 +66,31 @@ export default function LoginPage() {
           </span>
         </div>
 
-        <h1
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "24px",
-            fontWeight: 700,
-            marginBottom: "12px",
-            letterSpacing: "-0.5px",
-          }}
-        >
+        <h1 className="display-large" style={{ fontSize: "2rem", marginBottom: "12px", lineHeight: 1.1 }}>
           Welcome back
         </h1>
 
         <p
           style={{
+            fontFamily: "var(--font-body)",
             color: "var(--text-secondary)",
-            fontSize: "14px",
-            marginBottom: "36px",
-            lineHeight: 1.6,
+            fontSize: "1rem",
+            fontWeight: 500,
+            marginBottom: "40px",
+            lineHeight: 1.5,
           }}
         >
-          Sign in to analyze your spending and get personalized financial insights.
+          Sign in to access your financial telemetry and personalized insights.
         </p>
 
         <button
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="btn"
+          className="btn btn-primary"
           style={{
             width: "100%",
             padding: "14px 24px",
-            fontSize: "15px",
-            background: "var(--text-primary)",
-            color: "var(--bg-primary)",
-            fontWeight: 600,
-            borderRadius: "var(--radius-sm)",
+            fontSize: "1.05rem",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -124,7 +99,7 @@ export default function LoginPage() {
             cursor: loading ? "not-allowed" : "pointer",
           }}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24">
+          <svg width="24" height="24" viewBox="0 0 24 24">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
               fill="#4285F4"
@@ -142,19 +117,21 @@ export default function LoginPage() {
               fill="#EA4335"
             />
           </svg>
-          {loading ? "Redirecting..." : "Continue with Google"}
-          {!loading && <ArrowRight size={16} />}
+          {loading ? "Signing in..." : "Continue with Google"}
+          {!loading && <ArrowRight size={20} />}
         </button>
 
         <p
           style={{
-            marginTop: "24px",
-            fontSize: "12px",
-            color: "var(--text-dim)",
+            marginTop: "32px",
+            fontFamily: "var(--font-body)",
+            fontSize: "0.85rem",
+            fontWeight: 500,
+            color: "var(--text-tertiary)",
             lineHeight: 1.6,
           }}
         >
-          By signing in, you agree to let us process your uploaded bank
+          By proceeding, you agree to let us process your uploaded bank
           statements for analysis. We never store raw credentials.
         </p>
       </div>

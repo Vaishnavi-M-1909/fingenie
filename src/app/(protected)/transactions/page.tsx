@@ -11,22 +11,22 @@ const CATEGORIES = [
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
-  "Food & Dining": "var(--coral)",
-  Shopping: "var(--blue)",
-  Transport: "var(--amber)",
-  Subscriptions: "var(--purple)",
-  Utilities: "var(--emerald)",
+  "Food & Dining": "var(--accent-coral)",
+  Shopping: "var(--brand-primary)",
+  Transport: "#FFC700",
+  Subscriptions: "#00E57A",
+  Utilities: "#00F0FF",
   Healthcare: "#F472B6",
   Education: "#38BDF8",
   Entertainment: "#FB923C",
-  Transfer: "var(--text-dim)",
-  "Cash Withdrawal": "var(--text-secondary)",
-  Uncategorized: "var(--text-dim)",
+  Transfer: "var(--text-tertiary)",
+  "Cash Withdrawal": "var(--bg-secondary)",
+  Uncategorized: "var(--text-tertiary)",
 };
 
 function formatCurrency(amount: number) {
   const sign = amount < 0 ? "-" : "+";
-  const color = amount < 0 ? "var(--coral)" : "var(--mint-primary)";
+  const color = amount < 0 ? "var(--accent-coral)" : "var(--brand-primary)";
   return { text: `${sign}₹${Math.abs(amount).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`, color };
 }
 
@@ -93,57 +93,50 @@ export default function TransactionsPage() {
   });
 
   return (
-    <div>
-      <h1
-        style={{
-          fontFamily: "var(--font-display)",
-          fontSize: "clamp(22px, 3vw, 28px)",
-          fontWeight: 700,
-          letterSpacing: "-1px",
-          marginBottom: "8px",
-        }}
-      >
-        Transactions
-      </h1>
-      <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
-        Browse and manage your parsed transactions.
-      </p>
+    <div className="container-editorial animate-reveal" style={{ maxWidth: "1200px" }}>
+      <header style={{ marginBottom: "40px" }}>
+        <h1 className="display-large" style={{ color: "var(--text-primary)", marginBottom: "8px" }}>
+          Transactions
+        </h1>
+        <p className="eyebrow" style={{ color: "var(--text-tertiary)", textTransform: "none", fontSize: "1.05rem", fontFamily: "var(--font-body)" }}>
+          Your chronological transaction history
+        </p>
+      </header>
+      
+      <div className="rule-horizontal" style={{ marginBottom: "32px" }} />
 
-      {/* Filters */}
+      {/* Sharp Brutalist Filters */}
       <div
         className="animate-fade-in-up"
         style={{
           display: "flex",
-          gap: "10px",
-          marginBottom: "20px",
+          gap: "8px",
+          marginBottom: "32px",
           flexWrap: "wrap",
         }}
       >
-        <div style={{ position: "relative", flex: "1 1 180px", minWidth: "0" }}>
-          <Search
-            size={16}
-            style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--text-dim)" }}
-          />
+        <div style={{ position: "relative", flex: "1 1 240px", minWidth: "0" }}>
+          <Search size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "var(--text-secondary)" }} />
           <input
             className="input"
-            placeholder="Search merchants..."
+            placeholder="Search merchants or descriptions..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            style={{ paddingLeft: "36px" }}
+            style={{ paddingLeft: "42px", height: "100%" }}
           />
         </div>
         <select
           className="input"
           value={month}
           onChange={(e) => { setMonth(e.target.value); setPage(1); }}
-          style={{ flex: isMobile ? "1 1 100%" : "0 0 auto", width: isMobile ? "100%" : "160px" }}
+          style={{ flex: isMobile ? "1 1 calc(50% - 4px)" : "0 0 auto", width: isMobile ? "auto" : "200px" }}
         >
           <option value="">All Months</option>
           {Array.from({ length: 12 }, (_, i) => {
             const d = new Date();
             d.setMonth(d.getMonth() - i);
             const val = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-            const label = d.toLocaleDateString("en-IN", { month: "short", year: "numeric" });
+            const label = d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
             return <option key={val} value={val}>{label}</option>;
           })}
         </select>
@@ -151,7 +144,7 @@ export default function TransactionsPage() {
           className="input"
           value={category}
           onChange={(e) => { setCategory(e.target.value); setPage(1); }}
-          style={{ flex: isMobile ? "1 1 100%" : "0 0 auto", width: isMobile ? "100%" : "160px" }}
+          style={{ flex: isMobile ? "1 1 calc(50% - 4px)" : "0 0 auto", width: isMobile ? "auto" : "200px" }}
         >
           <option value="">All Categories</option>
           {CATEGORIES.map((c) => (
@@ -161,100 +154,70 @@ export default function TransactionsPage() {
       </div>
 
       {/* Content */}
-      <div className="glass-card animate-fade-in-up delay-100" style={{ overflow: "hidden" }}>
+      <div className="editorial-card animate-fade-in-up delay-100" style={{ overflow: "hidden", padding: 0 }}>
         {isLoading ? (
-          <div style={{ padding: "20px" }}>
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="skeleton" style={{ height: "48px", marginBottom: "8px" }} />
+          <div style={{ padding: "0" }}>
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} style={{ height: "64px", borderBottom: "1px solid var(--border-light)", background: i % 2 === 0 ? "var(--bg-secondary)" : "var(--bg-primary)" }} className="animate-reveal" />
             ))}
           </div>
         ) : !data?.transactions?.length ? (
-          <div style={{ padding: "60px 20px", textAlign: "center" }}>
-            <Filter size={40} color="var(--text-dim)" style={{ marginBottom: "12px" }} />
-            <p style={{ color: "var(--text-secondary)", fontSize: "14px" }}>No transactions found</p>
+          <div style={{ padding: "80px 20px", textAlign: "center" }}>
+            <Filter size={64} style={{ color: "var(--text-tertiary)", marginBottom: "24px", margin: "0 auto" }} />
+            <div className="display-large" style={{ fontSize: "2rem", color: "var(--text-tertiary)", marginBottom: "1rem" }}>No Transactions Found</div>
+            <p style={{ color: "var(--text-secondary)", fontFamily: "var(--font-body)", fontWeight: 500 }}>Try adjusting your search or filters</p>
           </div>
         ) : isMobile ? (
-          /* ─── MOBILE: Card Layout ─── */
-          <div style={{ display: "grid", gap: "1px", background: "var(--border)" }}>
+          /* ─── MOBILE: Brutalist Card Layout ─── */
+          <div style={{ display: "flex", flexDirection: "column", background: "var(--border-heavy)", gap: "2px" }}>
             {data.transactions.map((tx: Transaction) => {
               const { text, color } = formatCurrency(tx.amount);
-              const catColor = CATEGORY_COLORS[tx.category] || "var(--text-dim)";
+              const catColor = CATEGORY_COLORS[tx.category] || "var(--text-tertiary)";
               const isEditing = editingId === tx.id;
 
               return (
-                <div
-                  key={tx.id}
-                  style={{
-                    padding: "14px 16px",
-                    background: "var(--bg-card)",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                  }}
-                >
+                <div key={tx.id} style={{ padding: "20px 16px", background: "var(--bg-primary)", display: "flex", flexDirection: "column", gap: "12px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                     <div style={{ minWidth: 0, flex: 1 }}>
-                      <div style={{ fontWeight: 500, fontSize: "14px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{tx.merchant}</div>
-                      <div style={{ fontSize: "12px", color: "var(--text-dim)", marginTop: "2px" }}>
-                        {new Date(tx.date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                      <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "1.1rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", textTransform: "uppercase", color: "var(--text-primary)" }}>{tx.merchant}</div>
+                      <div className="eyebrow" style={{ color: "var(--text-tertiary)", marginTop: "4px" }}>
+                        {new Date(tx.date).toLocaleDateString("en-US", { day: "2-digit", month: "short", year: "numeric" }).toUpperCase()}
                       </div>
                     </div>
-                    <span style={{ fontWeight: 600, fontFamily: "var(--font-display)", color, fontSize: "15px", whiteSpace: "nowrap", marginLeft: "12px" }}>
+                    <span style={{ fontWeight: 800, fontFamily: "var(--font-display)", color, fontSize: "1.25rem", whiteSpace: "nowrap", marginLeft: "12px" }}>
                       {text}
                     </span>
                   </div>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     {isEditing ? (
-                      <div style={{ display: "flex", gap: "6px", alignItems: "center", flex: 1 }}>
+                      <div style={{ display: "flex", gap: "8px", alignItems: "center", flex: 1 }}>
                         <select
                           className="input"
                           value={editCategory}
                           onChange={(e) => setEditCategory(e.target.value)}
-                          style={{ padding: "6px 10px", fontSize: "12px", flex: 1 }}
+                          style={{ padding: "8px 12px", fontSize: "0.85rem", flex: 1 }}
                         >
                           {CATEGORIES.map((c) => (
-                            <option key={c} value={c}>{c}</option>
+                            <option key={c} value={c}>{c.toUpperCase()}</option>
                           ))}
                         </select>
-                        <button
-                          style={{ background: "none", border: "none", cursor: "pointer", color: "var(--mint-primary)", padding: "4px" }}
-                          onClick={() => updateCategory.mutate({ id: tx.id, newCategory: editCategory })}
-                        >
-                          <Check size={16} />
+                        <button className="btn btn-primary" style={{ padding: "10px" }} onClick={() => updateCategory.mutate({ id: tx.id, newCategory: editCategory })}>
+                          <Check size={18} />
                         </button>
-                        <button
-                          style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", padding: "4px" }}
-                          onClick={() => setEditingId(null)}
-                        >
-                          <X size={16} />
+                        <button className="btn btn-secondary" style={{ padding: "10px" }} onClick={() => setEditingId(null)}>
+                          <X size={18} />
                         </button>
                       </div>
                     ) : (
                       <>
-                        <span
-                          className="badge"
-                          style={{
-                            background: `${catColor}15`,
-                            color: catColor,
-                            fontSize: "11px",
-                          }}
-                        >
+                        <span style={{ padding: "4px 8px", background: "var(--bg-primary)", border: `1px solid ${catColor}`, fontFamily: "var(--font-display)", fontSize: "0.75rem", fontWeight: 700, color: catColor, textTransform: "uppercase" }}>
                           {tx.category}
                         </span>
                         <button
-                          style={{
-                            background: "none",
-                            border: "none",
-                            cursor: "pointer",
-                            color: "var(--text-dim)",
-                            padding: "4px",
-                          }}
-                          onClick={() => {
-                            setEditingId(tx.id);
-                            setEditCategory(tx.category);
-                          }}
+                          style={{ background: "transparent", border: "1px solid var(--border-heavy)", cursor: "pointer", color: "var(--text-primary)", padding: "6px", display: "flex" }}
+                          onClick={() => { setEditingId(tx.id); setEditCategory(tx.category); }}
                         >
-                          <Edit3 size={14} />
+                          <Edit3 size={16} />
                         </button>
                       </>
                     )}
@@ -264,153 +227,134 @@ export default function TransactionsPage() {
             })}
           </div>
         ) : (
-          /* ─── DESKTOP: Table Layout ─── */
+          /* ─── DESKTOP: Stark Table Layout ─── */
           <>
             {/* Header */}
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "100px 1fr 160px 140px 60px",
-                gap: "16px",
-                padding: "14px 20px",
-                borderBottom: "1px solid var(--border)",
-                fontSize: "11px",
-                fontFamily: "var(--font-display)",
-                fontWeight: 600,
-                color: "var(--text-dim)",
-                textTransform: "uppercase",
-                letterSpacing: "1px",
+                gridTemplateColumns: "100px 1fr 200px 140px 80px",
+                gap: "24px",
+                padding: "20px 32px",
+                borderBottom: "1px solid var(--border-light)",
+                background: "var(--bg-secondary)",
               }}
             >
-              <span>Date</span>
-              <span>Merchant</span>
-              <span>Category</span>
-              <span style={{ textAlign: "right" }}>Amount</span>
+              <span className="eyebrow" style={{ color: "var(--text-secondary)" }}>Date</span>
+              <span className="eyebrow" style={{ color: "var(--text-secondary)" }}>Merchant</span>
+              <span className="eyebrow" style={{ color: "var(--text-secondary)" }}>Category</span>
+              <span className="eyebrow" style={{ textAlign: "right", color: "var(--text-secondary)" }}>Amount</span>
               <span />
             </div>
 
             {/* Rows */}
-            {data.transactions.map((tx: Transaction) => {
-              const { text, color } = formatCurrency(tx.amount);
-              const catColor = CATEGORY_COLORS[tx.category] || "var(--text-dim)";
-              const isEditing = editingId === tx.id;
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {data.transactions.map((tx: Transaction, idx: number) => {
+                const { text, color } = formatCurrency(tx.amount);
+                const catColor = CATEGORY_COLORS[tx.category] || "var(--text-tertiary)";
+                const isEditing = editingId === tx.id;
 
-              return (
-                <div
-                  key={tx.id}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "100px 1fr 160px 140px 60px",
-                    gap: "16px",
-                    padding: "14px 20px",
-                    borderBottom: "1px solid var(--border)",
-                    fontSize: "14px",
-                    alignItems: "center",
-                    transition: "background 0.15s",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "var(--bg-card-hover)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                >
-                  <span style={{ color: "var(--text-secondary)", fontSize: "13px" }}>
-                    {new Date(tx.date).toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}
-                  </span>
-                  <div>
-                    <div style={{ fontWeight: 500 }}>{tx.merchant}</div>
-                    {tx.description && tx.description !== tx.merchant && (
-                      <div style={{ fontSize: "12px", color: "var(--text-dim)", marginTop: "2px" }}>
-                        {tx.description}
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    {isEditing ? (
-                      <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
-                        <select
-                          className="input"
-                          value={editCategory}
-                          onChange={(e) => setEditCategory(e.target.value)}
-                          style={{ padding: "4px 8px", fontSize: "12px" }}
-                        >
-                          {CATEGORIES.map((c) => (
-                            <option key={c} value={c}>{c}</option>
-                          ))}
-                        </select>
-                        <button
-                          style={{ background: "none", border: "none", cursor: "pointer", color: "var(--mint-primary)", padding: "2px" }}
-                          onClick={() => updateCategory.mutate({ id: tx.id, newCategory: editCategory })}
-                        >
-                          <Check size={14} />
-                        </button>
-                        <button
-                          style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-dim)", padding: "2px" }}
-                          onClick={() => setEditingId(null)}
-                        >
-                          <X size={14} />
-                        </button>
-                      </div>
-                    ) : (
-                      <span
-                        className="badge"
-                        style={{
-                          background: `${catColor}15`,
-                          color: catColor,
-                          fontSize: "12px",
-                        }}
-                      >
-                        {tx.category}
-                      </span>
-                    )}
-                  </div>
-                  <span style={{ textAlign: "right", fontWeight: 600, fontFamily: "var(--font-display)", color }}>
-                    {text}
-                  </span>
-                  <button
+                return (
+                  <div
+                    key={tx.id}
                     style={{
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      color: "var(--text-dim)",
-                      padding: "4px",
-                      display: "flex",
-                      justifyContent: "center",
+                      display: "grid",
+                      gridTemplateColumns: "100px 1fr 200px 140px 80px",
+                      gap: "24px",
+                      padding: "20px 32px",
+                      borderBottom: "1px solid var(--border-light)",
+                      alignItems: "center",
+                      transition: "background 0.15s",
+                      background: idx % 2 === 0 ? "transparent" : "var(--bg-secondary)",
+                      cursor: "pointer"
                     }}
-                    onClick={() => {
-                      setEditingId(tx.id);
-                      setEditCategory(tx.category);
-                    }}
-                    title="Edit category"
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-primary)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = idx % 2 === 0 ? "transparent" : "var(--bg-secondary)"; }}
                   >
-                    <Edit3 size={14} />
-                  </button>
-                </div>
-              );
-            })}
+                    <span style={{ fontFamily: "var(--font-body)", fontWeight: 600, color: "var(--text-secondary)", fontSize: "0.95rem" }}>
+                      {new Date(tx.date).toLocaleDateString("en-US", { day: "2-digit", month: "short" })}
+                    </span>
+                    <div style={{ minWidth: 0, paddingRight: "16px" }}>
+                      <div style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "1.05rem", textTransform: "capitalize", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{tx.merchant}</div>
+                      {tx.description && tx.description !== tx.merchant && (
+                        <div style={{ fontSize: "13px", fontFamily: "var(--font-body)", color: "var(--text-tertiary)", marginTop: "4px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {tx.description}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      {isEditing ? (
+                        <div style={{ display: "flex", gap: "8px", alignItems: "center" }} onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+                          <select
+                            className="input"
+                            value={editCategory}
+                            onChange={(e) => setEditCategory(e.target.value)}
+                            style={{ padding: "6px 10px", fontSize: "0.85rem", background: "var(--bg-primary)", color: "var(--text-primary)" }}
+                          >
+                            {CATEGORIES.map((c) => (
+                              <option key={c} value={c}>{c}</option>
+                            ))}
+                          </select>
+                          <button style={{ border: "1px solid var(--border-light)", background: "var(--brand-primary)", borderRadius: "var(--radius-sm)", color: "var(--bg-primary)", padding: "6px", cursor: "pointer" }} onClick={() => updateCategory.mutate({ id: tx.id, newCategory: editCategory })}>
+                            <Check size={16} />
+                          </button>
+                          <button style={{ border: "1px solid var(--border-light)", background: "var(--bg-primary)", borderRadius: "var(--radius-sm)", color: "var(--text-primary)", padding: "6px", cursor: "pointer" }} onClick={() => setEditingId(null)}>
+                            <X size={16} />
+                          </button>
+                        </div>
+                      ) : (
+                        <span style={{ padding: "4px 8px", border: `1px solid ${catColor}`, borderRadius: "var(--radius-sm)", fontFamily: "var(--font-body)", fontSize: "0.75rem", fontWeight: 600, color: catColor }}>
+                          {tx.category}
+                        </span>
+                      )}
+                    </div>
+                    <span style={{ textAlign: "right", fontWeight: 700, fontFamily: "var(--font-display)", color, fontSize: "1.1rem" }}>
+                      {text}
+                    </span>
+                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                      <button
+                        style={{
+                          background: "var(--bg-secondary)",
+                          border: "1px solid var(--border-light)",
+                          borderRadius: "var(--radius-sm)",
+                          cursor: "pointer",
+                          color: "var(--text-secondary)",
+                          padding: "8px",
+                          display: "flex",
+                          justifyContent: "center",
+                          transition: "all 0.2s"
+                        }}
+                        onMouseOver={e => { e.currentTarget.style.color = "var(--text-primary)"; e.currentTarget.style.background = "var(--bg-primary)"; e.currentTarget.style.borderColor = "var(--text-tertiary)"; }}
+                        onMouseOut={e => { e.currentTarget.style.color = "var(--text-secondary)"; e.currentTarget.style.background = "var(--bg-secondary)"; e.currentTarget.style.borderColor = "var(--border-light)"; }}
+                        onClick={(e) => { e.stopPropagation(); setEditingId(tx.id); setEditCategory(tx.category); }}
+                        title="Edit Category"
+                      >
+                        <Edit3 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </>
         )}
       </div>
 
-      {/* Pagination */}
+      {/* Brutalist Pagination */}
       {data?.pagination && data.pagination.totalPages > 1 && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "8px",
-            marginTop: "20px",
-          }}
-        >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "32px", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)", background: "var(--bg-primary)", overflow: "hidden" }}>
           <button
-            className="btn btn-ghost btn-sm"
+            style={{ padding: "12px 24px", background: "transparent", border: "none", borderRight: "1px solid var(--border-light)", fontFamily: "var(--font-body)", fontSize: "0.95rem", fontWeight: 600, cursor: page <= 1 ? "not-allowed" : "pointer", opacity: page <= 1 ? 0.3 : 1, color: "var(--text-primary)" }}
             disabled={page <= 1}
             onClick={() => setPage(page - 1)}
           >
             Previous
           </button>
-          <span style={{ padding: "6px 16px", fontSize: "13px", color: "var(--text-secondary)" }}>
+          <span style={{ padding: "0 24px", fontFamily: "var(--font-body)", fontWeight: 600, color: "var(--text-secondary)", fontSize: "0.95rem" }}>
             Page {page} of {data.pagination.totalPages}
           </span>
           <button
-            className="btn btn-ghost btn-sm"
+            style={{ padding: "12px 24px", background: "transparent", border: "none", borderLeft: "1px solid var(--border-light)", fontFamily: "var(--font-body)", fontSize: "0.95rem", fontWeight: 600, cursor: page >= data.pagination.totalPages ? "not-allowed" : "pointer", opacity: page >= data.pagination.totalPages ? 0.3 : 1, color: "var(--text-primary)" }}
             disabled={page >= data.pagination.totalPages}
             onClick={() => setPage(page + 1)}
           >

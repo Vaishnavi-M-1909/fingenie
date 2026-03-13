@@ -14,75 +14,48 @@ import Logo from "@/components/Logo";
 const features = [
   {
     icon: Upload,
-    title: "Upload Statements",
-    description: "Drag & drop your PDF or CSV bank statements. We support all major Indian banks.",
-    color: "var(--mint-primary)",
-    bg: "var(--mint-dim)",
+    title: "Data Ingestion",
+    description: "Drag & drop PDF bank statements or photo receipts. Immediate parsing and vectorization.",
+    color: "var(--brand-primary)",
+    bg: "var(--bg-secondary)",
   },
   {
     icon: BarChart3,
-    title: "Visual Analytics",
-    description: "Interactive charts showing category breakdowns, spending timelines, and top merchants.",
-    color: "var(--blue)",
-    bg: "var(--blue-dim)",
+    title: "Visual Telemetry",
+    description: "Precise category breakdowns, temporal spending matrices, and top merchant mapping.",
+    color: "var(--text-primary)",
+    bg: "var(--bg-secondary)",
   },
   {
     icon: Brain,
-    title: "AI Insights",
-    description: "Get personalized financial advice and curated learning resources powered by AI.",
-    color: "var(--purple)",
-    bg: "var(--purple-dim)",
+    title: "AI Cognition",
+    description: "Interface directly with FinGenie intelligence. Obtain diagnostic strategies bounded to your data.",
+    color: "var(--accent-coral)",
+    bg: "var(--bg-secondary)",
   },
   {
     icon: Shield,
-    title: "Privacy First",
-    description: "Your data stays yours. We never send raw transactions to AI — only aggregated summaries.",
-    color: "var(--amber)",
-    bg: "var(--amber-dim)",
+    title: "Zero-Trust Privacy",
+    description: "Absolute data sovereignty. Raw telemetry never touches the AI layer—only obfuscated statistical signatures.",
+    color: "var(--text-tertiary)",
+    bg: "var(--bg-secondary)",
   },
 ];
 
 export default function LandingPage() {
   return (
-    <div style={{ minHeight: "100vh", position: "relative", overflow: "hidden" }}>
-      {/* Background grid */}
+    <div style={{ minHeight: "100vh", position: "relative", backgroundColor: "var(--bg-primary)" }}>
+      {/* Editorial Grid overlay */}
       <div
         style={{
           position: "fixed",
           inset: 0,
           backgroundImage:
-            "linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px)",
-          backgroundSize: "64px 64px",
-          opacity: 0.3,
+            "linear-gradient(var(--border-heavy) 1px, transparent 1px), linear-gradient(90deg, var(--border-heavy) 1px, transparent 1px)",
+          backgroundSize: "128px 128px",
+          opacity: 0.05,
           zIndex: 0,
-        }}
-      />
-
-      {/* Gradient orbs */}
-      <div
-        style={{
-          position: "fixed",
-          top: "-20%",
-          right: "-10%",
-          width: "min(600px, 80vw)",
-          height: "min(600px, 80vw)",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, var(--mint-glow) 0%, transparent 70%)",
-          filter: "blur(80px)",
-          zIndex: 0,
-        }}
-      />
-      <div
-        style={{
-          position: "fixed",
-          bottom: "-20%",
-          left: "-10%",
-          width: "min(500px, 70vw)",
-          height: "min(500px, 70vw)",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, var(--purple-dim) 0%, transparent 70%)",
-          filter: "blur(80px)",
-          zIndex: 0,
+          pointerEvents: "none"
         }}
       />
 
@@ -94,10 +67,9 @@ export default function LandingPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "16px clamp(16px, 4vw, 48px)",
-          borderBottom: "1px solid var(--border)",
-          backdropFilter: "blur(12px)",
-          background: "rgba(10, 12, 16, 0.8)",
+          padding: "20px clamp(24px, 5vw, 64px)",
+          borderBottom: "1px solid var(--border-light)",
+          background: "var(--bg-primary)",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -105,205 +77,225 @@ export default function LandingPage() {
           <span
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "22px",
-              fontWeight: 700,
+              fontSize: "1.5rem",
+              fontWeight: 800,
               letterSpacing: "-0.5px",
+              color: "var(--text-primary)",
             }}
           >
             FinGenie
           </span>
         </div>
-        <Link href="/login" className="btn btn-primary">
+        <Link href="/login" className="btn btn-primary" style={{ padding: "10px 20px" }}>
           Get Started <ArrowRight size={16} />
         </Link>
       </nav>
 
-      {/* Hero */}
-      <section
-        style={{
-          position: "relative",
-          zIndex: 10,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          textAlign: "center",
-          padding: "clamp(60px, 10vw, 120px) 20px clamp(40px, 6vw, 80px)",
-          maxWidth: "900px",
-          margin: "0 auto",
-        }}
-      >
-        <div
-          className="animate-fade-in-up"
+      <main className="container-editorial animate-reveal" style={{ padding: 0, maxWidth: "none" }}>
+        {/* Hero */}
+        <section
           style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "8px",
-            padding: "8px 20px",
-            borderRadius: "100px",
-            background: "var(--mint-dim)",
-            border: "1px solid var(--mint-primary)",
-            marginBottom: "clamp(20px, 3vw, 32px)",
-            fontSize: "13px",
-            fontWeight: 500,
-            color: "var(--mint-primary)",
-            fontFamily: "var(--font-display)",
+            position: "relative",
+            zIndex: 10,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            padding: "clamp(60px, 10vw, 120px) clamp(24px, 5vw, 64px)",
+            borderBottom: "1px solid var(--border-light)",
           }}
         >
-          <TrendingUp size={14} />
-          Built for ages 18–24
-        </div>
-
-        <h1
-          className="animate-fade-in-up delay-100"
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "clamp(36px, 6vw, 72px)",
-            fontWeight: 800,
-            lineHeight: 1.05,
-            letterSpacing: "-2px",
-            marginBottom: "clamp(16px, 2vw, 24px)",
-          }}
-        >
-          Your money,{" "}
-          <span
+          <div
+            className="animate-fade-in-up"
             style={{
-              background: "linear-gradient(135deg, var(--mint-primary), var(--emerald))",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "8px 16px",
+              background: "var(--brand-dim)",
+              border: "1px solid var(--brand-primary)",
+              borderRadius: "100px",
+              marginBottom: "32px",
+              fontSize: "0.85rem",
+              fontWeight: 700,
+              color: "var(--brand-primary)",
+              fontFamily: "var(--font-body)",
             }}
           >
-            explained.
-          </span>
-        </h1>
+            <TrendingUp size={16} />
+            FinGenie Intelligence Active
+          </div>
 
-        <p
-          className="animate-fade-in-up delay-200"
+          <h1
+            className="animate-fade-in-up delay-100 display-large"
+            style={{
+              fontSize: "clamp(2.5rem, 6vw, 5rem)",
+              lineHeight: 1.05,
+              maxWidth: "1100px",
+              marginBottom: "32px",
+              color: "var(--text-primary)"
+            }}
+          >
+            Your capital, <span style={{ color: "var(--brand-primary)" }}>decoded.</span>
+          </h1>
+
+          <p
+            className="animate-fade-in-up delay-200"
+            style={{
+              fontSize: "clamp(1.1rem, 2vw, 1.35rem)",
+              color: "var(--text-secondary)",
+              fontFamily: "var(--font-body)",
+              fontWeight: 500,
+              maxWidth: "800px",
+              lineHeight: 1.6,
+              marginBottom: "48px",
+            }}
+          >
+            Upload arbitrary financial payloads. FinGenie executes absolute semantic parsing and injects the telemetry into a rigorous cognitive matrix. No generic dashboards. Pure signal.
+          </p>
+
+          <div
+            className="animate-fade-in-up delay-300"
+            style={{ display: "flex", gap: "16px", flexWrap: "wrap", alignItems: "center" }}
+          >
+            <Link
+              href="/login"
+              className="btn btn-primary"
+              style={{ padding: "14px 28px", fontSize: "1.1rem" }}
+            >
+              Get Started <ArrowRight size={20} />
+            </Link>
+            <a
+              href="#architecture"
+              className="btn btn-secondary"
+              style={{ padding: "14px 28px", fontSize: "1.1rem", border: "1px solid var(--border-light)" }}
+            >
+              Learn More
+            </a>
+          </div>
+        </section>
+
+        {/* Architecture Grid */}
+        <section
+          id="architecture"
           style={{
-            fontSize: "clamp(15px, 2vw, 18px)",
-            color: "var(--text-secondary)",
-            maxWidth: "560px",
-            lineHeight: 1.7,
-            marginBottom: "clamp(28px, 4vw, 48px)",
+            position: "relative",
+            zIndex: 10,
+            padding: "clamp(60px, 8vw, 120px) clamp(24px, 5vw, 64px)",
+            borderBottom: "1px solid var(--border-light)",
           }}
         >
-          Upload your bank statements. Get instant spending breakdowns,
-          AI-powered financial insights, and personalized learning resources —
-          all in one place.
-        </p>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "24px", marginBottom: "48px" }}>
+            <h2 className="display-large" style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)", lineHeight: 1.1 }}>
+              System Capabilities
+            </h2>
+            <p style={{ maxWidth: "500px", color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: 1.6 }}>
+              The FinGenie engine operates on a multi-stage ingestion protocol, providing absolute clarity on your capital velocity.
+            </p>
+          </div>
 
-        <div
-          className="animate-fade-in-up delay-300"
-          style={{ display: "flex", gap: "12px", flexWrap: "wrap", justifyContent: "center" }}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))",
+              gap: "24px",
+            }}
+          >
+            {features.map((feature, i) => (
+              <div
+                key={feature.title}
+                className={`editorial-card animate-fade-in-up delay-${(i + 1) * 100}`}
+                style={{ padding: "32px", background: feature.bg, display: "flex", flexDirection: "column" }}
+              >
+                <div
+                  style={{
+                    width: "56px",
+                    height: "56px",
+                    borderRadius: "16px",
+                    background: feature.color,
+                    color: "var(--bg-primary)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: "24px",
+                    boxShadow: "var(--shadow-hover)"
+                  }}
+                >
+                  <feature.icon size={28} />
+                </div>
+                <h3
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: "1.35rem",
+                    fontWeight: 800,
+                    marginBottom: "12px",
+                  }}
+                >
+                  {feature.title}
+                </h3>
+                <p
+                  style={{
+                    fontSize: "1rem",
+                    color: "var(--text-secondary)",
+                    fontFamily: "var(--font-body)",
+                    fontWeight: 500,
+                    lineHeight: 1.6,
+                    flex: 1
+                  }}
+                >
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section
+          style={{
+            position: "relative",
+            zIndex: 10,
+            padding: "clamp(60px, 10vw, 120px) clamp(24px, 5vw, 64px)",
+            textAlign: "center",
+            background: "var(--text-primary)",
+            color: "var(--bg-primary)"
+          }}
         >
+          <h2 className="display-large" style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", color: "var(--bg-primary)", marginBottom: "32px" }}>
+            Ready to take control?
+          </h2>
           <Link
             href="/login"
             className="btn btn-primary"
-            style={{ padding: "clamp(12px, 2vw, 16px) clamp(24px, 3vw, 32px)", fontSize: "clamp(14px, 1.5vw, 16px)" }}
+            style={{ background: "var(--brand-primary)", borderColor: "var(--brand-primary)", color: "var(--bg-primary)", padding: "16px 36px", fontSize: "1.25rem", boxShadow: "0 8px 30px rgba(23, 0, 255, 0.4)" }}
           >
-            Start for Free <ArrowRight size={18} />
+            Start for free <ArrowRight size={20} />
           </Link>
-          <a
-            href="#features"
-            className="btn btn-secondary"
-            style={{ padding: "clamp(12px, 2vw, 16px) clamp(24px, 3vw, 32px)", fontSize: "clamp(14px, 1.5vw, 16px)" }}
-          >
-            See How It Works
-          </a>
-        </div>
-      </section>
+        </section>
 
-      {/* Features */}
-      <section
-        id="features"
-        style={{
-          position: "relative",
-          zIndex: 10,
-          padding: "clamp(40px, 6vw, 80px) 20px clamp(60px, 8vw, 120px)",
-          maxWidth: "1100px",
-          margin: "0 auto",
-        }}
-      >
-        <h2
-          className="animate-fade-in-up"
+        {/* Footer */}
+        <footer
           style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "clamp(24px, 3vw, 32px)",
-            fontWeight: 700,
-            textAlign: "center",
-            marginBottom: "clamp(36px, 5vw, 64px)",
-            letterSpacing: "-1px",
+            position: "relative",
+            zIndex: 10,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "24px",
+            padding: "32px clamp(24px, 5vw, 64px)",
+            color: "var(--text-primary)",
+            fontFamily: "var(--font-body)",
           }}
         >
-          Everything you need to{" "}
-          <span style={{ color: "var(--mint-primary)" }}>master your finances</span>
-        </h2>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))",
-            gap: "20px",
-          }}
-        >
-          {features.map((feature, i) => (
-            <div
-              key={feature.title}
-              className={`glass-card animate-fade-in-up delay-${(i + 1) * 100}`}
-              style={{ padding: "clamp(24px, 3vw, 32px) clamp(20px, 2.5vw, 28px)" }}
-            >
-              <div
-                style={{
-                  width: "48px",
-                  height: "48px",
-                  borderRadius: "12px",
-                  background: feature.bg,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: "20px",
-                }}
-              >
-                <feature.icon size={24} color={feature.color} />
-              </div>
-              <h3
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "18px",
-                  fontWeight: 600,
-                  marginBottom: "12px",
-                }}
-              >
-                {feature.title}
-              </h3>
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "var(--text-secondary)",
-                  lineHeight: 1.7,
-                }}
-              >
-                {feature.description}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer
-        style={{
-          position: "relative",
-          zIndex: 10,
-          textAlign: "center",
-          padding: "24px 20px",
-          borderTop: "1px solid var(--border)",
-          color: "var(--text-dim)",
-          fontSize: "13px",
-          fontFamily: "var(--font-display)",
-        }}
-      >
-        FinGenie · Built with care for young adults managing their money
-      </footer>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <Logo size="sm" />
+            <span style={{ fontWeight: 700, fontSize: "1.1rem" }}>FinGenie</span>
+          </div>
+          <div style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>
+            © {new Date().getFullYear()} / All rights reserved.
+          </div>
+        </footer>
+      </main>
     </div>
   );
 }

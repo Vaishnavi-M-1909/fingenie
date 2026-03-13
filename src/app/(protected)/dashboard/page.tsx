@@ -12,8 +12,8 @@ import {
 import { useState } from "react";
 
 const COLORS = [
-  "#00E5A0", "#60A5FA", "#F59E0B", "#A78BFA", "#F87171",
-  "#34D399", "#FBBF24", "#818CF8", "#FB923C", "#E879F9",
+  "var(--brand-primary)", "#FF3B00", "#00E57A", "#FFC700", "#00F0FF",
+  "#0A0A0A", "#4A4A48", "#1700FF"
 ];
 
 function formatCurrency(amount: number) {
@@ -26,58 +26,25 @@ function getMonthStr(date: Date) {
 
 function getMonthLabel(monthStr: string) {
   const [y, m] = monthStr.split("-").map(Number);
-  return new Date(y, m - 1).toLocaleDateString("en-IN", { month: "long", year: "numeric" });
+  return new Date(y, m - 1).toLocaleDateString("en-IN", { month: "short", year: "numeric" }).toUpperCase();
 }
 
-// Health Ring SVG component
-function HealthRing({ score }: { score: number | null }) {
+// Brutalist Status Bar component instead of Health Ring
+function BrutalistStatusBar({ score }: { score: number | null }) {
   const safeScore = score ?? 0;
-  const circumference = 2 * Math.PI * 60;
-  const offset = circumference - (safeScore / 100) * circumference;
-  const color = safeScore >= 70 ? "var(--mint-primary)" : safeScore >= 40 ? "var(--amber)" : "var(--coral)";
+  const color = safeScore >= 70 ? "var(--brand-primary)" : safeScore >= 40 ? "#FFC700" : "var(--accent-coral)";
 
   return (
-    <div style={{ position: "relative", width: "140px", height: "140px" }}>
-      <svg width="140" height="140" viewBox="0 0 160 160">
-        <circle cx="80" cy="80" r="60" fill="none" stroke="var(--border)" strokeWidth="10" />
-        <circle
-          cx="80"
-          cy="80"
-          r="60"
-          fill="none"
-          stroke={color}
-          strokeWidth="10"
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          transform="rotate(-90 80 80)"
-          style={{ transition: "stroke-dashoffset 1s ease, stroke 0.3s", filter: `drop-shadow(0 0 8px ${color})` }}
-        />
-      </svg>
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "32px",
-            fontWeight: 800,
-            color,
-            lineHeight: 1,
-          }}
-        >
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", justifyContent: "center" }}>
+      <div className="eyebrow" style={{ marginBottom: "1rem" }}>System Health</div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: "8px", marginBottom: "1rem" }}>
+        <span style={{ fontFamily: "var(--font-display)", fontSize: "4rem", fontWeight: 800, color, lineHeight: 0.8 }}>
           {safeScore}
         </span>
-        <span style={{ fontSize: "10px", color: "var(--text-dim)", marginTop: "4px" }}>
-          Health Score
-        </span>
+        <span style={{ fontSize: "1rem", color: "var(--text-tertiary)", fontWeight: 700 }}>/ 100</span>
+      </div>
+      <div style={{ height: "12px", width: "100%", background: "var(--border-light)", border: "2px solid var(--border-heavy)" }}>
+        <div style={{ height: "100%", width: `${safeScore}%`, background: color, borderRight: "2px solid var(--border-heavy)" }} />
       </div>
     </div>
   );
@@ -107,302 +74,246 @@ export default function DashboardPage() {
 
   if (error) {
     return (
-      <div style={{ padding: "40px", textAlign: "center", color: "var(--text-secondary)" }}>
-        <p>Failed to load dashboard. Please try again later.</p>
+      <div style={{ padding: "40px", textAlign: "center", border: "2px solid var(--border-heavy)", background: "var(--accent-coral)", color: "#fff" }}>
+        <p style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", fontWeight: 800, textTransform: "uppercase" }}>System Failure</p>
+        <p>Failed to load diagnostic telemetry.</p>
       </div>
     );
   }
 
   return (
-    <div>
-      {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: "28px",
-          flexWrap: "wrap",
-          gap: "12px",
-        }}
-      >
+    <div className="container-editorial animate-reveal" style={{ maxWidth: "1200px" }}>
+      {/* Editorial Header */}
+      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "40px", flexWrap: "wrap", gap: "20px" }}>
         <div>
-          <h1
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "clamp(22px, 3vw, 28px)",
-              fontWeight: 700,
-              letterSpacing: "-1px",
-            }}
-          >
-            Dashboard
+          <h1 className="display-large" style={{ color: "var(--text-primary)", marginBottom: "8px" }}>
+            Telemetry.
           </h1>
-          <p style={{ color: "var(--text-secondary)", fontSize: "13px", marginTop: "4px" }}>
-            Your spending overview for {getMonthLabel(currentMonth)}
-          </p>
+          <div className="eyebrow" style={{ color: "var(--brand-primary)" }}>Data aggregation operative</div>
         </div>
 
-        {/* Month selector */}
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <button className="btn btn-ghost" onClick={() => navigateMonth(-1)} style={{ padding: "8px" }}>
-            <ChevronLeft size={18} />
+        {/* Sharp Navigation */}
+        <div style={{ display: "flex", border: "1px solid var(--border-heavy)", borderRadius: "var(--radius-sm)", background: "var(--bg-secondary)", overflow: "hidden" }}>
+          <button onClick={() => navigateMonth(-1)} style={{ padding: "12px 16px", borderRight: "1px solid var(--border-heavy)", background: "transparent", cursor: "pointer", border: "none" }}>
+            <ChevronLeft size={20} color="var(--text-primary)" />
           </button>
-          <span
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "13px",
-              fontWeight: 500,
-              minWidth: "140px",
-              textAlign: "center",
-            }}
-          >
+          <div style={{ padding: "12px 24px", fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "1rem", color: "var(--text-primary)", display: "flex", alignItems: "center", borderLeft: "1px solid var(--border-heavy)", borderRight: "1px solid var(--border-heavy)" }}>
             {getMonthLabel(currentMonth)}
-          </span>
-          <button className="btn btn-ghost" onClick={() => navigateMonth(1)} style={{ padding: "8px" }}>
-            <ChevronRight size={18} />
+          </div>
+          <button onClick={() => navigateMonth(1)} style={{ padding: "12px 16px", background: "transparent", cursor: "pointer", border: "none" }}>
+            <ChevronRight size={20} color="var(--text-primary)" />
           </button>
         </div>
-      </div>
+      </header>
+      
+      <div className="rule-horizontal" style={{ marginBottom: "40px" }} />
 
       {isLoading ? (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(200px, 100%), 1fr))", gap: "16px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "24px" }}>
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="skeleton" style={{ height: "120px" }} />
+            <div key={i} className="editorial-card animate-reveal delay-100" style={{ height: "200px" }} />
           ))}
         </div>
       ) : data?.transactionCount === 0 ? (
-        <div
-          className="glass-card"
-          style={{
-            padding: "clamp(40px, 6vw, 80px) clamp(20px, 4vw, 40px)",
-            textAlign: "center",
-          }}
-        >
-          <CreditCard size={48} style={{ color: "var(--text-dim)", marginBottom: "16px" }} />
-          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "20px", marginBottom: "8px" }}>
-            No transactions yet
-          </h2>
-          <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
-            Upload a bank statement to see your spending analytics here.
-          </p>
+        <div className="editorial-card" style={{ textAlign: "center", padding: "120px 20px" }}>
+          <div className="display-large" style={{ color: "var(--text-tertiary)", marginBottom: "1rem" }}>NULL</div>
+          <div className="eyebrow" style={{ marginBottom: "2rem" }}>No telemetry data found for period</div>
           <a href="/upload" className="btn btn-primary">
-            Upload Statement <ArrowUpRight size={16} />
+            INITIALIZE REGISTRY <ArrowUpRight size={18} />
           </a>
         </div>
       ) : (
         <>
-          {/* Stats row */}
-          <div
-            className="animate-fade-in-up"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))",
-              gap: "16px",
-              marginBottom: "24px",
-            }}
-          >
-            <div className="glass-card" style={{ padding: "20px" }}>
-              <div style={{ fontSize: "11px", color: "var(--text-dim)", marginBottom: "8px", fontFamily: "var(--font-display)", textTransform: "uppercase", letterSpacing: "1px" }}>
-                Total Spent
-              </div>
-              <div style={{ fontSize: "clamp(22px, 3vw, 28px)", fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--coral)" }}>
+          {/* Brutalist Data Grid */}
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+            gap: "24px",
+            marginBottom: "40px"
+          }}>
+            {/* Total Spent */}
+            <div className="editorial-card editorial-card-hover" style={{ display: "flex", flexDirection: "column" }}>
+              <div className="eyebrow" style={{ marginBottom: "1rem" }}>Total Outflow</div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 4vw, 3.5rem)", fontWeight: 800, color: "var(--text-primary)", lineHeight: 1, letterSpacing: "-0.03em" }}>
                 {formatCurrency(data?.totalSpent || 0)}
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "8px", fontSize: "12px", color: "var(--text-dim)" }}>
-                <TrendingDown size={14} color="var(--coral)" />
-                {data?.transactionCount || 0} transactions
+              <div style={{ marginTop: "auto", paddingTop: "24px", display: "flex", alignItems: "center", gap: "8px", fontFamily: "var(--font-display)", fontSize: "14px", fontWeight: 700, color: "var(--accent-coral)", textTransform: "uppercase" }}>
+                <TrendingDown size={18} /> {data?.transactionCount || 0} Event Vectors
               </div>
             </div>
 
-            <div className="glass-card" style={{ padding: "20px" }}>
-              <div style={{ fontSize: "11px", color: "var(--text-dim)", marginBottom: "8px", fontFamily: "var(--font-display)", textTransform: "uppercase", letterSpacing: "1px" }}>
-                Top Category
+            {/* Top Category */}
+            <div className="editorial-card editorial-card-hover" style={{ display: "flex", flexDirection: "column" }}>
+              <div className="eyebrow" style={{ marginBottom: "1rem" }}>Primary Node</div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 3vw, 2.5rem)", fontWeight: 800, color: "var(--text-primary)", lineHeight: 1.1, wordBreak: "break-word" }}>
+                {pieData[0]?.name || "UNKNOWN"}
               </div>
-              <div style={{ fontSize: "clamp(16px, 2vw, 20px)", fontWeight: 600, fontFamily: "var(--font-display)" }}>
-                {pieData[0]?.name || "—"}
-              </div>
-              <div style={{ fontSize: "14px", color: "var(--mint-primary)", marginTop: "4px" }}>
+              <div style={{ marginTop: "auto", paddingTop: "24px", fontFamily: "var(--font-body)", fontSize: "1.25rem", fontWeight: 700, color: "var(--brand-primary)" }}>
                 {pieData[0] ? formatCurrency(pieData[0].value as number) : "—"}
               </div>
             </div>
 
-            <div className="glass-card" style={{ padding: "20px" }}>
-              <div style={{ fontSize: "11px", color: "var(--text-dim)", marginBottom: "8px", fontFamily: "var(--font-display)", textTransform: "uppercase", letterSpacing: "1px" }}>
-                Recurring
+            {/* Recurring */}
+            <div className="editorial-card editorial-card-hover" style={{ display: "flex", flexDirection: "column" }}>
+              <div className="eyebrow" style={{ marginBottom: "1rem" }}>Cyclical Signatures</div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 4vw, 3.5rem)", fontWeight: 800, color: "var(--text-primary)", lineHeight: 1 }}>
+                {data?.recurring?.length || 0}
               </div>
-              <div style={{ fontSize: "clamp(16px, 2vw, 20px)", fontWeight: 600, fontFamily: "var(--font-display)" }}>
-                {data?.recurring?.length || 0} subscriptions
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "4px", fontSize: "13px", color: "var(--amber)" }}>
-                <RefreshCw size={13} />
-                {formatCurrency(data?.recurring?.reduce((s: number, r: { amount: number }) => s + r.amount, 0) || 0)}/mo
+              <div style={{ marginTop: "auto", paddingTop: "24px", display: "flex", alignItems: "center", gap: "8px", fontFamily: "var(--font-display)", fontSize: "14px", fontWeight: 700, color: "var(--accent-coral)", textTransform: "uppercase" }}>
+                <RefreshCw size={16} /> {formatCurrency(data?.recurring?.reduce((s: number, r: { amount: number }) => s + r.amount, 0) || 0)} / CYC
               </div>
             </div>
 
-            {/* Health ring card */}
-            <div
-              className="glass-card"
-              style={{
-                padding: "20px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <HealthRing score={data?.healthScore} />
+            {/* Health Status */}
+            <div className="editorial-card editorial-card-hover">
+              <BrutalistStatusBar score={data?.healthScore} />
             </div>
           </div>
 
-          {/* Charts row — stacks on mobile */}
-          <div
-            className="animate-fade-in-up delay-200"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(min(400px, 100%), 1fr))",
-              gap: "16px",
-              marginBottom: "24px",
-            }}
-          >
-            {/* Spending Timeline */}
-            <div className="glass-card" style={{ padding: "20px" }}>
-              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "15px", marginBottom: "16px", fontWeight: 600 }}>
-                Spending Timeline
-              </h3>
-              <div style={{ height: "220px" }}>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "1fr",
+            gap: "40px",
+            marginBottom: "80px"
+          }}>
+            {/* Brutalist Timeline Chart */}
+            <div className="editorial-card">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "24px", borderBottom: "1px solid var(--border-light)", paddingBottom: "16px" }}>
+                <h3 className="eyebrow">Temporal Outflow</h3>
+              </div>
+              <div style={{ height: "300px" }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={data?.dailyTotals || []}>
-                    <defs>
-                      <linearGradient id="mintGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#00E5A0" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#00E5A0" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border-light)" vertical={false} />
                     <XAxis
                       dataKey="date"
-                      tickFormatter={(v) => new Date(v).getDate().toString()}
-                      stroke="var(--text-dim)"
-                      tick={{ fontSize: 11 }}
+                      tickFormatter={(v) => String(new Date(v).getDate()).padStart(2, "0")}
+                      stroke="var(--text-tertiary)"
+                      tick={{ fill: "var(--text-secondary)", fontSize: 12, fontWeight: 600, fontFamily: "var(--font-body)" }}
+                      axisLine={{ stroke: "var(--border-light)", strokeWidth: 1 }}
+                      tickLine={{ stroke: "var(--border-light)", strokeWidth: 1 }}
                     />
                     <YAxis
-                      tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`}
-                      stroke="var(--text-dim)"
-                      tick={{ fontSize: 11 }}
-                      width={48}
+                      tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`}
+                      stroke="var(--text-tertiary)"
+                      tick={{ fill: "var(--text-secondary)", fontSize: 12, fontWeight: 600, fontFamily: "var(--font-body)" }}
+                      axisLine={{ stroke: "var(--border-light)", strokeWidth: 1 }}
+                      tickLine={{ stroke: "var(--border-light)", strokeWidth: 1 }}
+                      width={50}
                     />
                     <Tooltip
+                      cursor={{ stroke: "var(--border-heavy)", strokeWidth: 1, strokeDasharray: "none" }}
                       contentStyle={{
-                        background: "var(--bg-card)",
-                        border: "1px solid var(--border)",
-                        borderRadius: "8px",
-                        fontSize: "13px",
+                        background: "var(--bg-secondary)",
+                        border: "1px solid var(--border-heavy)",
+                        borderRadius: "var(--radius-sm)",
+                        fontFamily: "var(--font-body)",
+                        fontWeight: 600,
+                        boxShadow: "var(--shadow-hover)",
+                        color: "var(--text-primary)"
                       }}
-                      formatter={(value: unknown) => [formatCurrency(value as number), "Spent"]}
-                      labelFormatter={(l) => new Date(l).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                      formatter={(value: unknown) => [formatCurrency(value as number), "OUT"]}
+                      labelFormatter={(l) => new Date(l).toLocaleDateString("en-US", { day: "2-digit", month: "short" }).toUpperCase()}
                     />
-                    <Area type="monotone" dataKey="amount" stroke="#00E5A0" fill="url(#mintGradient)" strokeWidth={2} />
+                    <Area 
+                      type="monotone" 
+                      dataKey="amount" 
+                      stroke="var(--brand-primary)" 
+                      fill="var(--brand-dim)" 
+                      strokeWidth={3} 
+                      activeDot={{ r: 6, fill: "var(--brand-primary)", stroke: "var(--bg-secondary)", strokeWidth: 2 }}
+                    />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
-            {/* Category Pie */}
-            <div className="glass-card" style={{ padding: "20px" }}>
-              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "15px", marginBottom: "16px", fontWeight: 600 }}>
-                By Category
-              </h3>
-              <div style={{ display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap", justifyContent: "center" }}>
-                <div style={{ width: "160px", height: "160px", flexShrink: 0 }}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={pieData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={45}
-                        outerRadius={72}
-                        paddingAngle={3}
-                        dataKey="value"
-                        strokeWidth={0}
-                      >
-                        {pieData.map((_, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        contentStyle={{
-                          background: "var(--bg-card)",
-                          border: "1px solid var(--border)",
-                          borderRadius: "8px",
-                          fontSize: "13px",
-                        }}
-                        formatter={(value: unknown) => formatCurrency(value as number)}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "40px" }}>
+              {/* Top Merchants - Brutalist List */}
+              <div className="editorial-card" style={{ padding: "0", overflow: "hidden" }}>
+                <div style={{ padding: "24px 32px", borderBottom: "1px solid var(--border-light)", background: "var(--bg-primary)" }}>
+                  <h3 className="eyebrow" style={{ color: "var(--brand-primary)" }}>Entity Breakdown</h3>
                 </div>
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "6px", minWidth: "140px" }}>
-                  {pieData.slice(0, 6).map((item, i) => (
-                    <div key={item.name} style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px" }}>
-                      <div style={{ width: "8px", height: "8px", borderRadius: "2px", background: COLORS[i % COLORS.length], flexShrink: 0 }} />
-                      <span style={{ flex: 1, color: "var(--text-secondary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.name}</span>
-                      <span style={{ fontWeight: 500, fontFamily: "var(--font-display)", whiteSpace: "nowrap" }}>{formatCurrency(item.value as number)}</span>
+                <div>
+                  {(data?.topMerchants || []).slice(0, 6).map((m: { merchant: string; total: number }, i: number) => (
+                    <div
+                      key={m.merchant}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        padding: "20px 32px",
+                        borderBottom: "1px solid var(--border-light)",
+                        transition: "background 0.2s",
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.background = "var(--bg-primary)"}
+                      onMouseOut={(e) => e.currentTarget.style.background = "transparent"}
+                    >
+                      <span style={{ fontFamily: "var(--font-body)", fontSize: "0.9rem", fontWeight: 700, color: "var(--text-tertiary)", width: "32px" }}>
+                        {(i + 1).toString().padStart(2, '0')}
+                      </span>
+                      <span style={{ flex: 1, fontFamily: "var(--font-body)", fontSize: "1.05rem", fontWeight: 600, color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", textTransform: "capitalize" }}>
+                        {m.merchant}
+                      </span>
+                      <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, color: "var(--text-primary)", fontSize: "1.1rem" }}>
+                        {formatCurrency(m.total)}
+                      </span>
                     </div>
                   ))}
+                  {(!data?.topMerchants || data.topMerchants.length === 0) && (
+                    <div style={{ padding: "32px", color: "var(--text-tertiary)", fontFamily: "var(--font-body)", fontWeight: 600 }}>NO ENTITIES LOCATED</div>
+                  )}
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* Top Merchants */}
-          <div className="glass-card animate-fade-in-up delay-300" style={{ padding: "20px" }}>
-            <h3 style={{ fontFamily: "var(--font-display)", fontSize: "15px", marginBottom: "16px", fontWeight: 600 }}>
-              <TrendingUp size={16} style={{ display: "inline", marginRight: "8px", color: "var(--mint-primary)" }} />
-              Top Merchants
-            </h3>
-            <div style={{ display: "grid", gap: "8px" }}>
-              {(data?.topMerchants || []).slice(0, 8).map((m: { merchant: string; total: number }, i: number) => (
-                <div
-                  key={m.merchant}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    padding: "10px 14px",
-                    background: "var(--bg-secondary)",
-                    borderRadius: "var(--radius-sm)",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: "11px",
-                      fontWeight: 600,
-                      color: "var(--text-dim)",
-                      width: "20px",
-                    }}
-                  >
-                    #{i + 1}
-                  </span>
-                  <span style={{ flex: 1, fontSize: "13px", minWidth: "80px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{m.merchant}</span>
-                  <span style={{ fontFamily: "var(--font-display)", fontWeight: 600, color: "var(--coral)", fontSize: "13px" }}>
-                    {formatCurrency(m.total)}
-                  </span>
-                  {/* Progress bar — hidden on very small screens */}
-                  <div className="mobile-hidden" style={{ width: "60px", height: "4px", background: "var(--border)", borderRadius: "2px" }}>
-                    <div
-                      style={{
-                        height: "100%",
-                        borderRadius: "2px",
-                        background: COLORS[i % COLORS.length],
-                        width: `${((m.total / (data?.totalSpent || 1)) * 100).toFixed(0)}%`,
-                        transition: "width 0.5s ease",
-                      }}
-                    />
-                  </div>
+              {/* Composition Pie */}
+              <div className="editorial-card" style={{ display: "flex", flexDirection: "column" }}>
+                <div style={{ marginBottom: "24px", borderBottom: "1px solid var(--border-light)", paddingBottom: "16px" }}>
+                  <h3 className="eyebrow">Structural Integrity</h3>
                 </div>
-              ))}
+                <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                  {pieData.length > 0 ? (
+                    <>
+                      <ResponsiveContainer width="100%" height={280}>
+                        <PieChart>
+                          <Pie
+                            data={pieData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={70}
+                            outerRadius={110}
+                            paddingAngle={2}
+                            dataKey="value"
+                            stroke="var(--bg-secondary)"
+                            strokeWidth={2}
+                          >
+                            {pieData.map((_, index) => (
+                               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip
+                            contentStyle={{
+                              background: "var(--bg-secondary)",
+                              border: "1px solid var(--border-heavy)",
+                              borderRadius: "var(--radius-sm)",
+                              fontFamily: "var(--font-body)",
+                              fontWeight: 600,
+                              boxShadow: "var(--shadow-hover)",
+                              color: "var(--text-primary)"
+                            }}
+                            formatter={(value: unknown) => formatCurrency(value as number)}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                      <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", textAlign: "center", pointerEvents: "none" }}>
+                        <div className="eyebrow" style={{ fontSize: "10px" }}>DIST</div>
+                        <div style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", fontWeight: 800, color: "var(--text-primary)" }}>{pieData.length}</div>
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{ color: "var(--text-tertiary)", fontFamily: "var(--font-display)", fontWeight: 700 }}>AWAITING DATA</div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </>

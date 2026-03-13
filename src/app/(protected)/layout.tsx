@@ -11,7 +11,6 @@ import {
   Lightbulb,
   Settings,
   LogOut,
-  ChevronRight,
   Menu,
   X,
 } from "lucide-react";
@@ -20,10 +19,10 @@ import Logo from "@/components/Logo";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
-  { href: "/upload", label: "Upload", icon: Upload },
-  { href: "/transactions", label: "Transactions", icon: Receipt },
-  { href: "/insights", label: "Insights", icon: Lightbulb },
-  { href: "/settings/privacy", label: "Settings", icon: Settings },
+  { href: "/assistant", label: "Intelligence", icon: Lightbulb },
+  { href: "/upload", label: "Registry", icon: Upload },
+  { href: "/transactions", label: "Ledger", icon: Receipt },
+  { href: "/settings/privacy", label: "Config", icon: Settings },
 ];
 
 function useIsMobile() {
@@ -41,7 +40,6 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const isMobile = useIsMobile();
-  const [collapsed, setCollapsed] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [user, setUser] = useState<{ email?: string; name?: string; avatarUrl?: string } | null>(null);
 
@@ -58,7 +56,6 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  // Close drawer on route change
   useEffect(() => {
     setDrawerOpen(false);
   }, [pathname]);
@@ -72,222 +69,99 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
   // ─── MOBILE LAYOUT ───
   if (isMobile) {
     return (
-      <div style={{ minHeight: "100vh", paddingBottom: "72px" }}>
+      <div style={{ minHeight: "100vh", position: "relative" }}>
         {/* Mobile Top Bar */}
-        <div className="mobile-topbar">
-          <button className="hamburger-btn" onClick={() => setDrawerOpen(true)}>
-            <Menu size={22} />
-          </button>
-          <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
+        <div style={{
+          position: "fixed", top: 0, left: 0, right: 0, height: "70px",
+          background: "var(--bg-primary)", borderBottom: "2px solid var(--border-heavy)",
+          display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px", zIndex: 100
+        }}>
+          <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "12px", textDecoration: "none" }}>
             <Logo size="sm" />
-            <span
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "17px",
-                fontWeight: 700,
-                color: "var(--text-primary)",
-                letterSpacing: "-0.5px",
-              }}
-            >
+            <span style={{ fontFamily: "var(--font-display)", fontSize: "20px", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.5px" }}>
               FinGenie
             </span>
           </Link>
-          {user?.avatarUrl ? (
-            <img
-              src={user.avatarUrl}
-              alt=""
-              style={{ width: "30px", height: "30px", borderRadius: "50%" }}
-            />
-          ) : (
-            <div
-              style={{
-                width: "30px",
-                height: "30px",
-                borderRadius: "50%",
-                background: "var(--bg-elevated)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "13px",
-                fontWeight: 600,
-                color: "var(--mint-primary)",
-              }}
-            >
-              {user?.name?.[0] || "?"}
-            </div>
-          )}
+          <button style={{ background: "transparent", border: "none", color: "var(--text-primary)" }} onClick={() => setDrawerOpen(true)}>
+            <Menu size={28} />
+          </button>
         </div>
 
         {/* Slide-out Drawer */}
         {drawerOpen && (
-          <>
-            <div className="drawer-overlay" onClick={() => setDrawerOpen(false)} />
-            <div className="drawer">
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px 20px", borderBottom: "1px solid var(--border)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <Logo size="sm" />
-                  <span style={{ fontFamily: "var(--font-display)", fontSize: "18px", fontWeight: 700 }}>FinGenie</span>
-                </div>
-                <button className="hamburger-btn" onClick={() => setDrawerOpen(false)}>
-                  <X size={20} />
-                </button>
-              </div>
-              <nav style={{ padding: "16px 12px", display: "flex", flexDirection: "column", gap: "4px" }}>
-                {navItems.map((item) => {
-                  const isActive = pathname.startsWith(item.href);
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "12px",
-                        padding: "12px 16px",
-                        borderRadius: "var(--radius-sm)",
-                        color: isActive ? "var(--mint-primary)" : "var(--text-secondary)",
-                        background: isActive ? "var(--mint-dim)" : "transparent",
-                        textDecoration: "none",
-                        fontSize: "15px",
-                        fontWeight: isActive ? 500 : 400,
-                      }}
-                    >
-                      <item.icon size={20} />
-                      {item.label}
-                    </Link>
-                  );
-                })}
-              </nav>
-              {/* User section in drawer */}
-              <div style={{ padding: "16px 20px", borderTop: "1px solid var(--border)", marginTop: "auto" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
-                  {user?.avatarUrl ? (
-                    <img src={user.avatarUrl} alt="" style={{ width: "36px", height: "36px", borderRadius: "50%" }} />
-                  ) : (
-                    <div
-                      style={{
-                        width: "36px",
-                        height: "36px",
-                        borderRadius: "50%",
-                        background: "var(--bg-elevated)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "14px",
-                        fontWeight: 600,
-                        color: "var(--mint-primary)",
-                      }}
-                    >
-                      {user?.name?.[0] || "?"}
-                    </div>
-                  )}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: "14px", fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                      {user?.name || "User"}
-                    </div>
-                    <div style={{ fontSize: "12px", color: "var(--text-dim)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                      {user?.email}
-                    </div>
-                  </div>
-                </div>
-                <button
-                  onClick={handleSignOut}
+          <div style={{ width: "100vw", height: "100vh", position: "fixed", inset: 0, zIndex: 200, background: "var(--bg-primary)", display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px", borderBottom: "2px solid var(--border-heavy)" }}>
+              <Logo size="sm" />
+              <button style={{ background: "transparent", border: "none", color: "var(--text-primary)" }} onClick={() => setDrawerOpen(false)}>
+                <X size={28} />
+              </button>
+            </div>
+            <nav style={{ padding: "40px 20px", display: "flex", flexDirection: "column", gap: "24px", flex: 1 }}>
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    width: "100%",
-                    padding: "10px 16px",
-                    background: "var(--bg-elevated)",
-                    border: "1px solid var(--border)",
-                    borderRadius: "var(--radius-sm)",
-                    cursor: "pointer",
-                    color: "var(--text-secondary)",
-                    fontSize: "14px",
+                    fontFamily: "var(--font-display)",
+                    fontSize: "2rem",
+                    fontWeight: pathname.startsWith(item.href) ? 800 : 500,
+                    color: pathname.startsWith(item.href) ? "var(--brand-primary)" : "var(--text-primary)",
+                    textDecoration: "none",
+                    textTransform: "uppercase"
                   }}
                 >
-                  <LogOut size={16} />
-                  Sign Out
-                </button>
-              </div>
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+            <div style={{ padding: "20px", borderTop: "2px solid var(--border-heavy)" }}>
+              <button onClick={handleSignOut} className="btn btn-secondary" style={{ width: "100%" }}>
+                SIGN OUT TERMINAL
+              </button>
             </div>
-          </>
+          </div>
         )}
 
-        {/* Page Content */}
-        <main style={{ paddingTop: "72px", padding: "72px 16px 16px" }}>
+        <main style={{ paddingTop: "70px", paddingBottom: "40px" }}>
           {children}
         </main>
-
-        {/* Bottom Navigation */}
-        <nav className="bottom-nav">
-          {navItems.slice(0, 5).map((item) => {
-            const isActive = pathname.startsWith(item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={isActive ? "active" : ""}
-              >
-                <item.icon size={20} />
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
       </div>
     );
   }
 
-  // ─── DESKTOP LAYOUT ───
+  // ─── DESKTOP (EDITORIAL / NEOMRUTALIST) LAYOUT ───
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
-      {/* Sidebar */}
+    <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg-primary)" }}>
+      {/* Editorial Left Frame */}
       <aside
         style={{
-          width: collapsed ? "72px" : "256px",
-          background: "var(--bg-secondary)",
-          borderRight: "1px solid var(--border)",
+          width: "250px",
+          borderRight: "1px solid var(--border-light)",
           display: "flex",
           flexDirection: "column",
-          transition: "width 0.3s ease",
           position: "fixed",
           top: 0,
           left: 0,
           bottom: 0,
           zIndex: 50,
-          overflow: "hidden",
+          background: "transparent",
         }}
       >
-        {/* Logo */}
-        <div
-          style={{
-            padding: "24px 20px",
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            borderBottom: "1px solid var(--border)",
-            minHeight: "73px",
-          }}
-        >
-          <Logo size="sm" />
-          {!collapsed && (
-            <span
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "18px",
-                fontWeight: 700,
-                letterSpacing: "-0.5px",
-                whiteSpace: "nowrap",
-              }}
-            >
+        {/* Brand */}
+        <div style={{ padding: "24px 20px", borderBottom: "1px solid var(--border-light)" }}>
+          <Link href="/dashboard" style={{ textDecoration: "none", display: "inline-block" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
+              <Logo size="md" inverse={false} />
+            </div>
+            <h1 style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.5px", lineHeight: 1 }}>
               FinGenie
-            </span>
-          )}
+            </h1>
+            <div className="eyebrow" style={{ marginTop: "6px" }}>Operating System</div>
+          </Link>
         </div>
 
-        {/* Nav */}
-        <nav style={{ flex: 1, padding: "16px 12px", display: "flex", flexDirection: "column", gap: "4px" }}>
+        {/* Navigation */}
+        <nav style={{ flex: 1, padding: "24px 0", display: "flex", flexDirection: "column" }}>
           {navItems.map((item) => {
             const isActive = pathname.startsWith(item.href);
             return (
@@ -297,144 +171,62 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "12px",
-                  padding: collapsed ? "12px" : "10px 14px",
-                  borderRadius: "var(--radius-sm)",
-                  color: isActive ? "var(--mint-primary)" : "var(--text-secondary)",
-                  background: isActive ? "var(--mint-dim)" : "transparent",
-                  transition: "all 0.2s",
+                  padding: "12px 20px",
+                  color: isActive ? "var(--brand-primary)" : "var(--text-secondary)",
                   textDecoration: "none",
-                  fontSize: "14px",
-                  fontWeight: isActive ? 500 : 400,
-                  justifyContent: collapsed ? "center" : "flex-start",
-                  whiteSpace: "nowrap",
+                  fontFamily: "var(--font-body)",
+                  fontSize: "1rem",
+                  fontWeight: isActive ? 700 : 600,
+                  borderLeft: isActive ? "4px solid var(--brand-primary)" : "4px solid transparent",
+                  transition: "all 0.2s"
                 }}
-                title={item.label}
+                onMouseOver={(e) => {
+                  if(!isActive) {
+                    e.currentTarget.style.color = "var(--text-primary)";
+                    e.currentTarget.style.paddingLeft = "28px";
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if(!isActive) {
+                    e.currentTarget.style.color = "var(--text-secondary)";
+                    e.currentTarget.style.paddingLeft = "20px";
+                  }
+                }}
               >
-                <item.icon size={20} />
-                {!collapsed && item.label}
+                {item.label}
               </Link>
             );
           })}
         </nav>
 
-        {/* Collapse toggle */}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          style={{
-            padding: "12px",
-            margin: "0 12px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "transparent",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--radius-sm)",
-            cursor: "pointer",
-            color: "var(--text-dim)",
-            transition: "all 0.2s",
-          }}
-        >
-          <ChevronRight
-            size={16}
-            style={{
-              transform: collapsed ? "rotate(0deg)" : "rotate(180deg)",
-              transition: "transform 0.3s",
-            }}
-          />
-        </button>
-
-        {/* User */}
-        <div
-          style={{
-            padding: "16px",
-            borderTop: "1px solid var(--border)",
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            marginTop: "8px",
-          }}
-        >
-          {user?.avatarUrl ? (
-            <img
-              src={user.avatarUrl}
-              alt=""
-              style={{ width: "32px", height: "32px", borderRadius: "50%", minWidth: "32px" }}
-            />
-          ) : (
-            <div
-              style={{
-                width: "32px",
-                height: "32px",
-                minWidth: "32px",
-                borderRadius: "50%",
-                background: "var(--bg-elevated)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "14px",
-                fontWeight: 600,
-                color: "var(--mint-primary)",
-              }}
-            >
-              {user?.name?.[0] || "?"}
-            </div>
-          )}
-          {!collapsed && (
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div
-                style={{
-                  fontSize: "13px",
-                  fontWeight: 500,
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {user?.name || "User"}
+        {/* User Block */}
+        <div style={{ padding: "20px", borderTop: "1px solid var(--border-light)" }}>
+          <div className="eyebrow" style={{ marginBottom: "12px" }}>Operator</div>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+            {user?.avatarUrl ? (
+              <img src={user.avatarUrl} alt="" style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--border-light)", flexShrink: 0 }} />
+            ) : (
+              <div style={{ width: "36px", height: "36px", background: "var(--brand-primary)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontFamily: "var(--font-display)", fontWeight: 700, flexShrink: 0 }}>
+                {user?.name?.[0] || "?"}
               </div>
-              <div
-                style={{
-                  fontSize: "11px",
-                  color: "var(--text-dim)",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                }}
-              >
+            )}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "13px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {user?.name || "SYS_ADMIN"}
+              </div>
+              <div style={{ fontSize: "11px", color: "var(--text-tertiary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {user?.email}
               </div>
             </div>
-          )}
-          {!collapsed && (
-            <button
-              onClick={handleSignOut}
-              style={{
-                background: "transparent",
-                border: "none",
-                cursor: "pointer",
-                color: "var(--text-dim)",
-                padding: "4px",
-                display: "flex",
-              }}
-              title="Sign out"
-            >
-              <LogOut size={16} />
-            </button>
-          )}
+          </div>
+          <button onClick={handleSignOut} className="btn btn-secondary" style={{ width: "100%", fontSize: "0.75rem", padding: "8px" }}>
+            <LogOut size={14} /> TERMINATE SESSION
+          </button>
         </div>
       </aside>
 
-      {/* Main content */}
-      <main
-        style={{
-          flex: 1,
-          marginLeft: collapsed ? "72px" : "256px",
-          transition: "margin-left 0.3s ease",
-          padding: "32px 40px",
-          minHeight: "100vh",
-        }}
-      >
+      {/* Main Content Area */}
+      <main style={{ flex: 1, marginLeft: "250px", minHeight: "100vh" }}>
         {children}
       </main>
     </div>

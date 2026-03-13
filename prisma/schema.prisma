@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "./generated-client"
 }
 
 datasource db {
@@ -15,8 +16,21 @@ model User {
   statements   Statement[]
   transactions Transaction[]
   insights     Insight[]
+  chats        Chat[]
 
   @@map("users")
+}
+
+model Chat {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  role      String   // user | assistant
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("chat_messages")
 }
 
 model Statement {

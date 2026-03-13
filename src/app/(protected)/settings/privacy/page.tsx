@@ -32,6 +32,7 @@ export default function SettingsPrivacyPage() {
           fontWeight: 700,
           letterSpacing: "-1px",
           marginBottom: "8px",
+          color: "var(--text-primary)"
         }}
       >
         Settings & Privacy
@@ -48,13 +49,13 @@ export default function SettingsPrivacyPage() {
               width: "40px",
               height: "40px",
               borderRadius: "10px",
-              background: "var(--mint-dim)",
+              background: "var(--blue-dim)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            <Shield size={20} color="var(--mint-primary)" />
+            <Shield size={20} color="var(--blue-primary)" />
           </div>
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: "18px", fontWeight: 600 }}>
             How we handle your data
