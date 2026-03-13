@@ -35,10 +35,23 @@ export async function GET(request: Request) {
       select: { id: true, bankName: true, accountNumber: true, accountHolderName: true },
     });
 
+    // Find the latest statement month for auto-navigation
+    const latestTransaction = await prisma.transaction.findFirst({
+      where: { userId: user.id },
+      orderBy: { date: "desc" },
+      select: { date: true },
+    });
+    const latestStatementMonth = latestTransaction
+      ? `${latestTransaction.date.getFullYear()}-${String(latestTransaction.date.getMonth() + 1).padStart(2, "0")}`
+      : null;
+
+    const accountHolderName = bankAccounts.length > 0 ? bankAccounts[0].accountHolderName : (user.name || null);
+
     if (transactions.length === 0) {
       return NextResponse.json({
         month: targetMonth,
-        userName: user.name || null,
+        accountHolderName,
+        latestStatementMonth,
         bankAccounts,
         totalSpent: 0,
         categoryTotals: {},
@@ -129,7 +142,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       month: targetMonth,
-      userName: user.name || null,
+      accountHolderName,
+      latestStatementMonth,
       bankAccounts,
       totalSpent,
       categoryTotals,

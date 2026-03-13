@@ -72,7 +72,6 @@ export async function POST(request: Request) {
 
       // Cross-check bank account if metadata was extracted
       let bankAccountId: string | null = null;
-      let accountWarning: string | null = null;
 
       if (parseResult.metadata.bankAccountMeta?.accountNumber) {
         const extractedAccountNumber = parseResult.metadata.bankAccountMeta.accountNumber;
@@ -89,16 +88,34 @@ export async function POST(request: Request) {
           bankAccountId = matchingAccount.id;
           console.log(`[Upload] Statement matched to bank account: ${matchingAccount.bankName} (${extractedAccountNumber})`);
         } else {
-          // No matching account found — warn the user
+          // REJECT: account does not belong to this user
           const registeredAccounts = await prisma.bankAccount.findMany({
             where: { userId: user.id },
-            select: { accountNumber: true, bankName: true },
+            select: { accountNumber: true, bankName: true, accountHolderName: true },
           });
 
-          if (registeredAccounts.length > 0) {
-            accountWarning = `Statement account (${extractedAccountNumber}) does not match any registered account. Registered: ${registeredAccounts.map((a: { bankName: string; accountNumber: string }) => `${a.bankName} (${a.accountNumber})`).join(", ")}`;
-            console.warn(`[Upload] ${accountWarning}`);
-          }
+          // Mark statement as failed
+          await prisma.statement.update({
+            where: { id: statement.id },
+            data: {
+              status: "failed",
+              meta: JSON.parse(JSON.stringify({
+                error: "Account mismatch",
+                extractedAccount: extractedAccountNumber,
+                bankAccountMeta: parseResult.metadata.bankAccountMeta,
+              })),
+            },
+          });
+
+          const registeredInfo = registeredAccounts.length > 0
+            ? ` Your registered account: ${registeredAccounts.map((a: { bankName: string; accountNumber: string }) => `${a.bankName} (${a.accountNumber})`).join(", ")}.`
+            : "";
+
+          return NextResponse.json({
+            statementId: statement.id,
+            status: "rejected",
+            error: `This statement belongs to account ${extractedAccountNumber}, which does not match your registered bank account.${registeredInfo} Only statements for your own registered account are accepted.`,
+          }, { status: 400 });
         }
       }
 
@@ -143,7 +160,6 @@ export async function POST(request: Request) {
         failed: parseResult.metadata.failedRows,
         total: parseResult.metadata.totalRows,
         bankName: parseResult.metadata.bankName,
-        accountWarning,
       });
     } catch (parseError) {
       console.error("Parse error:", parseError);

@@ -6,10 +6,10 @@ import {
   AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid,
 } from "recharts";
 import {
-  TrendingDown, TrendingUp, CreditCard, RefreshCw,
+  TrendingDown, RefreshCw,
   ArrowUpRight, ChevronLeft, ChevronRight,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const COLORS = [
   "var(--brand-primary)", "#FF3B00", "#00E57A", "#FFC700", "#00F0FF",
@@ -52,6 +52,7 @@ function BrutalistStatusBar({ score }: { score: number | null }) {
 
 export default function DashboardPage() {
   const [currentMonth, setCurrentMonth] = useState(() => getMonthStr(new Date()));
+  const hasAutoNavigated = useRef(false);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["dashboard", currentMonth],
@@ -61,6 +62,14 @@ export default function DashboardPage() {
       return res.json();
     },
   });
+
+  // Auto-navigate to latest statement month on first load
+  useEffect(() => {
+    if (!hasAutoNavigated.current && data?.latestStatementMonth && data.latestStatementMonth !== currentMonth) {
+      hasAutoNavigated.current = true;
+      setCurrentMonth(data.latestStatementMonth);
+    }
+  }, [data?.latestStatementMonth]);
 
   const navigateMonth = (direction: number) => {
     const [y, m] = currentMonth.split("-").map(Number);
@@ -86,9 +95,9 @@ export default function DashboardPage() {
       {/* Editorial Header */}
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "40px", flexWrap: "wrap", gap: "20px" }}>
         <div>
-          {data?.userName && (
+          {data?.accountHolderName && (
             <div style={{ fontFamily: "var(--font-body)", fontSize: "1.05rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "4px" }}>
-              Welcome back, <span style={{ color: "var(--brand-primary)", fontWeight: 700 }}>{data.userName}</span>
+              Welcome back, <span style={{ color: "var(--brand-primary)", fontWeight: 700 }}>{data.accountHolderName}</span>
             </div>
           )}
           <h1 className="display-large" style={{ color: "var(--text-primary)", marginBottom: "8px" }}>
