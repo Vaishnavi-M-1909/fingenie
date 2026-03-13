@@ -16,8 +16,10 @@ export async function GET() {
       where: { userId: user.id },
       orderBy: { createdAt: "asc" },
       select: {
+        id: true,
         role: true,
         content: true,
+        imageUrl: true,
       },
     });
 
@@ -37,10 +39,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { message, history = [] } = await req.json();
+    const { message, history = [], image } = await req.json();
 
-    if (!message) {
-      return NextResponse.json({ error: "Message is required" }, { status: 400 });
+    if (!message && !image) {
+      return NextResponse.json({ error: "Message or image is required" }, { status: 400 });
+    }
+
+    // 1. Prepare contents for OpenRouter
+    const userContent: any[] = [{ type: "text", text: message || "Analyze this image" }];
+    if (image) {
+      userContent.push({
+        type: "image_url",
+        image_url: { url: image } // Already expected to be data:image/...;base64,...
+      });
     }
 
     // 1. Fetch recent transactions for context
@@ -74,22 +85,61 @@ export async function POST(req: NextRequest) {
       Always format currency as ₹ (INR).
     `;
 
-    // 3. Generate response using OpenRouter
+    // 3. Handle Image Persistence if present
+    let savedImageUrl: string | undefined;
+    if (image && image.startsWith("data:image")) {
+      try {
+        const base64Data = image.split(",")[1];
+        const buffer = Buffer.from(base64Data, "base64");
+        const mimeType = image.split(";")[0].split(":")[1];
+        const fileName = `chat_${Date.now()}.${mimeType.split("/")[1]}`;
+        const filePath = `${user.id}/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("finGenie-bucket")
+          .upload(filePath, buffer, { contentType: mimeType });
+
+        if (!uploadError) {
+          const { data: { publicUrl } } = supabase.storage
+            .from("finGenie-bucket")
+            .getPublicUrl(filePath);
+          savedImageUrl = publicUrl;
+        }
+      } catch (err) {
+        console.error("[CHAT_IMAGE_UPLOAD_ERROR]", err);
+      }
+    }
+
+    // 4. Generate response using OpenRouter
     const aiResponse = await generateChatResponse([
       { role: "system", content: systemPrompt },
       ...history,
-      { role: "user", content: message }
+      { role: "user", content: userContent }
     ]);
 
-    // 4. Save messages to DB
-    await prisma.chat.createMany({
-      data: [
-        { userId: user.id, role: "user", content: message },
-        { userId: user.id, role: "assistant", content: aiResponse },
-      ]
+    // 5. Save messages to DB
+    const userMsg = await prisma.chat.create({
+      data: {
+        userId: user.id,
+        role: "user",
+        content: message || "Sent an image",
+        imageUrl: savedImageUrl
+      }
     });
 
-    return NextResponse.json({ message: aiResponse });
+    const aiMsg = await prisma.chat.create({
+      data: {
+        userId: user.id,
+        role: "assistant",
+        content: aiResponse
+      }
+    });
+
+    return NextResponse.json({ 
+      message: aiResponse,
+      userMessageId: userMsg.id,
+      aiMessageId: aiMsg.id
+    });
   } catch (error) {
     console.error("[CHAT_POST_ERROR]", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

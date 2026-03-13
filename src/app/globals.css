@@ -256,13 +256,11 @@ a:hover {
 @keyframes revealUp {
   from {
     opacity: 0;
-    transform: translateY(40px);
-    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
   }
 }
 
@@ -292,4 +290,31 @@ a:hover {
 .recharts-cartesian-grid-horizontal line,
 .recharts-cartesian-grid-vertical line {
   stroke: var(--border-light) !important;
+}
+
+/* ── Markdown Prose ── */
+.markdown-prose {
+  width: 100%;
+}
+
+.markdown-prose p {
+  margin: 0;
+}
+
+.markdown-prose p:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+
+.markdown-prose strong {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.markdown-prose ul, .markdown-prose ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.markdown-prose li {
+  margin-bottom: 0.25rem;
 }

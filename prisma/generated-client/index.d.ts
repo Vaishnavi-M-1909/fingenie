@@ -2592,6 +2592,7 @@ export namespace Prisma {
     userId: string | null
     role: string | null
     content: string | null
+    imageUrl: string | null
     createdAt: Date | null
   }
 
@@ -2600,6 +2601,7 @@ export namespace Prisma {
     userId: string | null
     role: string | null
     content: string | null
+    imageUrl: string | null
     createdAt: Date | null
   }
 
@@ -2608,6 +2610,7 @@ export namespace Prisma {
     userId: number
     role: number
     content: number
+    imageUrl: number
     createdAt: number
     _all: number
   }
@@ -2618,6 +2621,7 @@ export namespace Prisma {
     userId?: true
     role?: true
     content?: true
+    imageUrl?: true
     createdAt?: true
   }
 
@@ -2626,6 +2630,7 @@ export namespace Prisma {
     userId?: true
     role?: true
     content?: true
+    imageUrl?: true
     createdAt?: true
   }
 
@@ -2634,6 +2639,7 @@ export namespace Prisma {
     userId?: true
     role?: true
     content?: true
+    imageUrl?: true
     createdAt?: true
     _all?: true
   }
@@ -2715,6 +2721,7 @@ export namespace Prisma {
     userId: string
     role: string
     content: string
+    imageUrl: string | null
     createdAt: Date
     _count: ChatCountAggregateOutputType | null
     _min: ChatMinAggregateOutputType | null
@@ -2740,6 +2747,7 @@ export namespace Prisma {
     userId?: boolean
     role?: boolean
     content?: boolean
+    imageUrl?: boolean
     createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["chat"]>
@@ -2749,6 +2757,7 @@ export namespace Prisma {
     userId?: boolean
     role?: boolean
     content?: boolean
+    imageUrl?: boolean
     createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["chat"]>
@@ -2758,6 +2767,7 @@ export namespace Prisma {
     userId?: boolean
     role?: boolean
     content?: boolean
+    imageUrl?: boolean
     createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["chat"]>
@@ -2767,10 +2777,11 @@ export namespace Prisma {
     userId?: boolean
     role?: boolean
     content?: boolean
+    imageUrl?: boolean
     createdAt?: boolean
   }
 
-  export type ChatOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "role" | "content" | "createdAt", ExtArgs["result"]["chat"]>
+  export type ChatOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "role" | "content" | "imageUrl" | "createdAt", ExtArgs["result"]["chat"]>
   export type ChatInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -2791,6 +2802,7 @@ export namespace Prisma {
       userId: string
       role: string
       content: string
+      imageUrl: string | null
       createdAt: Date
     }, ExtArgs["result"]["chat"]>
     composites: {}
@@ -3220,6 +3232,7 @@ export namespace Prisma {
     readonly userId: FieldRef<"Chat", 'String'>
     readonly role: FieldRef<"Chat", 'String'>
     readonly content: FieldRef<"Chat", 'String'>
+    readonly imageUrl: FieldRef<"Chat", 'String'>
     readonly createdAt: FieldRef<"Chat", 'DateTime'>
   }
     
@@ -8148,6 +8161,7 @@ export namespace Prisma {
     userId: 'userId',
     role: 'role',
     content: 'content',
+    imageUrl: 'imageUrl',
     createdAt: 'createdAt'
   };
 
@@ -8398,6 +8412,7 @@ export namespace Prisma {
     userId?: StringFilter<"Chat"> | string
     role?: StringFilter<"Chat"> | string
     content?: StringFilter<"Chat"> | string
+    imageUrl?: StringNullableFilter<"Chat"> | string | null
     createdAt?: DateTimeFilter<"Chat"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -8407,6 +8422,7 @@ export namespace Prisma {
     userId?: SortOrder
     role?: SortOrder
     content?: SortOrder
+    imageUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     user?: UserOrderByWithRelationInput
   }
@@ -8419,6 +8435,7 @@ export namespace Prisma {
     userId?: StringFilter<"Chat"> | string
     role?: StringFilter<"Chat"> | string
     content?: StringFilter<"Chat"> | string
+    imageUrl?: StringNullableFilter<"Chat"> | string | null
     createdAt?: DateTimeFilter<"Chat"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
@@ -8428,6 +8445,7 @@ export namespace Prisma {
     userId?: SortOrder
     role?: SortOrder
     content?: SortOrder
+    imageUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: ChatCountOrderByAggregateInput
     _max?: ChatMaxOrderByAggregateInput
@@ -8442,6 +8460,7 @@ export namespace Prisma {
     userId?: StringWithAggregatesFilter<"Chat"> | string
     role?: StringWithAggregatesFilter<"Chat"> | string
     content?: StringWithAggregatesFilter<"Chat"> | string
+    imageUrl?: StringNullableWithAggregatesFilter<"Chat"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Chat"> | Date | string
   }
 
@@ -8799,6 +8818,7 @@ export namespace Prisma {
     id?: string
     role: string
     content: string
+    imageUrl?: string | null
     createdAt?: Date | string
     user: UserCreateNestedOneWithoutChatsInput
   }
@@ -8808,6 +8828,7 @@ export namespace Prisma {
     userId: string
     role: string
     content: string
+    imageUrl?: string | null
     createdAt?: Date | string
   }
 
@@ -8815,6 +8836,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutChatsNestedInput
   }
@@ -8824,6 +8846,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -8832,6 +8855,7 @@ export namespace Prisma {
     userId: string
     role: string
     content: string
+    imageUrl?: string | null
     createdAt?: Date | string
   }
 
@@ -8839,6 +8863,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -8847,6 +8872,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -9310,6 +9336,7 @@ export namespace Prisma {
     userId?: SortOrder
     role?: SortOrder
     content?: SortOrder
+    imageUrl?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -9318,6 +9345,7 @@ export namespace Prisma {
     userId?: SortOrder
     role?: SortOrder
     content?: SortOrder
+    imageUrl?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -9326,6 +9354,7 @@ export namespace Prisma {
     userId?: SortOrder
     role?: SortOrder
     content?: SortOrder
+    imageUrl?: SortOrder
     createdAt?: SortOrder
   }
   export type JsonNullableFilter<$PrismaModel = never> =
@@ -10226,6 +10255,7 @@ export namespace Prisma {
     id?: string
     role: string
     content: string
+    imageUrl?: string | null
     createdAt?: Date | string
   }
 
@@ -10233,6 +10263,7 @@ export namespace Prisma {
     id?: string
     role: string
     content: string
+    imageUrl?: string | null
     createdAt?: Date | string
   }
 
@@ -10361,6 +10392,7 @@ export namespace Prisma {
     userId?: StringFilter<"Chat"> | string
     role?: StringFilter<"Chat"> | string
     content?: StringFilter<"Chat"> | string
+    imageUrl?: StringNullableFilter<"Chat"> | string | null
     createdAt?: DateTimeFilter<"Chat"> | Date | string
   }
 
@@ -10855,6 +10887,7 @@ export namespace Prisma {
     id?: string
     role: string
     content: string
+    imageUrl?: string | null
     createdAt?: Date | string
   }
 
@@ -10959,6 +10992,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -10966,6 +11000,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -10973,6 +11008,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

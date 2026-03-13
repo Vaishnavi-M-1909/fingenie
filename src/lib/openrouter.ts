@@ -1,6 +1,6 @@
 interface OpenRouterMessage {
   role: "system" | "user" | "assistant";
-  content: string;
+  content: string | Array<{ type: "text"; text: string } | { type: "image_url"; image_url: { url: string } }>;
 }
 
 interface InsightResponse {
@@ -132,9 +132,9 @@ export async function generateChatResponse(messages: OpenRouterMessage[]): Promi
       "X-Title": "FinGenie",
     },
     body: JSON.stringify({
-      model: "arcee-ai/trinity-large-preview:free",
+      model: "nvidia/nemotron-nano-12b-v2-vl:free",
       messages,
-      max_tokens: 512,
+      max_tokens: 1024, // Increased for vision responses
       temperature: 0.7,
     }),
   });
