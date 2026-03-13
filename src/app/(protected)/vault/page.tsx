@@ -1,16 +1,17 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   FileText, 
-  Image as ImageIcon, 
+  ImageIcon, 
   FileSpreadsheet, 
   Download, 
   Search,
   CheckCircle2,
   Clock,
   AlertCircle,
-  ExternalLink
+  ExternalLink,
+  Trash2,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -61,6 +62,7 @@ function StatusBadge({ status }: { status: Statement["status"] }) {
 
 export default function VaultPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery<{ statements: Statement[] }>({
     queryKey: ["vault"],
@@ -71,15 +73,35 @@ export default function VaultPage() {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/vault/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Delete failed");
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["vault"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+    },
+  });
+
+  const handleDelete = (id: string, name: string) => {
+    if (confirm(`Are you sure you want to delete ${name}? This will remove all associated transactions.`)) {
+      deleteMutation.mutate(id);
+    }
+  };
+
   const filteredStatements = data?.statements.filter(s => 
     s.originalFilename.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="container-editorial animate-reveal" style={{ maxWidth: "1200px" }}>
-      <header style={{ marginBottom: "40px" }}>
-        <h1 className="display-large" style={{ marginBottom: "8px" }}>Repository.</h1>
-        <div className="eyebrow" style={{ color: "var(--brand-primary)" }}>Document Storage & Audit Trail</div>
+      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px", flexWrap: "wrap", gap: "20px" }}>
+        <div>
+          <h1 className="display-large" style={{ marginBottom: "8px" }}>Repository.</h1>
+          <div className="eyebrow" style={{ color: "var(--brand-primary)" }}>Document Storage & Audit Trail</div>
+        </div>
       </header>
 
       <div className="rule-horizontal" style={{ marginBottom: "40px" }} />
@@ -112,7 +134,7 @@ export default function VaultPage() {
         <div style={{ border: "1px solid var(--border-heavy)", borderRadius: "var(--radius-sm)", overflow: "hidden", background: "var(--bg-secondary)" }}>
           <div style={{ 
             display: "grid", 
-            gridTemplateColumns: "1fr 150px 150px 120px 80px", 
+            gridTemplateColumns: "1fr 150px 150px 120px 120px", 
             padding: "16px 24px", 
             background: "var(--bg-primary)",
             borderBottom: "1px solid var(--border-heavy)",
@@ -126,7 +148,7 @@ export default function VaultPage() {
             <div>Date Uploaded</div>
             <div>Status</div>
             <div>Vectors</div>
-            <div>Action</div>
+            <div style={{ textAlign: "right" }}>Actions</div>
           </div>
           
           <div style={{ display: "flex", flexDirection: "column" }}>
@@ -135,7 +157,7 @@ export default function VaultPage() {
                 key={stmt.id} 
                 style={{ 
                   display: "grid", 
-                  gridTemplateColumns: "1fr 150px 150px 120px 80px", 
+                  gridTemplateColumns: "1fr 150px 150px 120px 120px", 
                   padding: "20px 24px", 
                   borderBottom: idx === filteredStatements.length - 1 ? "none" : "1px solid var(--border-light)",
                   alignItems: "center",
@@ -179,7 +201,7 @@ export default function VaultPage() {
                   {stmt._count.transactions} <span style={{ fontSize: "10px", color: "var(--text-tertiary)" }}>TXS</span>
                 </div>
 
-                <div>
+                <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
                   <a 
                     href={`/api/vault/file/${stmt.id}`} 
                     target="_blank" 
@@ -199,6 +221,24 @@ export default function VaultPage() {
                   >
                     <ExternalLink size={18} />
                   </a>
+                  <button
+                    onClick={() => handleDelete(stmt.id, stmt.originalFilename)}
+                    disabled={deleteMutation.isPending}
+                    style={{ 
+                      display: "flex", 
+                      alignItems: "center", 
+                      justifyContent: "center", 
+                      width: "36px", 
+                      height: "36px", 
+                      borderRadius: "6px", 
+                      background: "rgba(255, 59, 0, 0.05)",
+                      border: "1px solid rgba(255, 59, 0, 0.2)",
+                      color: "var(--accent-coral)",
+                      cursor: "pointer"
+                    }}
+                  >
+                    <Trash2 size={18} />
+                  </button>
                 </div>
               </div>
             ))}
