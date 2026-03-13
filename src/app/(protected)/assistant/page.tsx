@@ -35,7 +35,15 @@ export default function AssistantPage() {
   const [editInput, setEditInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [mentionFilter, setMentionFilter] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const MENTION_OPTIONS = [
     { id: "insights", label: "Latest Insights", description: "Inject your latest AI financial analysis" },
@@ -246,8 +254,13 @@ export default function AssistantPage() {
     }}>
       
       {/* Immersive Header */}
-      <header className="animate-reveal" style={{ padding: "4rem 4vw 2rem", maxWidth: "900px", margin: "0 auto", width: "100%" }}>
-        <h1 className="display-large" style={{ color: "var(--text-primary)" }}>
+      <header className="animate-reveal" style={{ 
+        padding: isMobile ? "2rem 4vw 1rem" : "4rem 4vw 2rem", 
+        maxWidth: "900px", 
+        margin: "0 auto", 
+        width: "100%" 
+      }}>
+        <h1 className="display-large" style={{ color: "var(--text-primary)", fontSize: isMobile ? "2rem" : undefined }}>
           Intelligence.
         </h1>
         <div className="rule-thick" style={{ width: "40px", marginTop: "1rem" }} />
@@ -270,12 +283,12 @@ export default function AssistantPage() {
               style={{ 
                 animationDelay: "0.1s",
                 alignSelf: isUser ? "flex-end" : "flex-start",
-                maxWidth: "85%",
+                maxWidth: isMobile ? "92%" : "85%",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: isUser ? "flex-end" : "flex-start",
                 position: "relative",
-                paddingBottom: isHovered && !isEditing ? "2.5rem" : "0.5rem",
+                paddingBottom: (isHovered || isMobile) && !isEditing ? "2.5rem" : "0.5rem",
                 transition: "padding-bottom 0.2s ease"
               }}
             >
@@ -303,9 +316,10 @@ export default function AssistantPage() {
                 boxShadow: isUser ? "var(--shadow-hover)" : "none",
                 position: "relative",
                 width: "fit-content",
+                minWidth: isMobile ? "100px" : "150px"
               }}>
                 {isEditing ? (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%", minWidth: "250px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%", minWidth: isMobile ? "200px" : "250px" }}>
                     <textarea 
                       value={editInput}
                       onChange={(e) => setEditInput(e.target.value)}
@@ -383,14 +397,15 @@ export default function AssistantPage() {
               )}
 
               {/* Action Buttons Below Bubble */}
-              {!isEditing && isHovered && (
+              {!isEditing && (isHovered || isMobile) && (
                 <div style={{
                   position: "absolute",
                   bottom: "4px",
-                  [isUser ? "right" : "left"]: "12px",
+                  [isUser ? "right" : "left"]: "8px",
                   display: "flex",
                   gap: "4px",
-                  animation: "animate-reveal 0.2s ease-out"
+                  animation: "animate-reveal 0.2s ease-out",
+                  opacity: isMobile && !isHovered ? 0.6 : 1
                 }}>
                   <div style={{
                     display: "flex",
@@ -452,14 +467,15 @@ export default function AssistantPage() {
       {/* Floating Soft Input Wrapper */}
       <div className="animate-fade-in-up" style={{
         position: "fixed",
-        bottom: "24px",
-        left: "250px", 
+        bottom: isMobile ? "0" : "24px",
+        left: isMobile ? "0" : "250px", 
         right: 0,
         display: "flex",
         justifyContent: "center",
-        padding: "0 4vw",
+        padding: isMobile ? "12px" : "0 4vw",
         pointerEvents: "none",
         zIndex: 50,
+        background: isMobile ? "linear-gradient(to top, var(--bg-primary) 80%, transparent)" : "transparent"
       }}>
         <div style={{
           width: "100%",
@@ -477,8 +493,8 @@ export default function AssistantPage() {
               <div style={{
                 position: "absolute",
                 bottom: "calc(100% + 12px)",
-                left: "60px",
-                width: "300px",
+                left: isMobile ? "0" : "60px",
+                width: isMobile ? "calc(100vw - 24px)" : "300px",
                 background: "var(--bg-secondary)",
                 border: "1px solid var(--border-light)",
                 borderRadius: "var(--radius-md)",
@@ -579,7 +595,7 @@ export default function AssistantPage() {
               disabled={!input.trim() || isLoading}
               style={{ 
                 borderRadius: "var(--radius-md)",
-                padding: "0 20px",
+                padding: isMobile ? "0 12px" : "0 20px",
                 height: "46px",
                 opacity: !input.trim() || isLoading ? 0.3 : 1
               }}
@@ -588,7 +604,18 @@ export default function AssistantPage() {
             </button>
           </div>
           
-          <div style={{ margin: "12px 0 0 60px", display: "flex", gap: "12px", flexWrap: "wrap", opacity: (!input.trim() && !isLoading) ? 1 : 0, transition: "opacity 0.2s" }}>
+          <div 
+            className="hide-scrollbar"
+            style={{ 
+              margin: isMobile ? "12px 0 0 0" : "12px 0 0 60px", 
+              display: "flex", 
+              gap: "8px", 
+              overflowX: "auto",
+              paddingBottom: "4px",
+              opacity: (!input.trim() && !isLoading) ? 1 : 0, 
+              transition: "opacity 0.2s" 
+            }}
+          >
             {["Analyze spending", "Savings strategy", "Help me with @tax", "Learn about @investing"].map(text => (
               <button 
                 key={text}
@@ -602,7 +629,9 @@ export default function AssistantPage() {
                   color: "var(--text-tertiary)",
                   fontFamily: "var(--font-body)",
                   fontSize: "0.85rem",
-                  transition: "all 0.2s"
+                  transition: "all 0.2s",
+                  whiteSpace: "nowrap",
+                  flexShrink: 0
                 }}
                 onMouseOver={(e) => { e.currentTarget.style.color = "var(--text-primary)"; e.currentTarget.style.borderColor = "var(--text-secondary)"; }}
                 onMouseOut={(e) => { e.currentTarget.style.color = "var(--text-tertiary)"; e.currentTarget.style.borderColor = "var(--border-light)"; }}
