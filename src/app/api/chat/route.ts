@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { message, history = [], image } = await req.json();
+    const { message, history = [], image, injectedContext = "" } = await req.json();
 
     if (!message && !image) {
       return NextResponse.json({ error: "Message or image is required" }, { status: 400 });
@@ -79,7 +79,11 @@ export async function POST(req: NextRequest) {
       You are FinGenie, a professional and helpful financial assistant for users aged 18-24.
       Your goal is to help them understand their spending, save better, and learn about finance.
       
+      --- General Context ---
       ${context}
+
+      --- Specifically Requested Context (@mentions) ---
+      ${injectedContext || "No specific entities mentioned."}
 
       Be concise, insightful, and friendly. If they ask about specific spending, refer to the transaction data provided above.
       Always format currency as ₹ (INR).

@@ -14,6 +14,20 @@ const MERCHANT_CATEGORY_MAP: Record<string, string> = {
   "cafe coffee day": "Food & Dining",
   restaurant: "Food & Dining",
 
+  // Groceries
+  groceries: "Groceries",
+  supermarket: "Groceries",
+  "big basket": "Groceries",
+  blinkit: "Groceries",
+  zepto: "Groceries",
+  reliance: "Groceries",
+  apples: "Groceries",
+  bananas: "Groceries",
+  milk: "Groceries",
+  eggs: "Groceries",
+  meat: "Groceries",
+  "chicken breast": "Groceries",
+
   // Shopping
   amazon: "Shopping",
   flipkart: "Shopping",
@@ -23,6 +37,10 @@ const MERCHANT_CATEGORY_MAP: Record<string, string> = {
   nykaa: "Shopping",
   "big bazaar": "Shopping",
   dmart: "Shopping",
+  book: "Shopping",
+  hail: "Shopping",
+  habit: "Shopping",
+  stationery: "Shopping",
 
   // Transport
   uber: "Transport",

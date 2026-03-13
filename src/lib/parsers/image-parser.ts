@@ -15,14 +15,14 @@ export async function parseImage(base64Image: string, mimeType: string) {
       "X-Title": "FinGenie",
     },
     body: JSON.stringify({
-      model: "google/gemma-3-27b-it:free", // Free vision model
+      model: "qwen/qwen2.5-vl-72b-instruct", // Free vision model
       messages: [
         {
           role: "user",
           content: [
             {
               type: "text",
-              text: "Extract all visible line-item transaction details from this receipt or statement image. Respond with a valid CSV format containing exactly the following columns, and no other text: Date, Merchant, Amount, Category, Description. CRITICAL: The Date MUST be exactly in YYYY-MM-DD format. If the year is missing, assume it is 2026. If the exact date is totally illegible, assume today is 2026-03-13. The Category should be a short 1-word generic category (like Food, Travel, Utilities, Software). If the file is clearly not a receipt or statement, output an empty CSV."
+              text: "Extract all visible line-item transaction details from this receipt or statement image. Respond with a valid CSV format containing exactly the following columns, and no other text: Date, Merchant, Amount, Category, Description. \n\nCRITICAL INSTRUCTIONS:\n- Date: MUST be in YYYY-MM-DD format. Assume 2026 if year is missing.\n- Category: Assign a short, generic category. \n  * Fruits, Vegetables, Meat, Dairy, Bread -> 'Groceries'\n  * Fast food, Restaurants, Cafes -> 'Food & Dining'\n  * Books, Electronics, Clothing -> 'Shopping'\n  * Bus, Taxi, Fuel, Metro -> 'Transport'\n  * Apps, Streaming, Internet -> 'Subscriptions'\n- If not a receipt/statement, output empty CSV."
             },
             {
               type: "image_url",

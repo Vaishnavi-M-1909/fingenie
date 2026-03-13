@@ -23,7 +23,16 @@ export default function AssistantPage() {
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editInput, setEditInput] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [mentionFilter, setMentionFilter] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const MENTION_OPTIONS = [
+    { id: "insights", label: "Latest Insights", description: "Inject your latest AI financial analysis" },
+    { id: "transactions", label: "Recent Transactions", description: "Inject your last 10 transactions" },
+    { id: "statements", label: "Statement Summary", description: "Inject your recent upload history" },
+    { id: "summary", label: "Financial Summary", description: "Inject a top-down view of your finances" }
+  ];
 
   useEffect(() => {
     async function fetchHistory() {
@@ -67,6 +76,28 @@ export default function AssistantPage() {
     }
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInput(value);
+
+    // Detect @ for suggestions
+    const lastWord = value.split(" ").pop() || "";
+    if (lastWord.startsWith("@")) {
+      setMentionFilter(lastWord.slice(1).toLowerCase());
+      setShowSuggestions(true);
+    } else {
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleSelectMention = (id: string) => {
+    const words = input.split(" ");
+    words.pop(); // Remove the partial @mention
+    const newValue = [...words, `@${id} `].join(" ");
+    setInput(newValue);
+    setShowSuggestions(false);
+  };
+
   const handleSend = async () => {
     if ((!input.trim() && !selectedImage) || isLoading) return;
 
@@ -76,6 +107,27 @@ export default function AssistantPage() {
     setInput("");
     setSelectedImage(null);
     setImagePreview(null);
+    setShowSuggestions(false);
+
+    // Context Injection Logic
+    let injectedContext = "";
+    const mentionMatches = userMessage.match(/@(\w+)/g);
+    if (mentionMatches) {
+      const types = mentionMatches.map(m => m.slice(1));
+      try {
+        const contexts = await Promise.all(types.map(async type => {
+          const res = await fetch(`/api/chat/context?type=${type}`);
+          if (res.ok) {
+            const json = await res.json();
+            return `--- Context: @${type} ---\n${JSON.stringify(json.data, null, 2)}`;
+          }
+          return "";
+        }));
+        injectedContext = contexts.filter(c => c).join("\n\n");
+      } catch (err) {
+        console.error("Context injection failed:", err);
+      }
+    }
     
     const tempUserMessageId = `temp-${Date.now()}`;
     setMessages(prev => [...prev, { 
@@ -93,7 +145,8 @@ export default function AssistantPage() {
         body: JSON.stringify({
           message: userMessage,
           history: messages.map(m => ({ role: m.role, content: m.content })),
-          image: currentImage
+          image: currentImage,
+          injectedContext
         }),
       });
 
@@ -382,7 +435,54 @@ export default function AssistantPage() {
           boxShadow: "var(--shadow-hover)",
           pointerEvents: "auto",
         }}>
-          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+          <div style={{ display: "flex", gap: "12px", alignItems: "center", position: "relative" }}>
+            {/* Mention Suggestions Dropdown */}
+            {showSuggestions && (
+              <div style={{
+                position: "absolute",
+                bottom: "calc(100% + 12px)",
+                left: "60px",
+                width: "300px",
+                background: "var(--bg-secondary)",
+                border: "1px solid var(--border-light)",
+                borderRadius: "var(--radius-md)",
+                boxShadow: "var(--shadow-hover)",
+                padding: "8px",
+                zIndex: 60,
+                display: "flex",
+                flexDirection: "column",
+                gap: "4px"
+              }}>
+                <div className="eyebrow" style={{ padding: "8px", fontSize: "0.7rem", borderBottom: "1px solid var(--border-light)", marginBottom: "4px" }}>
+                  CONTEXT TRIGGERS
+                </div>
+                {MENTION_OPTIONS.filter(opt => opt.id.includes(mentionFilter) || opt.label.toLowerCase().includes(mentionFilter)).map(opt => (
+                  <button
+                    key={opt.id}
+                    onClick={() => handleSelectMention(opt.id)}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                      padding: "8px 12px",
+                      borderRadius: "var(--radius-sm)",
+                      border: "none",
+                      background: "transparent",
+                      cursor: "pointer",
+                      textAlign: "left",
+                      width: "100%",
+                      transition: "background 0.2s"
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = "var(--bg-primary)"}
+                    onMouseOut={(e) => e.currentTarget.style.background = "transparent"}
+                  >
+                    <div style={{ fontWeight: 600, color: "var(--brand-primary)", fontSize: "0.9rem" }}>@{opt.id}</div>
+                    <div style={{ fontSize: "0.75rem", color: "var(--text-tertiary)" }}>{opt.description}</div>
+                  </button>
+                ))}
+              </div>
+            )}
+
             {imagePreview && (
               <div style={{ position: "relative", marginBottom: "8px", cursor: "pointer" }} onClick={() => setFullScreenImage(imagePreview)}>
                 <img src={imagePreview} alt="Preview" style={{ height: "60px", borderRadius: "var(--radius-sm)", border: "1px solid var(--border-light)" }} />
@@ -427,9 +527,9 @@ export default function AssistantPage() {
                 fontSize: "1rem",
                 fontFamily: "var(--font-body)",
               }}
-              placeholder="Ask about your finances..."
+              placeholder="Ask about your finances... use @ for context"
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={handleInputChange}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();

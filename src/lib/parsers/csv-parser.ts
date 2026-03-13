@@ -87,6 +87,7 @@ export function parseCSV(content: string): ParseResult {
   const amountCol = findColumn(headers, AMOUNT_COLUMNS);
   const debitCol = findColumn(headers, DEBIT_COLUMNS);
   const creditCol = findColumn(headers, CREDIT_COLUMNS);
+  const categoryCol = findColumn(headers, ["category", "type", "group"]);
 
   if (!dateCol) {
     return {
@@ -128,14 +129,19 @@ export function parseCSV(content: string): ParseResult {
 
       const merchant = descCol ? (row[descCol] || "Unknown").trim() : "Unknown";
       const normalizedMerchant = normalizeMerchant(merchant);
-      const category = categorizeTransaction(normalizedMerchant);
+      
+      // Use CSV category if available, otherwise fallback to rules
+      let category = categoryCol ? row[categoryCol] : undefined;
+      if (!category || category.toLowerCase() === "uncategorized") {
+        category = categorizeTransaction(normalizedMerchant);
+      }
 
       transactions.push({
         date,
         merchant: normalizedMerchant,
         amount,
         currency: "INR",
-        category,
+        category: category || "Uncategorized",
         description: merchant,
         rawLine,
         confidence: 0.9,
