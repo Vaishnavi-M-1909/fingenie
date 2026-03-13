@@ -80,7 +80,7 @@ export default function AssistantPage() {
     }}>
       
       {/* Immersive Header */}
-      <header className="animate-reveal" style={{ padding: "40px 4vw 24px", maxWidth: "900px", margin: "0 auto", width: "100%" }}>
+      <header className="animate-reveal" style={{ padding: "4rem 4vw 2rem", maxWidth: "900px", margin: "0 auto", width: "100%" }}>
         <h1 className="display-large" style={{ color: "var(--text-primary)" }}>
           Intelligence.
         </h1>
@@ -150,18 +150,18 @@ export default function AssistantPage() {
       <div className="animate-fade-in-up" style={{
         position: "fixed",
         bottom: "24px",
-        left: "250px", // Exact width of the sidebar
+        left: "250px", // Sidebar width
         right: 0,
         display: "flex",
-        justifyContent: "center", // Center exactly in the remaining space
-        padding: "0 24px",
+        justifyContent: "center",
+        padding: "0 4vw",
         pointerEvents: "none",
         zIndex: 50,
       }}>
         {/* Input Card Container */}
         <div style={{
-          flex: 1,
-          maxWidth: "800px",
+          width: "100%",
+          maxWidth: "900px",
           background: "var(--bg-secondary)",
           border: "1px solid var(--border-light)",
           borderRadius: "var(--radius-lg)",

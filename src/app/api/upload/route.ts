@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import { parseCSV } from "@/lib/parsers/csv-parser";
 import { parsePDF } from "@/lib/parsers/pdf-parser";
+import { parseImage } from "@/lib/parsers/image-parser";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
     const storagePath = `${user.id}/${Date.now()}_${file.name}`;
 
     const { error: uploadError } = await supabase.storage
-      .from("statements")
+      .from("finGenie-bucket")
       .upload(storagePath, file, { contentType: file.type });
 
     if (uploadError) {
@@ -64,12 +65,9 @@ export async function POST(request: Request) {
       } else if (ext === "pdf") {
         parseResult = await parsePDF(Buffer.from(arrayBuffer));
       } else {
-        // Image parsing stub
-        parseResult = { 
-          transactions: [], 
-          metadata: { parsedRows: 0, failedRows: 0, totalRows: 0 }, 
-          errors: ["Image successfully uploaded. OCR data extraction requires visual model processing (coming in next update)."] 
-        };
+        // Use Vision OCR for images
+        const base64 = Buffer.from(arrayBuffer).toString("base64");
+        parseResult = await parseImage(base64, file.type);
       }
 
       // Save transactions
