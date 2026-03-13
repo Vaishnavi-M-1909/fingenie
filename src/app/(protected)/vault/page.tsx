@@ -134,7 +134,7 @@ export default function VaultPage() {
         <div style={{ border: "1px solid var(--border-heavy)", borderRadius: "var(--radius-sm)", overflow: "hidden", background: "var(--bg-secondary)" }}>
           <div style={{ 
             display: "grid", 
-            gridTemplateColumns: "1fr 150px 150px 120px 120px", 
+            gridTemplateColumns: "minmax(0, 1fr) 150px 150px 120px 120px", 
             padding: "16px 24px", 
             background: "var(--bg-primary)",
             borderBottom: "1px solid var(--border-heavy)",
@@ -157,7 +157,7 @@ export default function VaultPage() {
                 key={stmt.id} 
                 style={{ 
                   display: "grid", 
-                  gridTemplateColumns: "1fr 150px 150px 120px 120px", 
+                  gridTemplateColumns: "minmax(0, 1fr) 150px 150px 120px 120px", 
                   padding: "20px 24px", 
                   borderBottom: idx === filteredStatements.length - 1 ? "none" : "1px solid var(--border-light)",
                   alignItems: "center",

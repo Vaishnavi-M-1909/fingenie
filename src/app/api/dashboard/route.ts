@@ -167,15 +167,26 @@ export async function GET(request: Request) {
       .sort((a, b) => (watchedSet.has(a.id) ? 1 : 0) - (watchedSet.has(b.id) ? 1 : 0))
       .slice(0, 3);
 
-    // Fetch user's interaction history (last 6 items)
+    // Fetch user's interaction history (last 6 unique items)
     const interactionHistory = await prisma.resourceInteraction.findMany({
       where: { userId: user.id },
       orderBy: { interactedAt: "desc" },
-      take: 6,
       include: {
         resource: true
       }
     });
+
+    // Deduplicate resources in the interaction history
+    const uniqueInteractionHistory = interactionHistory
+      .reduce((acc: any[], current) => {
+        const x = acc.find(item => item.id === current.resourceId);
+        if (!x) {
+          return acc.concat([current.resource]);
+        } else {
+          return acc;
+        }
+      }, [])
+      .slice(0, 6);
 
     return NextResponse.json({
       month: targetMonth,
@@ -190,7 +201,7 @@ export async function GET(request: Request) {
       healthScore: Math.max(0, Math.min(100, healthScore)),
       transactionCount: transactions.length,
       recommendations: recommendedResources,
-      interactionHistory: interactionHistory.map(i => i.resource),
+      interactionHistory: uniqueInteractionHistory,
     });
   } catch (error) {
     console.error("Dashboard error:", error);
