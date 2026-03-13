@@ -119,7 +119,7 @@ export default function UploadPage() {
           <input
             id="file-input"
             type="file"
-            accept=".csv,.pdf"
+            accept=".csv,.pdf,image/jpeg,image/png"
             style={{ display: "none" }}
             onChange={handleFileInput}
           />
@@ -154,6 +154,8 @@ export default function UploadPage() {
             <span style={{ fontSize: "0.8rem", fontWeight: 700, fontFamily: "var(--font-body)", color: "var(--brand-primary)" }}>CSV</span>
             <span style={{ fontSize: "0.8rem", color: "var(--border-heavy)" }}>|</span>
             <span style={{ fontSize: "0.8rem", fontWeight: 700, fontFamily: "var(--font-body)", color: "var(--accent-coral)" }}>PDF</span>
+            <span style={{ fontSize: "0.8rem", color: "var(--border-heavy)" }}>|</span>
+            <span style={{ fontSize: "0.8rem", fontWeight: 700, fontFamily: "var(--font-body)", color: "var(--accent-mint)" }}>IMG</span>
             <span style={{ fontSize: "0.8rem", color: "var(--text-tertiary)", marginLeft: "8px", fontWeight: 500 }}>Max 5MB</span>
           </div>
         </div>
@@ -255,7 +257,7 @@ export default function UploadPage() {
         <div>
           <h4 style={{ fontFamily: "var(--font-body)", fontSize: "0.9rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "12px", textTransform: "uppercase" }}>Supported Formats</h4>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-            {["SBI [PDF]", "HDFC [PDF]", "ICICI [PDF]", "AXIS [PDF]", "KOTAK [PDF]", "PNB [PDF]", "GLOBAL [CSV]"].map((bank) => (
+            {["SBI [PDF]", "HDFC [PDF]", "ICICI [PDF]", "AXIS [PDF]", "GLOBAL [CSV]", "RECEIPT [JPG/PNG]"].map((bank) => (
               <span key={bank} style={{ padding: "6px 10px", background: "var(--bg-primary)", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)", fontFamily: "var(--font-body)", fontSize: "0.8rem", fontWeight: 600, color: "var(--text-secondary)" }}>
                 {bank}
               </span>

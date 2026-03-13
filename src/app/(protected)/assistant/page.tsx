@@ -103,12 +103,11 @@ export default function AssistantPage() {
             </div>
             
             <div style={{
-              fontFamily: m.role === "user" ? "var(--font-display)" : "var(--font-body)",
-              fontSize: m.role === "user" ? "clamp(1.15rem, 2vw, 1.25rem)" : "1rem",
+              fontFamily: "var(--font-body)",
+              fontSize: m.role === "user" ? "1.1rem" : "1rem",
               fontWeight: m.role === "user" ? 600 : 400,
               lineHeight: 1.6,
               color: m.role === "user" ? "var(--text-primary)" : "var(--text-secondary)",
-              letterSpacing: m.role === "user" ? "-0.01em" : "0",
             }}>
               {m.content}
             </div>

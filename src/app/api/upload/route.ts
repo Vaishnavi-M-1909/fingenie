@@ -26,8 +26,8 @@ export async function POST(request: Request) {
     }
 
     const ext = file.name.split(".").pop()?.toLowerCase();
-    if (!["csv", "pdf"].includes(ext || "")) {
-      return NextResponse.json({ error: "Only CSV and PDF files are supported" }, { status: 400 });
+    if (!["csv", "pdf", "jpg", "jpeg", "png"].includes(ext || "")) {
+      return NextResponse.json({ error: "Only CSV, PDF, and Images are supported" }, { status: 400 });
     }
 
     // Upload to Supabase Storage
@@ -61,8 +61,15 @@ export async function POST(request: Request) {
       if (ext === "csv") {
         const text = new TextDecoder().decode(arrayBuffer);
         parseResult = parseCSV(text);
-      } else {
+      } else if (ext === "pdf") {
         parseResult = await parsePDF(Buffer.from(arrayBuffer));
+      } else {
+        // Image parsing stub
+        parseResult = { 
+          transactions: [], 
+          metadata: { parsedRows: 0, failedRows: 0, totalRows: 0 }, 
+          errors: ["Image successfully uploaded. OCR data extraction requires visual model processing (coming in next update)."] 
+        };
       }
 
       // Save transactions
