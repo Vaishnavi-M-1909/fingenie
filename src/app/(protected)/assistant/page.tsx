@@ -80,7 +80,7 @@ export default function AssistantPage() {
     }}>
       
       {/* Immersive Header */}
-      <header className="animate-reveal" style={{ padding: "4rem 4vw 2rem", maxWidth: "900px", margin: "0 auto", width: "100%" }}>
+      <header className="animate-reveal" style={{ padding: "40px 4vw 24px", maxWidth: "900px", margin: "0 auto", width: "100%" }}>
         <h1 className="display-large" style={{ color: "var(--text-primary)" }}>
           Intelligence.
         </h1>
@@ -88,36 +88,45 @@ export default function AssistantPage() {
       </header>
 
       {/* Editorial Chat Flow */}
-      <main style={{ flex: 1, padding: "0 4vw", maxWidth: "900px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "column", gap: "3rem" }}>
-        {messages.map((m, i) => (
-          <div key={i} className="animate-reveal" style={{ animationDelay: "0.1s" }}>
+      <main style={{ flex: 1, padding: "0 4vw", maxWidth: "900px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "column", gap: "2rem" }}>
+        {messages.map((m, i) => {
+          const isUser = m.role === "user";
+          return (
+          <div key={i} className="animate-reveal" style={{ 
+            animationDelay: "0.1s",
+            alignSelf: isUser ? "flex-end" : "flex-start",
+            maxWidth: "85%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: isUser ? "flex-end" : "flex-start"
+          }}>
             <div className="eyebrow" style={{ 
-              color: m.role === "user" ? "var(--text-tertiary)" : "var(--brand-primary)",
-              marginBottom: "1rem",
+              color: isUser ? "var(--text-tertiary)" : "var(--brand-primary)",
+              marginBottom: "0.5rem",
               display: "flex",
               alignItems: "center",
               gap: "8px"
             }}>
-              {m.role === "assistant" && <Sparkles size={14} />}
-              {m.role === "user" ? "QUERY" : "FINGENIE"}
+              {!isUser && <Sparkles size={14} />}
+              {isUser ? "QUERY" : "FINGENIE"}
             </div>
             
             <div style={{
               fontFamily: "var(--font-body)",
-              fontSize: m.role === "user" ? "1.1rem" : "1rem",
-              fontWeight: m.role === "user" ? 600 : 400,
+              fontSize: isUser ? "1.05rem" : "1rem",
+              fontWeight: isUser ? 500 : 400,
               lineHeight: 1.6,
-              color: m.role === "user" ? "var(--text-primary)" : "var(--text-secondary)",
+              color: isUser ? "var(--bg-primary)" : "var(--text-secondary)",
+              background: isUser ? "var(--text-primary)" : "var(--bg-secondary)",
+              border: isUser ? "none" : "1px solid var(--border-light)",
+              padding: "16px 20px",
+              borderRadius: isUser ? "var(--radius-lg) var(--radius-lg) 0 var(--radius-lg)" : "var(--radius-lg) var(--radius-lg) var(--radius-lg) 0",
+              boxShadow: isUser ? "var(--shadow-hover)" : "none"
             }}>
               {m.content}
             </div>
-            
-            {/* Minimal separator after assistant messages */}
-            {m.role === "assistant" && i < messages.length - 1 && (
-              <div className="rule-horizontal" style={{ opacity: 0.2, marginTop: "3rem", marginBottom: 0 }} />
-            )}
           </div>
-        ))}
+        )})}
 
         {isLoading && (
           <div className="animate-reveal" style={{ animationDelay: "0.1s" }}>
@@ -137,21 +146,29 @@ export default function AssistantPage() {
         <div ref={scrollRef} style={{ height: "1px" }} />
       </main>
 
-      {/* Floating Soft Input */}
+      {/* Floating Soft Input Wrapper */}
       <div className="animate-fade-in-up" style={{
         position: "fixed",
         bottom: "24px",
-        left: "50%",
-        transform: "translateX(-50%)",
-        width: "calc(100% - 48px)",
-        maxWidth: "800px",
-        background: "var(--bg-secondary)",
-        border: "1px solid var(--border-light)",
-        borderRadius: "var(--radius-lg)",
-        padding: "16px",
-        boxShadow: "var(--shadow-hover)",
+        left: "250px", // Exact width of the sidebar
+        right: 0,
+        display: "flex",
+        justifyContent: "center", // Center exactly in the remaining space
+        padding: "0 24px",
+        pointerEvents: "none",
         zIndex: 50,
       }}>
+        {/* Input Card Container */}
+        <div style={{
+          flex: 1,
+          maxWidth: "800px",
+          background: "var(--bg-secondary)",
+          border: "1px solid var(--border-light)",
+          borderRadius: "var(--radius-lg)",
+          padding: "16px",
+          boxShadow: "var(--shadow-hover)",
+          pointerEvents: "auto",
+        }}>
         <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
           <input type="file" id="chat-image-upload" accept="image/*" style={{ display: "none" }} onChange={(e) => { if (e.target.files?.length) alert("Image upload functionality is active but processing requires visual model integration coming in the next update."); e.target.value = ''; }} />
           <button 
@@ -208,7 +225,7 @@ export default function AssistantPage() {
         
         {/* Soft Suggested Actions */}
         <div style={{ margin: "12px 0 0 60px", display: "flex", gap: "12px", flexWrap: "wrap", opacity: (!input.trim() && !isLoading) ? 1 : 0, transition: "opacity 0.2s" }}>
-          {["Analyze my spending", "How can I improve my savings?", "What are my biggest expenses?"].map(text => (
+          {["Analyze spending", "Savings strategy"].map(text => (
             <button 
               key={text}
               onClick={() => { setInput(text); }}
@@ -230,6 +247,7 @@ export default function AssistantPage() {
             </button>
           ))}
         </div>
+      </div>
       </div>
     </div>
   );

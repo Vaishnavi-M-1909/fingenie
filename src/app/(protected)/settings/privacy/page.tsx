@@ -24,7 +24,7 @@ export default function SettingsPrivacyPage() {
   };
 
   return (
-    <div style={{ maxWidth: "640px", width: "100%" }}>
+    <div className="container-editorial" style={{ maxWidth: "800px" }}>
       <h1
         style={{
           fontFamily: "var(--font-display)",
