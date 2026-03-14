@@ -353,19 +353,24 @@ function regexFallback(pdfText: string): ParseResult {
 }
 
 export async function parsePDF(buffer: Buffer): Promise<ParseResult> {
+  console.log("[PDF Parser] Starting PDF parsing...");
+
   // Polyfill browser APIs for Node environments (required by pdfjs-dist used in pdf-parse)
   if (typeof global !== "undefined") {
     if (!(global as any).DOMMatrix) {
+      console.log("[PDF Parser] Polyfilling DOMMatrix");
       (global as any).DOMMatrix = class DOMMatrix {
         constructor() {}
       };
     }
     if (!(global as any).ImageData) {
+      console.log("[PDF Parser] Polyfilling ImageData");
       (global as any).ImageData = class ImageData {
         constructor() {}
       };
     }
     if (!(global as any).Path2D) {
+      console.log("[PDF Parser] Polyfilling Path2D");
       (global as any).Path2D = class Path2D {
         constructor() {}
       };
@@ -374,25 +379,59 @@ export async function parsePDF(buffer: Buffer): Promise<ParseResult> {
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const pdfParseMod = require("pdf-parse");
+  console.log("[PDF Parser] Loaded pdf-parse module");
+
+  // Fix for Vercel: pdf-parse v2 uses a path that fails in serverless environments
+  // We need to ensure the worker is correctly initialized.
+  try {
+    console.log("[PDF Parser] Attempting to initialize worker...");
+    // Try to load the worker directly which is a pattern suggested for some environments
+    try {
+      require("pdf-parse/worker");
+      console.log("[PDF Parser] Successfully required pdf-parse/worker");
+    } catch (e) {
+      console.log("[PDF Parser] Could not require pdf-parse/worker directly, trying manual config...");
+    }
+
+    const PDFJS = pdfParseMod.PDFJS || pdfParseMod.default?.PDFJS;
+    if (PDFJS && PDFJS.GlobalWorkerOptions) {
+      const path = require("path");
+      const workerPath = path.join(process.cwd(), "node_modules", "pdf-parse", "dist", "worker", "pdf.worker.mjs");
+      console.log(`[PDF Parser] Manually configuring worker path: ${workerPath}`);
+      PDFJS.GlobalWorkerOptions.workerSrc = workerPath;
+    } else {
+      console.log("[PDF Parser] PDFJS.GlobalWorkerOptions not found in main module");
+    }
+  } catch (workerErr) {
+    console.error("[PDF Parser] Error during worker initialization:", workerErr);
+  }
+
   let pdfText = "";
 
   // Handle pdf-parse v2 (Class-based API) vs v1 (Function-based API)
   const PDFParseClass = pdfParseMod.PDFParse || pdfParseMod.default?.PDFParse;
 
   if (PDFParseClass) {
+    console.log("[PDF Parser] Using Class-based API (v2)");
     const parser = new PDFParseClass({ data: buffer });
+    // In v2, the getter is usually 'text' or 'getText()'
     const data = await parser.getText();
     pdfText = data.text;
     await parser.destroy();
   } else if (typeof pdfParseMod === "function" || typeof pdfParseMod.default === "function") {
+    console.log("[PDF Parser] Using Function-based API (v1)");
     const parseFn = typeof pdfParseMod === "function" ? pdfParseMod : pdfParseMod.default;
     const data = await parseFn(buffer);
     pdfText = data.text;
   } else {
+    console.error("[PDF Parser] Export structure:", Object.keys(pdfParseMod));
     throw new Error("Could not initialize pdf-parse module. Export not recognized.");
   }
 
+  console.log(`[PDF Parser] Extracted ${pdfText?.length || 0} characters of text`);
+
   if (!pdfText || pdfText.trim().length < 20) {
+    console.warn("[PDF Parser] No text extracted from PDF");
     return {
       transactions: [],
       errors: [{ line: 0, rawText: "", reason: "No text extracted from PDF" }],
