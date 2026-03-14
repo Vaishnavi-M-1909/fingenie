@@ -381,29 +381,20 @@ export async function parsePDF(buffer: Buffer): Promise<ParseResult> {
   const pdfParseMod = require("pdf-parse");
   console.log("[PDF Parser] Loaded pdf-parse module");
 
-  // Fix for Vercel: pdf-parse v2 uses a path that fails in serverless environments
-  // We need to ensure the worker is correctly initialized.
+  // Fix for Vercel: pdf-parse v2 uses a path that fails in serverless environments.
+  // We use the bundled worker Data URL to bypass file system issues.
+  let workerData: string | undefined;
   try {
     console.log("[PDF Parser] Attempting to initialize worker...");
-    // Try to load the worker directly which is a pattern suggested for some environments
-    try {
-      require("pdf-parse/worker");
-      console.log("[PDF Parser] Successfully required pdf-parse/worker");
-    } catch (e) {
-      console.log("[PDF Parser] Could not require pdf-parse/worker directly, trying manual config...");
+    // Use the direct worker entry point which bundles the worker as a Data URL
+    // @typescript-eslint/no-require-imports
+    const worker = require("pdf-parse/worker");
+    if (typeof worker.getData === "function") {
+      workerData = worker.getData();
+      console.log(`[PDF Parser] Extracted Data URL from pdf-parse/worker (length: ${workerData?.length})`);
     }
-
-    const PDFJS = pdfParseMod.PDFJS || pdfParseMod.default?.PDFJS;
-    if (PDFJS && PDFJS.GlobalWorkerOptions) {
-      const path = require("path");
-      const workerPath = path.join(process.cwd(), "node_modules", "pdf-parse", "dist", "worker", "pdf.worker.mjs");
-      console.log(`[PDF Parser] Manually configuring worker path: ${workerPath}`);
-      PDFJS.GlobalWorkerOptions.workerSrc = workerPath;
-    } else {
-      console.log("[PDF Parser] PDFJS.GlobalWorkerOptions not found in main module");
-    }
-  } catch (workerErr) {
-    console.error("[PDF Parser] Error during worker initialization:", workerErr);
+  } catch (e) {
+    console.warn("[PDF Parser] Failed to load Data URL from pdf-parse/worker", e);
   }
 
   let pdfText = "";
@@ -412,9 +403,13 @@ export async function parsePDF(buffer: Buffer): Promise<ParseResult> {
   const PDFParseClass = pdfParseMod.PDFParse || pdfParseMod.default?.PDFParse;
 
   if (PDFParseClass) {
+    if (typeof PDFParseClass.setWorker === "function" && workerData) {
+      console.log("[PDF Parser] Initializing worker via PDFParse.setWorker(Data URL)");
+      PDFParseClass.setWorker(workerData);
+    }
+    
     console.log("[PDF Parser] Using Class-based API (v2)");
     const parser = new PDFParseClass({ data: buffer });
-    // In v2, the getter is usually 'text' or 'getText()'
     const data = await parser.getText();
     pdfText = data.text;
     await parser.destroy();
