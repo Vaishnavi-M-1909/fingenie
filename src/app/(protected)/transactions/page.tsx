@@ -20,8 +20,8 @@ const CATEGORY_COLORS: Record<string, string> = {
   Education: "#38BDF8",
   Entertainment: "#FB923C",
   Transfer: "var(--text-tertiary)",
-  "Cash Withdrawal": "var(--bg-secondary)",
-  Uncategorized: "var(--text-tertiary)",
+  "Cash Withdrawal": "#8B5CF6",
+  Uncategorized: "#EF4444",
 };
 
 function formatCurrency(amount: number) {
@@ -129,7 +129,11 @@ export default function TransactionsPage() {
           className="input"
           value={month}
           onChange={(e) => { setMonth(e.target.value); setPage(1); }}
-          style={{ flex: isMobile ? "1 1 calc(50% - 4px)" : "0 0 auto", width: isMobile ? "auto" : "200px" }}
+          style={{ 
+            flex: isMobile ? "1 1 calc(50% - 4px)" : "0 0 auto", 
+            width: isMobile ? "auto" : "200px",
+            borderLeft: "4px solid var(--text-tertiary)"
+          }}
         >
           <option value="">All Months</option>
           {Array.from({ length: 12 }, (_, i) => {
@@ -144,7 +148,12 @@ export default function TransactionsPage() {
           className="input"
           value={category}
           onChange={(e) => { setCategory(e.target.value); setPage(1); }}
-          style={{ flex: isMobile ? "1 1 calc(50% - 4px)" : "0 0 auto", width: isMobile ? "auto" : "200px" }}
+          style={{ 
+            flex: isMobile ? "1 1 calc(50% - 4px)" : "0 0 auto", 
+            width: isMobile ? "auto" : "200px",
+            borderLeft: "4px solid var(--brand-primary)",
+            fontWeight: 600
+          }}
         >
           <option value="">All Categories</option>
           {CATEGORIES.map((c) => (
@@ -195,7 +204,13 @@ export default function TransactionsPage() {
                           className="input"
                           value={editCategory}
                           onChange={(e) => setEditCategory(e.target.value)}
-                          style={{ padding: "8px 12px", fontSize: "0.85rem", flex: 1 }}
+                          style={{ 
+                            padding: "8px 12px", 
+                            fontSize: "0.85rem", 
+                            flex: 1,
+                            borderLeft: "3px solid var(--brand-primary)",
+                            background: "var(--bg-primary)"
+                          }}
                         >
                           {CATEGORIES.map((c) => (
                             <option key={c} value={c}>{c.toUpperCase()}</option>
@@ -210,7 +225,7 @@ export default function TransactionsPage() {
                       </div>
                     ) : (
                       <>
-                        <span style={{ padding: "4px 8px", background: "var(--bg-primary)", border: `1px solid ${catColor}`, fontFamily: "var(--font-display)", fontSize: "0.75rem", fontWeight: 700, color: catColor, textTransform: "uppercase" }}>
+                        <span className={tx.category === "Uncategorized" ? "animate-pulse-soft" : ""} style={{ padding: "4px 8px", background: "var(--bg-primary)", border: `1px solid ${catColor}`, fontFamily: "var(--font-display)", fontSize: "0.75rem", fontWeight: 700, color: catColor, textTransform: "uppercase" }}>
                           {tx.category}
                         </span>
                         <button
@@ -289,7 +304,14 @@ export default function TransactionsPage() {
                             className="input"
                             value={editCategory}
                             onChange={(e) => setEditCategory(e.target.value)}
-                            style={{ padding: "6px 10px", fontSize: "0.85rem", background: "var(--bg-primary)", color: "var(--text-primary)" }}
+                            style={{ 
+                              padding: "6px 10px", 
+                              fontSize: "0.85rem", 
+                              background: "var(--bg-primary)", 
+                              color: "var(--text-primary)",
+                              borderLeft: "3px solid var(--brand-primary)",
+                              fontWeight: 600
+                            }}
                           >
                             {CATEGORIES.map((c) => (
                               <option key={c} value={c}>{c}</option>
@@ -303,7 +325,24 @@ export default function TransactionsPage() {
                           </button>
                         </div>
                       ) : (
-                        <span style={{ padding: "4px 8px", border: `1px solid ${catColor}`, borderRadius: "var(--radius-sm)", fontFamily: "var(--font-body)", fontSize: "0.75rem", fontWeight: 600, color: catColor }}>
+                        <span 
+                          className={tx.category === "Uncategorized" ? "animate-pulse-soft" : ""}
+                          style={{ 
+                            padding: "6px 10px", 
+                            border: `1px solid ${catColor}`, 
+                            background: tx.category === "Uncategorized" ? `${catColor}15` : "transparent",
+                            borderRadius: "var(--radius-sm)", 
+                            fontFamily: "var(--font-body)", 
+                            fontSize: "0.75rem", 
+                            fontWeight: tx.category === "Uncategorized" ? 800 : 600, 
+                            color: catColor,
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "6px",
+                            boxShadow: tx.category === "Uncategorized" ? `0 0 10px ${catColor}30` : "none"
+                          }}
+                        >
+                          {tx.category === "Uncategorized" && <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: catColor, display: "inline-block" }} />}
                           {tx.category}
                         </span>
                       )}
