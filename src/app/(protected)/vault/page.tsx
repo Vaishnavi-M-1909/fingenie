@@ -14,6 +14,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
+import { useBank } from "@/lib/contexts/BankContext";
 
 type Statement = {
   id: string;
@@ -61,13 +62,18 @@ function StatusBadge({ status }: { status: Statement["status"] }) {
 }
 
 export default function VaultPage() {
+  const { activeBankAccountId } = useBank();
   const [searchQuery, setSearchQuery] = useState("");
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery<{ statements: Statement[] }>({
-    queryKey: ["vault"],
+    queryKey: ["vault", activeBankAccountId],
     queryFn: async () => {
-      const res = await fetch("/api/vault");
+      const url = new URL("/api/vault", window.location.origin);
+      if (activeBankAccountId) {
+        url.searchParams.set("bankAccountId", activeBankAccountId);
+      }
+      const res = await fetch(url.toString());
       if (!res.ok) throw new Error("Failed to fetch vault");
       return res.json();
     },
