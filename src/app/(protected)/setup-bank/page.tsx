@@ -4,9 +4,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Building2, CreditCard, Shield } from "lucide-react";
 import Logo from "@/components/Logo";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useBank } from "@/lib/contexts/BankContext";
 
 export default function SetupBankPage() {
   const router = useRouter();
+  const { setActiveBankAccountId } = useBank();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState({
@@ -17,31 +21,35 @@ export default function SetupBankPage() {
     branch: "",
   });
 
+  const registerMutation = useMutation({
+    mutationFn: async (formData: typeof form) => {
+      const res = await fetch("/api/bank-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to register bank account");
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["bank-accounts"] });
+      if (data.bankAccount?.id) {
+        setActiveBankAccountId(data.bankAccount.id);
+      }
+      router.push("/dashboard");
+    },
+    onError: (err: Error) => {
+      setError(err.message);
+      setLoading(false);
+    }
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
-    try {
-      const res = await fetch("/api/bank-account", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Failed to register bank account");
-        setLoading(false);
-        return;
-      }
-
-      router.push("/dashboard");
-    } catch {
-      setError("Network error. Please try again.");
-      setLoading(false);
-    }
+    registerMutation.mutate(form);
   };
 
   const handleSkip = () => {

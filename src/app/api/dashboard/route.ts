@@ -12,6 +12,7 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const month = searchParams.get("month");
+    const bankAccountId = searchParams.get("bankAccountId");
 
     // Default to current month
     const now = new Date();
@@ -21,11 +22,19 @@ export async function GET(request: Request) {
     const startDate = new Date(year, mon - 1, 1);
     const endDate = new Date(year, mon, 1);
 
+    const where: any = {
+      userId: user.id,
+      date: { gte: startDate, lt: endDate },
+    };
+
+    if (bankAccountId) {
+      where.statement = {
+        bankAccountId: bankAccountId,
+      };
+    }
+
     const transactions = await prisma.transaction.findMany({
-      where: {
-        userId: user.id,
-        date: { gte: startDate, lt: endDate },
-      },
+      where,
       orderBy: { date: "asc" },
     });
 
@@ -45,7 +54,16 @@ export async function GET(request: Request) {
       ? `${latestTransaction.date.getFullYear()}-${String(latestTransaction.date.getMonth() + 1).padStart(2, "0")}`
       : null;
 
-    const accountHolderName = bankAccounts.length > 0 ? bankAccounts[0].accountHolderName : (user.name || null);
+    // Get the account holder name for the specific selection if possible
+    let accountHolderName = user.name || null;
+    if (bankAccountId) {
+      const activeAccount = bankAccounts.find(a => a.id === bankAccountId);
+      if (activeAccount) {
+        accountHolderName = activeAccount.accountHolderName;
+      }
+    } else if (bankAccounts.length > 0) {
+      accountHolderName = bankAccounts[0].accountHolderName;
+    }
 
     if (transactions.length === 0) {
       return NextResponse.json({

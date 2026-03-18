@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import RecommendationCards from "@/components/RecommendationCards";
+import { useBank } from "@/lib/contexts/BankContext";
 
 const COLORS = [
   "var(--brand-primary)", "#FF3B00", "#00E57A", "#FFC700", "#00F0FF",
@@ -53,13 +54,19 @@ function BrutalistStatusBar({ score }: { score: number | null }) {
 }
 
 export default function DashboardPage() {
+  const { activeBankAccountId } = useBank();
   const [currentMonth, setCurrentMonth] = useState(() => getMonthStr(new Date()));
   const hasAutoNavigated = useRef(false);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["dashboard", currentMonth],
+    queryKey: ["dashboard", currentMonth, activeBankAccountId],
     queryFn: async () => {
-      const res = await fetch(`/api/dashboard?month=${currentMonth}`);
+      const url = new URL("/api/dashboard", window.location.origin);
+      url.searchParams.set("month", currentMonth);
+      if (activeBankAccountId) {
+        url.searchParams.set("bankAccountId", activeBankAccountId);
+      }
+      const res = await fetch(url.toString());
       if (!res.ok) throw new Error("Failed to fetch dashboard");
       return res.json();
     },
@@ -106,9 +113,11 @@ export default function DashboardPage() {
             Telemetry.
           </h1>
           <div className="eyebrow" style={{ color: "var(--brand-primary)" }}>
-            {data?.bankAccounts?.length > 0
-              ? `${data.bankAccounts[0].bankName} · ${data.bankAccounts[0].accountNumber}`
-              : "Data aggregation operative"}
+            {activeBankAccountId ? (
+              data?.bankAccounts?.find((a: any) => a.id === activeBankAccountId) 
+                ? `${data.bankAccounts.find((a: any) => a.id === activeBankAccountId).bankName} · ${data.bankAccounts.find((a: any) => a.id === activeBankAccountId).accountNumber}`
+                : "Active account monitoring"
+            ) : "Consolidated financial telemetry"}
           </div>
         </div>
 

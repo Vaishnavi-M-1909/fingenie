@@ -13,10 +13,17 @@ export async function GET(request: Request) {
     const month = searchParams.get("month"); // format: "2026-03"
     const category = searchParams.get("category");
     const search = searchParams.get("search");
+    const bankAccountId = searchParams.get("bankAccountId");
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "50");
 
-    const where: Record<string, unknown> = { userId: user.id };
+    const where: any = { userId: user.id };
+
+    if (bankAccountId) {
+      where.statement = {
+        bankAccountId: bankAccountId,
+      };
+    }
 
     if (month) {
       const [year, mon] = month.split("-").map(Number);

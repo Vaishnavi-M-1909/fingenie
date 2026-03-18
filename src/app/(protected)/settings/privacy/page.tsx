@@ -50,11 +50,7 @@ export default function SettingsPrivacyPage() {
   };
 
   return (
-    <div className="container-editorial animate-reveal" style={{ maxWidth: "800px" }}>
-      <header style={{ marginBottom: "40px" }}>
-        <h1 className="display-large" style={{ marginBottom: "8px" }}>Settings.</h1>
-        <div className="eyebrow" style={{ color: "var(--brand-primary)" }}>Account & Data Governance</div>
-      </header>
+    <div className="animate-reveal">
 
       {/* Data Usage */}
       <div className="editorial-card" style={{ marginBottom: "24px" }}>

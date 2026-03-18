@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { Upload, FileText, CheckCircle, XCircle, AlertTriangle, ArrowRight } from "lucide-react";
+import { useState, useCallback, useEffect } from "react";
+import { Upload, FileText, CheckCircle, XCircle, AlertTriangle, ArrowRight, CreditCard } from "lucide-react";
 import Link from "next/link";
+import { useBank } from "@/lib/contexts/BankContext";
 
 type UploadState = "idle" | "uploading" | "done" | "failed";
 
@@ -18,11 +19,21 @@ interface UploadResult {
 }
 
 export default function UploadPage() {
+  const { bankAccounts, activeBankAccountId } = useBank();
   const [state, setState] = useState<UploadState>("idle");
   const [result, setResult] = useState<UploadResult | null>(null);
   const [fileName, setFileName] = useState("");
   const [dragOver, setDragOver] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [selectedBankAccountId, setSelectedBankAccountId] = useState<string>("");
+
+  useEffect(() => {
+    if (activeBankAccountId) {
+      setSelectedBankAccountId(activeBankAccountId);
+    } else if (bankAccounts.length > 0 && !selectedBankAccountId) {
+      setSelectedBankAccountId(bankAccounts[0].id);
+    }
+  }, [activeBankAccountId, bankAccounts]);
 
   const handleUpload = useCallback(async (file: File) => {
     setFileName(file.name);
@@ -31,6 +42,9 @@ export default function UploadPage() {
 
     const formData = new FormData();
     formData.append("file", file);
+    if (selectedBankAccountId) {
+      formData.append("bankAccountId", selectedBankAccountId);
+    }
 
     try {
       setProgress(50);
@@ -55,7 +69,7 @@ export default function UploadPage() {
       setState("failed");
       setResult({ statementId: "", status: "failed", parsed: 0, failed: 0, total: 0, error: "Network error" });
     }
-  }, []);
+  }, [selectedBankAccountId]);
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
@@ -93,7 +107,46 @@ export default function UploadPage() {
         </p>
       </header>
 
-      <div className="rule-horizontal" style={{ marginBottom: "40px" }} />
+      <div className="rule-horizontal" style={{ marginBottom: "32px" }} />
+
+      {state === "idle" && bankAccounts.length > 0 && (
+        <div style={{ marginBottom: "32px" }}>
+          <label className="eyebrow" style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px", color: "var(--text-secondary)" }}>
+            <CreditCard size={14} /> Target Bank Account
+          </label>
+          <select
+            value={selectedBankAccountId}
+            onChange={(e) => setSelectedBankAccountId(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "14px 18px",
+              background: "var(--bg-secondary)",
+              border: "2px solid var(--border-heavy)",
+              borderRadius: "var(--radius-sm)",
+              fontFamily: "var(--font-body)",
+              fontWeight: 700,
+              fontSize: "1rem",
+              color: "var(--text-primary)",
+              cursor: "pointer",
+              appearance: "none",
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "right 16px center",
+              backgroundSize: "20px"
+            }}
+          >
+            <option value="">Auto-Detect from Statement</option>
+            {bankAccounts.map((account) => (
+              <option key={account.id} value={account.id}>
+                {account.bankName} ({account.accountNumber.slice(-4)})
+              </option>
+            ))}
+          </select>
+          <p style={{ marginTop: "8px", fontSize: "0.8rem", color: "var(--text-tertiary)", fontWeight: 500 }}>
+            Choose which account this statement belongs to. We'll still verify the account number if found.
+          </p>
+        </div>
+      )}
 
       {state === "idle" && (
         <div

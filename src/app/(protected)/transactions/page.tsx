@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Search, Filter, Edit3, Check, X } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useBank } from "@/lib/contexts/BankContext";
 
 const CATEGORIES = [
   "Food & Dining", "Shopping", "Transport", "Subscriptions", "Utilities",
@@ -58,17 +59,19 @@ export default function TransactionsPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const { activeBankAccountId } = useBank();
   const [editCategory, setEditCategory] = useState("");
 
   const queryParams = new URLSearchParams();
   if (month) queryParams.set("month", month);
   if (category) queryParams.set("category", category);
   if (search) queryParams.set("search", search);
+  if (activeBankAccountId) queryParams.set("bankAccountId", activeBankAccountId);
   queryParams.set("page", String(page));
   queryParams.set("limit", "30");
 
   const { data, isLoading } = useQuery({
-    queryKey: ["transactions", month, category, search, page],
+    queryKey: ["transactions", month, category, search, page, activeBankAccountId],
     queryFn: async () => {
       const res = await fetch(`/api/transactions?${queryParams}`);
       if (!res.ok) throw new Error("Failed to fetch");

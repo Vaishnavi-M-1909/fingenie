@@ -17,6 +17,7 @@ export async function POST(request: Request) {
 
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
+    const manualBankAccountId = formData.get("bankAccountId") as string | null;
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -71,7 +72,7 @@ export async function POST(request: Request) {
       }
 
       // Cross-check bank account if metadata was extracted
-      let bankAccountId: string | null = null;
+      let bankAccountId: string | null = manualBankAccountId;
 
       if (parseResult.metadata.bankAccountMeta?.accountNumber) {
         const extractedAccountNumber = parseResult.metadata.bankAccountMeta.accountNumber;
@@ -88,7 +89,7 @@ export async function POST(request: Request) {
           bankAccountId = matchingAccount.id;
           console.log(`[Upload] Statement matched to bank account: ${matchingAccount.bankName} (${extractedAccountNumber})`);
         } else {
-          // REJECT: account does not belong to this user
+          // REJECT: extracted account does not belong to this user
           const registeredAccounts = await prisma.bankAccount.findMany({
             where: { userId: user.id },
             select: { accountNumber: true, bankName: true, accountHolderName: true },
