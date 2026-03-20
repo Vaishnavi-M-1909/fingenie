@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/monthly-reminder?secret=test_secret_123",
+      "schedule": "0 0 1 * *"
+    }
+  ]
+}

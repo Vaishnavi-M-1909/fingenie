@@ -13,25 +13,26 @@ model User {
   name                 String?
   avatarUrl            String?
   createdAt            DateTime              @default(now()) @map("created_at")
+  monthlyReminder      Boolean               @default(false) @map("monthly_reminder")
+  bankAccounts         BankAccount[]
+  chats                Chat[]
+  insights             Insight[]
+  resourceInteractions ResourceInteraction[]
   statements           Statement[]
   transactions         Transaction[]
-  insights             Insight[]
-  chats                Chat[]
-  bankAccounts         BankAccount[]
-  resourceInteractions ResourceInteraction[]
 
   @@map("users")
 }
 
 model Chat {
-  id        String   @id @default(cuid())
-  userId    String   @map("user_id")
-  role      String   // user | assistant
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  role            String
   content         String
+  createdAt       DateTime @default(now()) @map("created_at")
   imageUrl        String?  @map("image_url")
   recommendations Json?
-  createdAt       DateTime @default(now()) @map("created_at")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("chat_messages")
@@ -60,13 +61,13 @@ model Statement {
   filePath         String        @map("file_path")
   originalFilename String        @map("original_filename")
   uploadedAt       DateTime      @default(now()) @map("uploaded_at")
-  status           String        @default("queued") // queued | parsing | done | failed
+  status           String        @default("queued")
   meta             Json?
   bankAccountId    String?       @map("bank_account_id")
-  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  bankAccount      BankAccount?  @relation(fields: [bankAccountId], references: [id], onDelete: SetNull)
-  transactions     Transaction[]
   insights         Insight[]
+  bankAccount      BankAccount?  @relation(fields: [bankAccountId], references: [id])
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions     Transaction[]
 
   @@index([userId])
   @@index([bankAccountId])
@@ -74,18 +75,18 @@ model Statement {
 }
 
 model Transaction {
-  id          String    @id @default(cuid())
-  userId      String    @map("user_id")
-  statementId String?   @map("statement_id")
+  id          String     @id @default(cuid())
+  userId      String     @map("user_id")
+  statementId String?    @map("statement_id")
   date        DateTime
   merchant    String
   amount      Float
-  currency    String    @default("INR")
+  currency    String     @default("INR")
   category    String?
   description String?
-  rawLine     String    @map("raw_line")
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  statement   Statement? @relation(fields: [statementId], references: [id], onDelete: SetNull)
+  rawLine     String     @map("raw_line")
+  statement   Statement? @relation(fields: [statementId], references: [id])
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([date])
@@ -94,16 +95,16 @@ model Transaction {
 }
 
 model Insight {
-  id              String   @id @default(cuid())
-  userId          String   @map("user_id")
-  statementId     String?  @map("statement_id")
-  month           String   // e.g. "2026-03"
+  id              String     @id @default(cuid())
+  userId          String     @map("user_id")
+  statementId     String?    @map("statement_id")
+  month           String
   score           Int?
   summary         String
-  recommendations Json?    // list of {title, url}
-  createdAt       DateTime @default(now()) @map("created_at")
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  statement       Statement? @relation(fields: [statementId], references: [id], onDelete: SetNull)
+  recommendations Json?
+  createdAt       DateTime   @default(now()) @map("created_at")
+  statement       Statement? @relation(fields: [statementId], references: [id])
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([month])
@@ -114,7 +115,7 @@ model MerchantMap {
   id             String @id @default(cuid())
   normalizedName String @unique @map("normalized_name")
   category       String
-  createdBy      String @default("system") @map("created_by") // "system" | userId
+  createdBy      String @default("system") @map("created_by")
 
   @@map("merchant_maps")
 }
@@ -123,8 +124,8 @@ model LearningResource {
   id           String                @id @default(cuid())
   title        String
   description  String
-  type         String                // VIDEO | ARTICLE | BOOK
-  category     String                // Tax, Finance, Spending, Investing, Budgeting, Insurance, Savings
+  type         String
+  category     String
   url          String
   thumbnailUrl String?               @map("thumbnail_url")
   author       String?
@@ -141,10 +142,10 @@ model ResourceInteraction {
   id           String           @id @default(cuid())
   userId       String           @map("user_id")
   resourceId   String           @map("resource_id")
-  type         String           // CLICK | VIEW | COMPLETE
+  type         String
   interactedAt DateTime         @default(now()) @map("interacted_at")
-  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   resource     LearningResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([resourceId])
