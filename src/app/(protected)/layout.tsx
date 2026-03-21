@@ -19,6 +19,7 @@ import { useState, useEffect, type ReactNode } from "react";
 import Logo from "@/components/Logo";
 import { BankProvider } from "@/lib/contexts/BankContext";
 import AccountSwitcher from "@/components/AccountSwitcher";
+import BankStatementReminder from "@/components/BankStatementReminder";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
@@ -72,6 +73,7 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
 
   return (
     <BankProvider>
+      <BankStatementReminder />
       {isMobile ? (
         <div style={{ minHeight: "100vh", position: "relative" }}>
           {/* Mobile Top Bar */}

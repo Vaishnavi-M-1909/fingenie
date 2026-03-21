@@ -346,3 +346,19 @@ a:hover {
 .animate-pulse-soft {
   animation: pulse-soft 2s infinite ease-in-out;
 }
+
+/* ── Bank Statement Reminder Popup ── */
+@keyframes reminderSlideIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.92); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes reminderSlideOut {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  to { opacity: 0; transform: translate(-50%, -50%) scale(0.92); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
