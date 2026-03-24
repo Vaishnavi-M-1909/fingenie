@@ -19,8 +19,10 @@ const COLORS = [
   "#0A0A0A", "#4A4A48", "#1700FF"
 ];
 
+const RUPEE = "\u20B9";
+
 function formatCurrency(amount: number) {
-  return `₹${Math.abs(amount).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
+  return `${RUPEE}${Math.abs(amount).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
 }
 
 function getMonthStr(date: Date) {
@@ -120,7 +122,7 @@ export default function DashboardPage() {
           <div className="eyebrow" style={{ color: "var(--brand-primary)" }}>
             {activeBankAccountId ? (
               data?.bankAccounts?.find((a: any) => a.id === activeBankAccountId) 
-                ? `${data.bankAccounts.find((a: any) => a.id === activeBankAccountId).bankName} · ${data.bankAccounts.find((a: any) => a.id === activeBankAccountId).accountNumber}`
+                ? `${data.bankAccounts.find((a: any) => a.id === activeBankAccountId).bankName} - ${data.bankAccounts.find((a: any) => a.id === activeBankAccountId).accountNumber}`
                 : "Active account monitoring"
             ) : "Consolidated financial telemetry"}
           </div>
@@ -184,7 +186,7 @@ export default function DashboardPage() {
               <div style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 4vw, 3.5rem)", fontWeight: 800, color: "var(--text-primary)", lineHeight: 1, letterSpacing: "-0.03em" }}>
                 {data?.accountBalances?.some((a: { currentBalance: number | null }) => a.currentBalance !== null)
                   ? formatCurrency(data?.totalBankAmount || 0)
-                  : "â€”"}
+                  : "-"}
               </div>
               <div style={{ fontSize: "0.85rem", color: "var(--text-tertiary)", marginTop: "8px", fontFamily: "var(--font-body)", fontWeight: 500 }}>
                 Latest available balance {activeBankAccountId ? "for the selected account" : "across linked accounts"}
@@ -204,7 +206,7 @@ export default function DashboardPage() {
                 Your highest spending category this month
               </div>
               <div style={{ marginTop: "auto", paddingTop: "16px", fontFamily: "var(--font-body)", fontSize: "1.25rem", fontWeight: 700, color: "var(--brand-primary)" }}>
-                {pieData[0] ? formatCurrency(pieData[0].value as number) : "—"}
+                {pieData[0] ? formatCurrency(pieData[0].value as number) : "-"}
               </div>
             </div>
 
@@ -248,14 +250,14 @@ export default function DashboardPage() {
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--border-light)" vertical={false} />
                     <XAxis
                       dataKey="date"
-                      tickFormatter={(v) => String(new Date(v).getDate()).padStart(2, "0")}
+                      tickFormatter={(v) => formatCurrency(v)}
                       stroke="var(--text-tertiary)"
                       tick={{ fill: "var(--text-secondary)", fontSize: 12, fontWeight: 600, fontFamily: "var(--font-body)" }}
                       axisLine={{ stroke: "var(--border-light)", strokeWidth: 1 }}
                       tickLine={{ stroke: "var(--border-light)", strokeWidth: 1 }}
                     />
                     <YAxis
-                      tickFormatter={(v) => `₹${v.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`}
+                      tickFormatter={(v) => formatCurrency(v)}
                       stroke="var(--text-tertiary)"
                       tick={{ fill: "var(--text-secondary)", fontSize: 10, fontWeight: 600, fontFamily: "var(--font-body)" }}
                       axisLine={{ stroke: "var(--border-light)", strokeWidth: 1 }}
@@ -320,7 +322,7 @@ export default function DashboardPage() {
                       )}
                     </div>
                     <div style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", fontWeight: 700, color: "var(--text-tertiary)" }}>
-                      {tx.balance !== null && tx.balance !== undefined ? `Bal ${formatCurrency(tx.balance)}` : tx.category || "â€”"}
+                      {tx.balance !== null && tx.balance !== undefined ? `Bal ${formatCurrency(tx.balance)}` : tx.category || "-"}
                     </div>
                     <div style={{ textAlign: "right", fontFamily: "var(--font-display)", fontSize: "1.1rem", fontWeight: 800, color: tx.amount < 0 ? "var(--accent-coral)" : "var(--brand-primary)" }}>
                       {formatSignedCurrency(tx.amount)}

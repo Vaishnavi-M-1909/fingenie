@@ -30,7 +30,11 @@ const RUPEE = "\u20B9";
 function formatCurrency(amount: number) {
   const sign = amount < 0 ? "-" : "+";
   const color = amount < 0 ? "var(--accent-coral)" : "var(--brand-primary)";
-  return { text: `${sign}₹${Math.abs(amount).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`, color };
+  return { text: `${sign}${RUPEE}${Math.abs(amount).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`, color };
+}
+
+function formatBalance(amount: number) {
+  return `${RUPEE}${amount.toLocaleString("en-IN", { maximumFractionDigits: 2, minimumFractionDigits: 2 })}`;
 }
 
 interface Transaction {
@@ -183,7 +187,7 @@ export default function TransactionsPage() {
             <p style={{ color: "var(--text-secondary)", fontFamily: "var(--font-body)", fontWeight: 500 }}>Try adjusting your search or filters</p>
           </div>
         ) : isMobile ? (
-          /* ─── MOBILE: Brutalist Card Layout ─── */
+          /* MOBILE: Brutalist Card Layout */
           <div style={{ display: "flex", flexDirection: "column", background: "var(--border-heavy)", gap: "2px" }}>
             {data.transactions.map((tx: Transaction) => {
               const { text, color } = formatCurrency(tx.amount);
@@ -205,7 +209,7 @@ export default function TransactionsPage() {
                   </div>
                   {tx.balance !== null && tx.balance !== undefined && (
                     <div style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", fontWeight: 700, color: "var(--text-tertiary)" }}>
-                      Balance {`â‚¹${tx.balance.toLocaleString("en-IN", { maximumFractionDigits: 2, minimumFractionDigits: 2 })}`}
+                      Balance {formatBalance(tx.balance)}
                     </div>
                   )}
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -253,7 +257,7 @@ export default function TransactionsPage() {
             })}
           </div>
         ) : (
-          /* ─── DESKTOP: Stark Table Layout ─── */
+          /* DESKTOP: Stark Table Layout */
           <>
             {/* Header */}
             <div
@@ -361,8 +365,8 @@ export default function TransactionsPage() {
                     </div>
                     <span style={{ textAlign: "right", fontWeight: 700, fontFamily: "var(--font-body)", color: "var(--text-secondary)", fontSize: "0.95rem" }}>
                       {tx.balance !== null && tx.balance !== undefined
-                        ? `â‚¹${tx.balance.toLocaleString("en-IN", { maximumFractionDigits: 2, minimumFractionDigits: 2 })}`
-                        : "â€”"}
+                        ? formatBalance(tx.balance)
+                        : "-"}
                     </span>
                     <span style={{ textAlign: "right", fontWeight: 700, fontFamily: "var(--font-display)", color, fontSize: "1.1rem" }}>
                       {text}
