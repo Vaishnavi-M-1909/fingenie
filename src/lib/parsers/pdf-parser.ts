@@ -127,6 +127,167 @@ function parseDateString(dateStr: string): Date | null {
   return isNaN(fallback.getTime()) ? null : fallback;
 }
 
+function sanitizeJsonCandidate(value: string): string {
+  return value
+    .replace(/^\uFEFF/, "")
+    .replace(/[“”]/g, "\"")
+    .replace(/[‘’]/g, "'")
+    .replace(/,\s*([}\]])/g, "$1")
+    .trim();
+}
+
+function extractJsonPayload(content: string): string {
+  let jsonStr = content.trim();
+  const jsonMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (jsonMatch) {
+    jsonStr = jsonMatch[1].trim();
+  }
+
+  const jsonStart = jsonStr.indexOf("{");
+  const jsonEnd = jsonStr.lastIndexOf("}");
+  if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+    jsonStr = jsonStr.substring(jsonStart, jsonEnd + 1);
+  }
+
+  return sanitizeJsonCandidate(jsonStr);
+}
+
+function extractJsonSection(source: string, key: string, openChar: "{" | "[", closeChar: "}" | "]"): string | null {
+  const keyIndex = source.indexOf(`"${key}"`);
+  if (keyIndex === -1) return null;
+
+  const start = source.indexOf(openChar, keyIndex);
+  if (start === -1) return null;
+
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+
+  for (let i = start; i < source.length; i++) {
+    const ch = source[i];
+
+    if (inString) {
+      if (escaped) {
+        escaped = false;
+      } else if (ch === "\\") {
+        escaped = true;
+      } else if (ch === "\"") {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (ch === "\"") {
+      inString = true;
+      continue;
+    }
+
+    if (ch === openChar) {
+      depth++;
+      continue;
+    }
+
+    if (ch === closeChar) {
+      depth--;
+      if (depth === 0) {
+        return source.slice(start, i + 1);
+      }
+    }
+  }
+
+  return null;
+}
+
+function recoverPartialTransactions(arraySource: string | null): Array<Record<string, unknown>> {
+  if (!arraySource) return [];
+
+  const recovered: Array<Record<string, unknown>> = [];
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  let objectStart = -1;
+
+  for (let i = 0; i < arraySource.length; i++) {
+    const ch = arraySource[i];
+
+    if (inString) {
+      if (escaped) {
+        escaped = false;
+      } else if (ch === "\\") {
+        escaped = true;
+      } else if (ch === "\"") {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (ch === "\"") {
+      inString = true;
+      continue;
+    }
+
+    if (ch === "{") {
+      if (depth === 0) {
+        objectStart = i;
+      }
+      depth++;
+      continue;
+    }
+
+    if (ch === "}") {
+      depth--;
+      if (depth === 0 && objectStart !== -1) {
+        const candidate = sanitizeJsonCandidate(arraySource.slice(objectStart, i + 1));
+        try {
+          const parsed = JSON.parse(candidate);
+          if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+            recovered.push(parsed as Record<string, unknown>);
+          }
+        } catch {
+          break;
+        }
+        objectStart = -1;
+      }
+    }
+  }
+
+  return recovered;
+}
+
+function recoverPartialAiPayload(jsonStr: string): { accountInfo?: Record<string, unknown>; transactions?: Array<Record<string, unknown>> } | null {
+  const accountInfoSource = extractJsonSection(jsonStr, "accountInfo", "{", "}");
+  const transactionsSource = extractJsonSection(jsonStr, "transactions", "[", "]");
+
+  let accountInfo: Record<string, unknown> | undefined;
+  if (accountInfoSource) {
+    try {
+      accountInfo = JSON.parse(sanitizeJsonCandidate(accountInfoSource));
+    } catch {
+      accountInfo = undefined;
+    }
+  }
+
+  const transactions = recoverPartialTransactions(transactionsSource);
+  if (!accountInfo && transactions.length === 0) {
+    return null;
+  }
+
+  return {
+    accountInfo,
+    transactions,
+  };
+}
+
+function asOptionalString(value: unknown): string | undefined {
+  return typeof value === "string" && value.trim() ? value : undefined;
+}
+
+function parseLooseAmount(value: unknown): number {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") return parseFloat(value);
+  return NaN;
+}
+
 async function parseWithAI(pdfText: string): Promise<ParseResult> {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) throw new Error("OPENROUTER_API_KEY is not set");
@@ -164,21 +325,21 @@ async function parseWithAI(pdfText: string): Promise<ParseResult> {
     throw new Error("Empty response from AI model");
   }
 
-  // Extract JSON from response (handle markdown fences)
-  let jsonStr = content.trim();
-  const jsonMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
-  if (jsonMatch) {
-    jsonStr = jsonMatch[1].trim();
-  }
+  const jsonStr = extractJsonPayload(content);
 
-  // Try to find JSON object in the response
-  const jsonStart = jsonStr.indexOf("{");
-  const jsonEnd = jsonStr.lastIndexOf("}");
-  if (jsonStart !== -1 && jsonEnd !== -1) {
-    jsonStr = jsonStr.substring(jsonStart, jsonEnd + 1);
+  let parsed: { accountInfo?: Record<string, unknown>; transactions?: Array<Record<string, unknown>> };
+  try {
+    parsed = JSON.parse(jsonStr);
+  } catch (error) {
+    const recovered = recoverPartialAiPayload(jsonStr);
+    if (!recovered) {
+      throw error;
+    }
+    console.warn(
+      `[PDF Parser] Recovered ${recovered.transactions?.length || 0} transactions from malformed AI JSON`
+    );
+    parsed = recovered;
   }
-
-  const parsed = JSON.parse(jsonStr);
 
   const transactions: ParsedTransaction[] = [];
   const errors: ParserError[] = [];
@@ -186,16 +347,18 @@ async function parseWithAI(pdfText: string): Promise<ParseResult> {
   const bankAccountMeta: BankAccountMeta = {};
   if (parsed.accountInfo) {
     const info = parsed.accountInfo;
-    bankAccountMeta.accountHolderName = info.accountHolderName || undefined;
-    bankAccountMeta.accountNumber = info.accountNumber || undefined;
-    bankAccountMeta.ifscCode = info.ifscCode || undefined;
-    bankAccountMeta.bankName = info.bankName || undefined;
-    bankAccountMeta.branch = info.branch || undefined;
-    bankAccountMeta.customerId = info.customerId || undefined;
-    if (info.statementPeriodFrom || info.statementPeriodTo) {
+    bankAccountMeta.accountHolderName = asOptionalString(info.accountHolderName);
+    bankAccountMeta.accountNumber = asOptionalString(info.accountNumber);
+    bankAccountMeta.ifscCode = asOptionalString(info.ifscCode);
+    bankAccountMeta.bankName = asOptionalString(info.bankName);
+    bankAccountMeta.branch = asOptionalString(info.branch);
+    bankAccountMeta.customerId = asOptionalString(info.customerId);
+    const statementPeriodFrom = asOptionalString(info.statementPeriodFrom);
+    const statementPeriodTo = asOptionalString(info.statementPeriodTo);
+    if (statementPeriodFrom || statementPeriodTo) {
       bankAccountMeta.statementPeriod = {
-        from: info.statementPeriodFrom || undefined,
-        to: info.statementPeriodTo || undefined,
+        from: statementPeriodFrom,
+        to: statementPeriodTo,
       };
     }
   }
@@ -204,18 +367,19 @@ async function parseWithAI(pdfText: string): Promise<ParseResult> {
     for (let i = 0; i < parsed.transactions.length; i++) {
       const tx = parsed.transactions[i];
       try {
-        const date = parseDateString(tx.date);
+        const dateValue = asOptionalString(tx.date);
+        const date = parseDateString(dateValue || "");
         if (!date) {
           errors.push({
             line: i + 1,
             rawText: JSON.stringify(tx),
-            reason: `Invalid date: ${tx.date}`,
+            reason: `Invalid date: ${dateValue || "unknown"}`,
           });
           continue;
         }
 
-        const debit = typeof tx.debit === "number" ? tx.debit : parseFloat(tx.debit);
-        const credit = typeof tx.credit === "number" ? tx.credit : parseFloat(tx.credit);
+        const debit = parseLooseAmount(tx.debit);
+        const credit = parseLooseAmount(tx.credit);
 
         let amount: number;
         if (!isNaN(debit) && debit > 0) {
@@ -232,9 +396,9 @@ async function parseWithAI(pdfText: string): Promise<ParseResult> {
         }
 
         // Build description from available fields
-        const description = tx.description || tx.remarks || "";
-        const counterparty = tx.counterparty || "";
-        const txType = tx.transactionType || "";
+        const description = asOptionalString(tx.description) || asOptionalString(tx.remarks) || "";
+        const counterparty = asOptionalString(tx.counterparty) || "";
+        const txType = asOptionalString(tx.transactionType) || "";
 
         // Use counterparty as merchant if available, otherwise normalize description
         const rawMerchant = counterparty || description;
@@ -245,7 +409,7 @@ async function parseWithAI(pdfText: string): Promise<ParseResult> {
         const richDescription = [
           txType && `[${txType}]`,
           description,
-          tx.referenceNumber && `Ref: ${tx.referenceNumber}`,
+          asOptionalString(tx.referenceNumber) && `Ref: ${asOptionalString(tx.referenceNumber)}`,
         ]
           .filter(Boolean)
           .join(" ");
