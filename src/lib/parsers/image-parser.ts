@@ -5,6 +5,8 @@ import { categorizeTransaction, normalizeMerchant } from "./normalizer";
 
 const RECEIPT_HEADER = "Date,Merchant,Amount,Category,Description";
 const BANK_STATEMENT_HEADER = "Date,Description,Debit,Credit,Balance,Counterparty,TransactionType,ReferenceNumber";
+const VISION_REQUEST_TIMEOUT_MS = 45_000;
+const VISION_MAX_RETRIES = 2;
 
 type OCRBankCandidate = {
   line: number;
@@ -12,6 +14,17 @@ type OCRBankCandidate = {
   tx: ParsedTransaction;
   balance: number | null;
 };
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function isTransientVisionFailure(status: number, errorText: string): boolean {
+  if ([408, 409, 425, 429, 500, 502, 503, 504].includes(status)) return true;
+
+  const normalized = errorText.toLowerCase();
+  return normalized.includes("aborted") || normalized.includes("timeout") || normalized.includes("temporar");
+}
 
 function parseDate(value: string): Date | null {
   if (!value) return null;
@@ -352,23 +365,15 @@ export async function parseImage(base64Image: string, mimeType: string) {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) throw new Error("OPENROUTER_API_KEY is not set. Contact administrator.");
 
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey.trim()}`,
-      "Content-Type": "application/json",
-      "HTTP-Referer": process.env.NEXT_PUBLIC_SUPABASE_URL || "http://localhost:3000",
-      "X-Title": "FinGenie",
-    },
-    body: JSON.stringify({
-      model: "qwen/qwen2.5-vl-72b-instruct",
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: `You are a financial document parser. Analyze this image carefully. It could be either a BANK STATEMENT page or a RECEIPT/BILL.
+  const requestBody = JSON.stringify({
+    model: "qwen/qwen2.5-vl-72b-instruct",
+    messages: [
+      {
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: `You are a financial document parser. Analyze this image carefully. It could be either a BANK STATEMENT page or a RECEIPT/BILL.
 
 OUTPUT FORMAT: Respond with ONLY valid CSV text. No markdown fences. No explanation.
 
@@ -406,24 +411,73 @@ Rules for RECEIPT/BILL:
 === IF NOT A FINANCIAL DOCUMENT ===
 Return only:
 ${RECEIPT_HEADER}`
+          },
+          {
+            type: "image_url",
+            image_url: {
+              url: `data:${mimeType};base64,${base64Image}`,
             },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:${mimeType};base64,${base64Image}`,
-              },
-            },
-          ],
-        },
-      ],
-      max_tokens: 4096,
-      temperature: 0.1,
-    }),
+          },
+        ],
+      },
+    ],
+    max_tokens: 4096,
+    temperature: 0.1,
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`OpenRouter Vision API error: ${response.status} - ${errorText}`);
+  let response: Response | null = null;
+  let lastError: Error | null = null;
+
+  for (let attempt = 0; attempt <= VISION_MAX_RETRIES; attempt++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), VISION_REQUEST_TIMEOUT_MS);
+
+    try {
+      response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey.trim()}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": process.env.NEXT_PUBLIC_SUPABASE_URL || "http://localhost:3000",
+          "X-Title": "FinGenie",
+        },
+        body: requestBody,
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        if (attempt < VISION_MAX_RETRIES && isTransientVisionFailure(response.status, errorText)) {
+          console.warn(
+            `[Image Parser] Vision request failed with ${response.status} on attempt ${attempt + 1}; retrying...`
+          );
+          await sleep(750 * (attempt + 1));
+          continue;
+        }
+        throw new Error(`OpenRouter Vision API error: ${response.status} - ${errorText}`);
+      }
+
+      lastError = null;
+      break;
+    } catch (error) {
+      clearTimeout(timeout);
+      const message = error instanceof Error ? error.message : String(error);
+      const isAbort = message.toLowerCase().includes("abort");
+
+      if (attempt < VISION_MAX_RETRIES && isAbort) {
+        console.warn(`[Image Parser] Vision request timed out on attempt ${attempt + 1}; retrying...`);
+        await sleep(750 * (attempt + 1));
+        continue;
+      }
+
+      lastError = error instanceof Error ? error : new Error(message);
+      break;
+    }
+  }
+
+  if (!response) {
+    throw lastError || new Error("Vision request failed before receiving a response");
   }
 
   const data = await response.json();

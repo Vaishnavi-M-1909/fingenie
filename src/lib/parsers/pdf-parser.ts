@@ -444,6 +444,7 @@ async function parseRenderedPdfPagesWithAI(parser: {
   }
 
   const pageResults: Array<{ pageNumber: number; result: ParseResult }> = [];
+  const pageErrors: ParserError[] = [];
 
   for (const page of screenshotResult.pages) {
     if (!page.data || page.data.length === 0) {
@@ -451,11 +452,33 @@ async function parseRenderedPdfPagesWithAI(parser: {
     }
 
     console.log(`[PDF Parser] OCR parsing rendered page ${page.pageNumber}...`);
-    const pageResult = await parseImage(Buffer.from(page.data).toString("base64"), "image/png");
-    pageResults.push({ pageNumber: page.pageNumber, result: pageResult });
+    try {
+      const pageResult = await parseImage(Buffer.from(page.data).toString("base64"), "image/png");
+      pageResults.push({ pageNumber: page.pageNumber, result: pageResult });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn(`[PDF Parser] OCR failed for rendered page ${page.pageNumber}: ${message}`);
+      pageErrors.push({
+        line: page.pageNumber,
+        rawText: `rendered-page-${page.pageNumber}`,
+        reason: `OCR failed for rendered page ${page.pageNumber}: ${message}`,
+      });
+    }
+  }
+
+  if (pageResults.length === 0) {
+    return {
+      transactions: [],
+      errors: pageErrors.length > 0
+        ? pageErrors
+        : [{ line: 0, rawText: "", reason: "OCR fallback did not yield any successfully parsed pages" }],
+      metadata: { totalRows: 0, parsedRows: 0, failedRows: pageErrors.length },
+    };
   }
 
   const combined = mergeParseResults(pageResults);
+  combined.errors.push(...pageErrors);
+  combined.metadata.failedRows += pageErrors.length;
   console.log(`[PDF Parser] OCR fallback parsed ${combined.transactions.length} transactions`);
   return combined;
 }

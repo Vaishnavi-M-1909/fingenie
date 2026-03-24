@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Upload, FileText, CheckCircle, XCircle, AlertTriangle, ArrowRight, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { useBank } from "@/lib/contexts/BankContext";
@@ -19,6 +20,7 @@ interface UploadResult {
 }
 
 export default function UploadPage() {
+  const queryClient = useQueryClient();
   const { bankAccounts, activeBankAccountId } = useBank();
   const [state, setState] = useState<UploadState>("idle");
   const [result, setResult] = useState<UploadResult | null>(null);
@@ -63,13 +65,19 @@ export default function UploadPage() {
       }
 
       setProgress(100);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["dashboard"] }),
+        queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+        queryClient.invalidateQueries({ queryKey: ["vault"] }),
+        queryClient.invalidateQueries({ queryKey: ["insights"] }),
+      ]);
       setState(data.status === "done" ? "done" : "failed");
       setResult(data);
     } catch {
       setState("failed");
       setResult({ statementId: "", status: "failed", parsed: 0, failed: 0, total: 0, error: "Network error" });
     }
-  }, [selectedBankAccountId]);
+  }, [queryClient, selectedBankAccountId]);
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {

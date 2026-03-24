@@ -13,16 +13,25 @@ const EXPENSE_CATEGORIES = new Set([
 ]);
 
 const EXPENSE_PATTERN =
-  /\b(debit|withdrawal|withdrawn|atm|cash withdrawal|purchase|pos|spent|paid|bill(?:pay)?|charge|fee|emi|autodebit|auto debit|debit card|withdrawal\s*\(dr\.?\)|upi\/.*\/dr\b|neft\/?.*\/dr\b|imps\/?.*\/dr\b|ach[- ]?dr|sent to|transfer to)\b/i;
+  /\b(debit|withdrawal|withdrawn|atm|cash withdrawal|purchase|pos|spent|paid|bill(?:pay)?|charge|fee|emi|autodebit|auto debit|debit card|withdrawal\s*\(dr\.?\)|upi\/.*\/dr\b|neft\/?.*\/dr\b|imps\/?.*\/dr\b|ach[- ]?dr|sent to|transfer to|to transfer|wdl(?:\s+tfr|\s+trf|\s+transfer)?|\bdr\b)\b/i;
 
 const CREDIT_PATTERN =
-  /\b(credit|credited|deposit|cash deposit|refund|reversal|salary|interest|cashback|reward|received|deposit\s*\(cr\.?\)|upi\/.*\/cr\b|neft\/?.*\/cr\b|imps\/?.*\/cr\b|ach[- ]?cr|transfer from|received from)\b/i;
+  /\b(credit|credited|deposit|cash deposit|refund|reversal|salary|interest|cashback|reward|received|deposit\s*\(cr\.?\)|upi\/.*\/cr\b|neft\/?.*\/cr\b|imps\/?.*\/cr\b|ach[- ]?cr|transfer from|received from|by transfer|by cash|by cheque|dep(?:\s+tfr|\s+trf|\s+transfer)?|\bcr\b)\b/i;
 
-const EXPLICIT_DEBIT_FIELD_PATTERN =
-  /"debit"\s*:\s*"?([1-9][\d,]*(?:\.\d+)?)"?|"withdrawal"\s*:\s*"?([1-9][\d,]*(?:\.\d+)?)"?|\bwithdrawal\s*\(dr\.?\)\b/i;
+const EXPLICIT_DEBIT_AMOUNT_PATTERNS = [
+  /"debit"\s*:\s*"?([1-9][\d,]*(?:\.\d+)?)"?/gi,
+  /"withdrawal"\s*:\s*"?([1-9][\d,]*(?:\.\d+)?)"?/gi,
+  /\bwithdrawal\s*\(dr\.?\)\b[^0-9-]*([1-9][\d,]*(?:\.\d+)?)/gi,
+];
 
-const EXPLICIT_CREDIT_FIELD_PATTERN =
-  /"credit"\s*:\s*"?([1-9][\d,]*(?:\.\d+)?)"?|"deposit"\s*:\s*"?([1-9][\d,]*(?:\.\d+)?)"?|\bdeposit\s*\(cr\.?\)\b/i;
+const EXPLICIT_CREDIT_AMOUNT_PATTERNS = [
+  /"credit"\s*:\s*"?([1-9][\d,]*(?:\.\d+)?)"?/gi,
+  /"deposit"\s*:\s*"?([1-9][\d,]*(?:\.\d+)?)"?/gi,
+  /\bdeposit\s*\(cr\.?\)\b[^0-9-]*([1-9][\d,]*(?:\.\d+)?)/gi,
+];
+
+const EXPLICIT_DEBIT_TAG_PATTERN = /(?:^|[\s|:/(-])(?:dr|debit|withdrawal|wdl(?:\s+tfr|\s+trf|\s+transfer)?)(?:$|[\s|:/).-])/i;
+const EXPLICIT_CREDIT_TAG_PATTERN = /(?:^|[\s|:/(-])(?:cr|credit|credited|deposit|dep(?:\s+tfr|\s+trf|\s+transfer)?)(?:$|[\s|:/).-])/i;
 
 export interface TransactionSignLike {
   amount: number;
@@ -42,6 +51,29 @@ function parseLooseNumber(value: string): number | null {
   if (!cleaned) return null;
   const parsed = parseFloat(cleaned);
   return Number.isFinite(parsed) ? parsed : null;
+}
+
+function amountMatches(a: number, b: number): boolean {
+  return Math.abs(a - b) <= 0.01;
+}
+
+function hasMatchingAmountField(text: string, patterns: RegExp[], baseAmount: number): boolean {
+  for (const pattern of patterns) {
+    pattern.lastIndex = 0;
+    let match: RegExpExecArray | null;
+    while ((match = pattern.exec(text)) !== null) {
+      const value = parseLooseNumber(match[1] || "");
+      if (value !== null && amountMatches(Math.abs(value), baseAmount)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function looksStructured(rawLine: string | null | undefined): boolean {
+  const text = (rawLine || "").trim();
+  return text.startsWith("{") || text.startsWith("[") || /"(?:debit|credit|withdrawal|deposit|balance)"/i.test(text);
 }
 
 export function extractTransactionBalance(tx: TransactionBalanceLike): number | null {
@@ -70,26 +102,42 @@ export function normalizeTransactionSign<T extends TransactionSignLike>(tx: T): 
     return tx;
   }
 
-  const text = [tx.description, tx.rawLine, tx.merchant]
+  const narrativeText = [tx.description, tx.merchant]
     .filter(Boolean)
     .join(" ")
     .toLowerCase();
+  const rawLineText = (tx.rawLine || "").toLowerCase();
+  const signalText = [narrativeText, looksStructured(tx.rawLine) ? null : rawLineText]
+    .filter(Boolean)
+    .join(" ");
 
-  const hasExpenseSignal = EXPENSE_PATTERN.test(text);
-  const hasCreditSignal = CREDIT_PATTERN.test(text);
-  const hasExplicitDebitField = EXPLICIT_DEBIT_FIELD_PATTERN.test(text);
-  const hasExplicitCreditField = EXPLICIT_CREDIT_FIELD_PATTERN.test(text);
+  const hasExplicitDebitField =
+    hasMatchingAmountField(rawLineText, EXPLICIT_DEBIT_AMOUNT_PATTERNS, baseAmount) ||
+    EXPLICIT_DEBIT_TAG_PATTERN.test(signalText);
+  const hasExplicitCreditField =
+    hasMatchingAmountField(rawLineText, EXPLICIT_CREDIT_AMOUNT_PATTERNS, baseAmount) ||
+    EXPLICIT_CREDIT_TAG_PATTERN.test(signalText);
+  const hasExpenseSignal = EXPENSE_PATTERN.test(signalText);
+  const hasCreditSignal = CREDIT_PATTERN.test(signalText);
   const isExpenseCategory = !!tx.category && EXPENSE_CATEGORIES.has(tx.category);
 
+  if (hasExplicitCreditField && !hasExplicitDebitField) {
+    return tx.amount < 0 ? { ...tx, amount: baseAmount } : tx;
+  }
+
+  if (hasExplicitDebitField && !hasExplicitCreditField) {
+    return tx.amount > 0 ? { ...tx, amount: -baseAmount } : tx;
+  }
+
   if (tx.amount > 0) {
-    if ((hasExplicitDebitField || isExpenseCategory || hasExpenseSignal) && !hasExplicitCreditField && !hasCreditSignal) {
+    if ((hasExpenseSignal || isExpenseCategory) && !hasCreditSignal) {
       return { ...tx, amount: -baseAmount };
     }
     return tx;
   }
 
   if (tx.amount < 0) {
-    if ((hasExplicitCreditField || hasCreditSignal) && !hasExplicitDebitField && !hasExpenseSignal && !isExpenseCategory) {
+    if (hasCreditSignal && !hasExpenseSignal) {
       return { ...tx, amount: baseAmount };
     }
   }
