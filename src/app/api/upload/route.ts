@@ -5,8 +5,89 @@ import { getUser } from "@/lib/auth";
 import { parseCSV } from "@/lib/parsers/csv-parser";
 import { parsePDF } from "@/lib/parsers/pdf-parser";
 import { parseImage } from "@/lib/parsers/image-parser";
+import type { ParsedTransaction } from "@/lib/parsers/types";
+import { normalizeTransactionSign } from "@/lib/transactions/sign";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+function normalizeSignaturePart(value: string | null | undefined): string {
+  return (value || "").replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+function buildTransactionSignature(tx: {
+  date: Date;
+  merchant: string;
+  amount: number;
+  currency: string;
+  description?: string | null;
+  rawLine: string;
+}): string {
+  return [
+    tx.date.toISOString().slice(0, 10),
+    normalizeSignaturePart(tx.merchant),
+    tx.amount.toFixed(2),
+    normalizeSignaturePart(tx.currency),
+    normalizeSignaturePart(tx.description),
+    normalizeSignaturePart(tx.rawLine),
+  ].join("|");
+}
+
+async function dedupeTransactionsForUser(userId: string, transactions: ParsedTransaction[]) {
+  if (transactions.length === 0) {
+    return { uniqueTransactions: [], duplicateCount: 0 };
+  }
+
+  const uniqueMerchants = [...new Set(transactions.map((tx) => tx.merchant))];
+  const uniqueAmounts = [...new Set(transactions.map((tx) => tx.amount))];
+
+  const minDate = new Date(Math.min(...transactions.map((tx) => tx.date.getTime())));
+  const maxDate = new Date(Math.max(...transactions.map((tx) => tx.date.getTime())));
+  minDate.setHours(0, 0, 0, 0);
+  maxDate.setHours(23, 59, 59, 999);
+
+  const existingTransactions = await prisma.transaction.findMany({
+    where: {
+      userId,
+      date: {
+        gte: minDate,
+        lte: maxDate,
+      },
+      merchant: {
+        in: uniqueMerchants,
+      },
+      amount: {
+        in: uniqueAmounts,
+      },
+    },
+    select: {
+      date: true,
+      merchant: true,
+      amount: true,
+      currency: true,
+      description: true,
+      rawLine: true,
+    },
+  });
+
+  const existingSignatures = new Set(existingTransactions.map((tx) => buildTransactionSignature(tx)));
+  const uploadSeenSignatures = new Set<string>();
+  const uniqueTransactions: ParsedTransaction[] = [];
+  let duplicateCount = 0;
+
+  for (const tx of transactions) {
+    const signature = buildTransactionSignature(tx);
+
+    if (existingSignatures.has(signature) || uploadSeenSignatures.has(signature)) {
+      duplicateCount++;
+      continue;
+    }
+
+    uploadSeenSignatures.add(signature);
+    uniqueTransactions.push(tx);
+  }
+
+  return { uniqueTransactions, duplicateCount };
+}
 
 export async function POST(request: Request) {
   try {
@@ -70,6 +151,13 @@ export async function POST(request: Request) {
         const base64 = Buffer.from(arrayBuffer).toString("base64");
         parseResult = await parseImage(base64, file.type);
       }
+
+      parseResult.transactions = parseResult.transactions.map((tx) => normalizeTransactionSign(tx));
+
+      const { uniqueTransactions, duplicateCount } = await dedupeTransactionsForUser(user.id, parseResult.transactions);
+      parseResult.transactions = uniqueTransactions;
+      parseResult.metadata.parsedRows = uniqueTransactions.length;
+      parseResult.metadata.failedRows += duplicateCount;
 
       // Cross-check bank account if metadata was extracted
       let bankAccountId: string | null = manualBankAccountId;
@@ -141,12 +229,13 @@ export async function POST(request: Request) {
       await prisma.statement.update({
         where: { id: statement.id },
         data: {
-          status: parseResult.transactions.length > 0 ? "done" : "failed",
+          status: parseResult.transactions.length > 0 || duplicateCount > 0 ? "done" : "failed",
           bankAccountId: bankAccountId,
           meta: JSON.parse(JSON.stringify({
             totalRows: parseResult.metadata.totalRows,
             parsedRows: parseResult.metadata.parsedRows,
             failedRows: parseResult.metadata.failedRows,
+            duplicateRows: duplicateCount,
             bankName: parseResult.metadata.bankName,
             bankAccountMeta: parseResult.metadata.bankAccountMeta,
             errors: parseResult.errors.slice(0, 10),
@@ -156,9 +245,10 @@ export async function POST(request: Request) {
 
       return NextResponse.json({
         statementId: statement.id,
-        status: parseResult.transactions.length > 0 ? "done" : "failed",
+        status: parseResult.transactions.length > 0 || duplicateCount > 0 ? "done" : "failed",
         parsed: parseResult.metadata.parsedRows,
         failed: parseResult.metadata.failedRows,
+        duplicates: duplicateCount,
         total: parseResult.metadata.totalRows,
         bankName: parseResult.metadata.bankName,
       });

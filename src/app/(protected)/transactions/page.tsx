@@ -38,6 +38,7 @@ interface Transaction {
   amount: number;
   category: string;
   description?: string;
+  balance?: number | null;
 }
 
 function useIsMobile() {
@@ -200,6 +201,11 @@ export default function TransactionsPage() {
                       {text}
                     </span>
                   </div>
+                  {tx.balance !== null && tx.balance !== undefined && (
+                    <div style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", fontWeight: 700, color: "var(--text-tertiary)" }}>
+                      Balance {`â‚¹${tx.balance.toLocaleString("en-IN", { maximumFractionDigits: 2, minimumFractionDigits: 2 })}`}
+                    </div>
+                  )}
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     {isEditing ? (
                       <div style={{ display: "flex", gap: "8px", alignItems: "center", flex: 1 }}>
@@ -251,7 +257,7 @@ export default function TransactionsPage() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "100px 1fr 200px 140px 80px",
+                gridTemplateColumns: "100px 1fr 160px 140px 140px 80px",
                 gap: "24px",
                 padding: "20px 32px",
                 borderBottom: "1px solid var(--border-light)",
@@ -261,6 +267,7 @@ export default function TransactionsPage() {
               <span className="eyebrow" style={{ color: "var(--text-secondary)" }}>Date</span>
               <span className="eyebrow" style={{ color: "var(--text-secondary)" }}>Merchant</span>
               <span className="eyebrow" style={{ color: "var(--text-secondary)" }}>Category</span>
+              <span className="eyebrow" style={{ textAlign: "right", color: "var(--text-secondary)" }}>Balance</span>
               <span className="eyebrow" style={{ textAlign: "right", color: "var(--text-secondary)" }}>Amount</span>
               <span />
             </div>
@@ -277,7 +284,7 @@ export default function TransactionsPage() {
                     key={tx.id}
                     style={{
                       display: "grid",
-                      gridTemplateColumns: "100px 1fr 200px 140px 80px",
+                      gridTemplateColumns: "100px 1fr 160px 140px 140px 80px",
                       gap: "24px",
                       padding: "20px 32px",
                       borderBottom: "1px solid var(--border-light)",
@@ -350,6 +357,11 @@ export default function TransactionsPage() {
                         </span>
                       )}
                     </div>
+                    <span style={{ textAlign: "right", fontWeight: 700, fontFamily: "var(--font-body)", color: "var(--text-secondary)", fontSize: "0.95rem" }}>
+                      {tx.balance !== null && tx.balance !== undefined
+                        ? `â‚¹${tx.balance.toLocaleString("en-IN", { maximumFractionDigits: 2, minimumFractionDigits: 2 })}`
+                        : "â€”"}
+                    </span>
                     <span style={{ textAlign: "right", fontWeight: 700, fontFamily: "var(--font-display)", color, fontSize: "1.1rem" }}>
                       {text}
                     </span>

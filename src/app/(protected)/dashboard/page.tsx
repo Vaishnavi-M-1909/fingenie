@@ -27,6 +27,11 @@ function getMonthStr(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
 
+function formatSignedCurrency(amount: number) {
+  const sign = amount < 0 ? "-" : "+";
+  return `${sign}${formatCurrency(amount)}`;
+}
+
 function getMonthLabel(monthStr: string) {
   const [y, m] = monthStr.split("-").map(Number);
   return new Date(y, m - 1).toLocaleDateString("en-IN", { month: "short", year: "numeric" }).toUpperCase();
@@ -174,6 +179,21 @@ export default function DashboardPage() {
               </div>
             </div>
 
+            <div className="editorial-card editorial-card-hover" style={{ display: "flex", flexDirection: "column" }}>
+              <div className="eyebrow" style={{ marginBottom: "1rem" }}>Total Bank Amount</div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 4vw, 3.5rem)", fontWeight: 800, color: "var(--text-primary)", lineHeight: 1, letterSpacing: "-0.03em" }}>
+                {data?.accountBalances?.some((a: { currentBalance: number | null }) => a.currentBalance !== null)
+                  ? formatCurrency(data?.totalBankAmount || 0)
+                  : "â€”"}
+              </div>
+              <div style={{ fontSize: "0.85rem", color: "var(--text-tertiary)", marginTop: "8px", fontFamily: "var(--font-body)", fontWeight: 500 }}>
+                Latest available balance {activeBankAccountId ? "for the selected account" : "across linked accounts"}
+              </div>
+              <div style={{ marginTop: "auto", paddingTop: "16px", fontFamily: "var(--font-display)", fontSize: "14px", fontWeight: 700, color: "var(--brand-primary)", textTransform: "uppercase" }}>
+                {data?.accountBalances?.filter((a: { currentBalance: number | null }) => a.currentBalance !== null).length || 0} Balance Signals
+              </div>
+            </div>
+
             {/* Top Category */}
             <div className="editorial-card editorial-card-hover" style={{ display: "flex", flexDirection: "column" }}>
               <div className="eyebrow" style={{ marginBottom: "1rem" }}>Primary Node</div>
@@ -266,6 +286,52 @@ export default function DashboardPage() {
                     />
                   </AreaChart>
                 </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="editorial-card" style={{ padding: "0", overflow: "hidden" }}>
+              <div style={{ padding: "24px 32px", borderBottom: "1px solid var(--border-light)", background: "var(--bg-primary)" }}>
+                <h3 className="eyebrow" style={{ color: "var(--brand-primary)" }}>Recent Ledger</h3>
+              </div>
+              <div>
+                {(data?.recentLedger || []).map((tx: { id: string; date: string; merchant: string; amount: number; category?: string; balance?: number | null; description?: string }, i: number) => (
+                  <div
+                    key={tx.id || `${tx.merchant}-${tx.date}-${i}`}
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "110px minmax(0, 1fr) 160px 140px",
+                      gap: "16px",
+                      padding: "18px 32px",
+                      borderBottom: "1px solid var(--border-light)",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div style={{ fontFamily: "var(--font-body)", fontSize: "0.9rem", fontWeight: 700, color: "var(--text-secondary)" }}>
+                      {new Date(tx.date).toLocaleDateString("en-IN", { day: "2-digit", month: "short" }).toUpperCase()}
+                    </div>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontFamily: "var(--font-body)", fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {tx.merchant}
+                      </div>
+                      {tx.description && (
+                        <div style={{ fontFamily: "var(--font-body)", fontSize: "0.8rem", color: "var(--text-tertiary)", marginTop: "4px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {tx.description}
+                        </div>
+                      )}
+                    </div>
+                    <div style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", fontWeight: 700, color: "var(--text-tertiary)" }}>
+                      {tx.balance !== null && tx.balance !== undefined ? `Bal ${formatCurrency(tx.balance)}` : tx.category || "â€”"}
+                    </div>
+                    <div style={{ textAlign: "right", fontFamily: "var(--font-display)", fontSize: "1.1rem", fontWeight: 800, color: tx.amount < 0 ? "var(--accent-coral)" : "var(--brand-primary)" }}>
+                      {formatSignedCurrency(tx.amount)}
+                    </div>
+                  </div>
+                ))}
+                {(!data?.recentLedger || data.recentLedger.length === 0) && (
+                  <div style={{ padding: "32px", color: "var(--text-tertiary)", fontFamily: "var(--font-body)", fontWeight: 600 }}>
+                    NO LEDGER EVENTS FOR THIS PERIOD
+                  </div>
+                )}
               </div>
             </div>
 

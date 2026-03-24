@@ -1,4 +1,352 @@
+import Papa from "papaparse";
 import { parseCSV } from "./csv-parser";
+import type { BankAccountMeta, ParseResult, ParsedTransaction, ParserError } from "./types";
+import { categorizeTransaction, normalizeMerchant } from "./normalizer";
+
+const RECEIPT_HEADER = "Date,Merchant,Amount,Category,Description";
+const BANK_STATEMENT_HEADER = "Date,Description,Debit,Credit,Balance,Counterparty,TransactionType,ReferenceNumber";
+
+type OCRBankCandidate = {
+  line: number;
+  rawText: string;
+  tx: ParsedTransaction;
+  balance: number | null;
+};
+
+function parseDate(value: string): Date | null {
+  if (!value) return null;
+
+  const cleaned = value
+    .trim()
+    .replace(/[Oo]/g, "0")
+    .replace(/[Il|]/g, "1");
+
+  const dmyMatch = cleaned.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+  if (dmyMatch) {
+    const day = parseInt(dmyMatch[1], 10);
+    const month = parseInt(dmyMatch[2], 10) - 1;
+    let year = parseInt(dmyMatch[3], 10);
+    if (year < 100) year += 2000;
+    const date = new Date(year, month, day);
+    if (!isNaN(date.getTime())) return date;
+  }
+
+  const isoMatch = cleaned.match(/^(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})$/);
+  if (isoMatch) {
+    const date = new Date(
+      parseInt(isoMatch[1], 10),
+      parseInt(isoMatch[2], 10) - 1,
+      parseInt(isoMatch[3], 10)
+    );
+    if (!isNaN(date.getTime())) return date;
+  }
+
+  const fallback = new Date(cleaned);
+  return isNaN(fallback.getTime()) ? null : fallback;
+}
+
+function normalizeNumericString(value: string): string {
+  let cleaned = value
+    .trim()
+    .replace(/[\u20B9,\s]/g, "")
+    .replace(/(?:rs\.?|inr)/gi, "")
+    .replace(/[\u2013\u2014]/g, "-")
+    .replace(/[OoQqDd]/g, "0")
+    .replace(/[Il|]/g, "1")
+    .replace(/[Ss]/g, "5")
+    .replace(/[Bb]/g, "8");
+
+  cleaned = cleaned.replace(/(\.)(?=.*\.)/g, "");
+  cleaned = cleaned.replace(/[^0-9().+-]/g, "");
+
+  return cleaned;
+}
+
+function parseNumber(value: string): number | null {
+  if (!value) return null;
+
+  const cleaned = normalizeNumericString(value);
+  if (!cleaned) return null;
+
+  const normalized = cleaned.replace(/\(([^)]+)\)/, "-$1");
+  const parsed = parseFloat(normalized);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function cleanModelOutput(content: string): string {
+  let cleaned = content.trim();
+  if (cleaned.startsWith("```")) {
+    cleaned = cleaned.replace(/```(?:csv|json)?/i, "");
+    cleaned = cleaned.replace(/```$/, "");
+    cleaned = cleaned.trim();
+  }
+  return cleaned;
+}
+
+function extractBankMetadata(content: string): {
+  csvContent: string;
+  bankMeta: Record<string, string> | null;
+  pageKind: "TRANSACTION" | "NON_TRANSACTION";
+} {
+  const lines = content.split("\n").map((line) => line.trim()).filter(Boolean);
+  const metaLine = lines.find((line) => line.startsWith("#BANK_STATEMENT"));
+
+  if (!metaLine) {
+    return {
+      csvContent: content,
+      bankMeta: null,
+      pageKind: "TRANSACTION",
+    };
+  }
+
+  const bankMeta: Record<string, string> = {};
+  const parts = metaLine.split("|").slice(1);
+
+  for (const part of parts) {
+    const [key, ...valueParts] = part.split("=");
+    if (key && valueParts.length > 0) {
+      bankMeta[key.trim()] = valueParts.join("=").trim();
+    }
+  }
+
+  return {
+    csvContent: lines.filter((line) => !line.startsWith("#")).join("\n"),
+    bankMeta,
+    pageKind: bankMeta.PageKind === "NON_TRANSACTION" ? "NON_TRANSACTION" : "TRANSACTION",
+  };
+}
+
+function buildBankAccountMeta(bankMeta: Record<string, string> | null): BankAccountMeta | undefined {
+  if (!bankMeta) return undefined;
+
+  return {
+    accountHolderName: bankMeta.AccountHolder || undefined,
+    accountNumber: bankMeta.AccountNumber || undefined,
+    ifscCode: bankMeta.IFSC || undefined,
+    bankName: bankMeta.BankName || undefined,
+  };
+}
+
+function isRepeatedHeaderRow(row: Record<string, string>): boolean {
+  const date = (row.Date || "").trim().toLowerCase();
+  const description = (row.Description || "").trim().toLowerCase();
+  return date === "date" || description === "description";
+}
+
+function isNearlyEqual(a: number, b: number, tolerance: number): boolean {
+  return Math.abs(a - b) <= tolerance;
+}
+
+function amountTolerance(amount: number): number {
+  return Math.max(2, Math.abs(amount) * 0.02);
+}
+
+function applyBalanceValidation(candidates: OCRBankCandidate[]): {
+  transactions: ParsedTransaction[];
+  errors: ParserError[];
+} {
+  const suspicionCounts = new Array(candidates.length).fill(0);
+  let ascendingMatches = 0;
+  let descendingMatches = 0;
+
+  for (let i = 0; i < candidates.length - 1; i++) {
+    const current = candidates[i];
+    const next = candidates[i + 1];
+
+    if (current.balance === null || next.balance === null) continue;
+
+    const delta = next.balance - current.balance;
+    if (isNearlyEqual(delta, next.tx.amount, amountTolerance(next.tx.amount))) {
+      ascendingMatches++;
+    }
+    if (isNearlyEqual(-delta, current.tx.amount, amountTolerance(current.tx.amount))) {
+      descendingMatches++;
+    }
+  }
+
+  const direction =
+    ascendingMatches === 0 && descendingMatches === 0
+      ? null
+      : ascendingMatches >= descendingMatches
+        ? "ascending"
+        : "descending";
+
+  if (direction) {
+    for (let i = 0; i < candidates.length - 1; i++) {
+      const current = candidates[i];
+      const next = candidates[i + 1];
+
+      if (current.balance === null || next.balance === null) continue;
+
+      const delta = next.balance - current.balance;
+      if (direction === "ascending") {
+        if (!isNearlyEqual(delta, next.tx.amount, amountTolerance(next.tx.amount))) {
+          suspicionCounts[i + 1]++;
+        }
+      } else if (!isNearlyEqual(-delta, current.tx.amount, amountTolerance(current.tx.amount))) {
+        suspicionCounts[i]++;
+      }
+    }
+  }
+
+  const transactions: ParsedTransaction[] = [];
+  const errors: ParserError[] = [];
+
+  for (let i = 0; i < candidates.length; i++) {
+    const candidate = candidates[i];
+    const suspicion = suspicionCounts[i];
+
+    if (suspicion >= 2) {
+      errors.push({
+        line: candidate.line,
+        rawText: candidate.rawText,
+        reason: "Row rejected because amount does not match running balance progression",
+      });
+      continue;
+    }
+
+    if (suspicion === 1) {
+      candidate.tx.confidence = Math.min(candidate.tx.confidence, 0.55);
+    }
+
+    transactions.push(candidate.tx);
+  }
+
+  return { transactions, errors };
+}
+
+function parseBankStatementCsv(
+  csvContent: string,
+  bankMeta: Record<string, string> | null,
+  pageKind: "TRANSACTION" | "NON_TRANSACTION"
+): ParseResult {
+  const bankAccountMeta = buildBankAccountMeta(bankMeta);
+  const bankName = bankAccountMeta?.bankName;
+
+  if (pageKind === "NON_TRANSACTION") {
+    return {
+      transactions: [],
+      errors: [],
+      metadata: {
+        totalRows: 0,
+        parsedRows: 0,
+        failedRows: 0,
+        bankName,
+        bankAccountMeta,
+      },
+    };
+  }
+
+  const parsed = Papa.parse<Record<string, string>>(csvContent, {
+    header: true,
+    skipEmptyLines: true,
+    transformHeader: (header) => header.trim(),
+  });
+
+  const rows = parsed.data || [];
+  const candidates: OCRBankCandidate[] = [];
+  const errors: ParserError[] = [];
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i] || {};
+    if (isRepeatedHeaderRow(row)) continue;
+
+    const rawLine = [
+      row.Date,
+      row.Description,
+      row.Debit,
+      row.Credit,
+      row.Balance,
+      row.Counterparty,
+      row.TransactionType,
+      row.ReferenceNumber,
+    ]
+      .filter(Boolean)
+      .join(" | ");
+
+    const description = (row.Description || "").trim();
+    const counterparty = (row.Counterparty || "").trim();
+    const txType = (row.TransactionType || "").trim().toUpperCase();
+    const referenceNumber = (row.ReferenceNumber || "").trim();
+
+    const debit = parseNumber(row.Debit || "");
+    const credit = parseNumber(row.Credit || "");
+    const balance = parseNumber(row.Balance || "");
+
+    if (!description && !counterparty && debit === null && credit === null) {
+      continue;
+    }
+
+    const date = parseDate(row.Date || "");
+    if (!date) {
+      errors.push({ line: i + 2, rawText: rawLine, reason: "Invalid transaction date" });
+      continue;
+    }
+
+    if (debit !== null && credit !== null) {
+      errors.push({ line: i + 2, rawText: rawLine, reason: "Both debit and credit were present" });
+      continue;
+    }
+
+    if (debit === null && credit === null) {
+      errors.push({ line: i + 2, rawText: rawLine, reason: "No debit or credit amount found" });
+      continue;
+    }
+
+    const amount = debit !== null ? -Math.abs(debit) : Math.abs(credit!);
+    if (!Number.isFinite(amount) || Math.abs(amount) > 1_00_00_00_000) {
+      errors.push({ line: i + 2, rawText: rawLine, reason: "Amount looks invalid" });
+      continue;
+    }
+
+    const merchantSeed = counterparty || description || "Unknown";
+    const merchant = normalizeMerchant(merchantSeed) || "Unknown";
+    const category =
+      categorizeTransaction(merchant) ||
+      categorizeTransaction(description) ||
+      (txType === "ATM" ? "Cash Withdrawal" : undefined) ||
+      "Uncategorized";
+
+    const richDescription = [
+      txType && `[${txType}]`,
+      description,
+      referenceNumber && `Ref: ${referenceNumber}`,
+      balance !== null && `Bal: ${balance.toFixed(2)}`,
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    candidates.push({
+      line: i + 2,
+      rawText: rawLine,
+      balance,
+      tx: {
+        date,
+        merchant,
+        amount,
+        currency: "INR",
+        category,
+        description: richDescription || description || undefined,
+        rawLine,
+        confidence: balance !== null ? 0.82 : 0.72,
+      },
+    });
+  }
+
+  const validated = applyBalanceValidation(candidates);
+
+  return {
+    transactions: validated.transactions,
+    errors: [...errors, ...validated.errors],
+    metadata: {
+      totalRows: rows.length,
+      parsedRows: validated.transactions.length,
+      failedRows: errors.length + validated.errors.length,
+      bankName,
+      bankAccountMeta,
+    },
+  };
+}
 
 export async function parseImage(base64Image: string, mimeType: string) {
   const apiKey = process.env.OPENROUTER_API_KEY;
@@ -20,63 +368,59 @@ export async function parseImage(base64Image: string, mimeType: string) {
           content: [
             {
               type: "text",
-              text: `You are a financial document parser. Analyze this image carefully. It could be either a BANK STATEMENT or a RECEIPT/BILL.
+              text: `You are a financial document parser. Analyze this image carefully. It could be either a BANK STATEMENT page or a RECEIPT/BILL.
 
-STEP 1: Determine if this is a BANK STATEMENT or a RECEIPT.
-- Bank statements have: account number, multiple transaction rows with dates, debit/credit columns, running balance, bank header/logo.
-- Receipts have: single merchant, itemized list of purchases, total amount.
-
-STEP 2: Extract data based on the document type.
-
-OUTPUT FORMAT: Respond with ONLY a valid CSV. No other text.
+OUTPUT FORMAT: Respond with ONLY valid CSV text. No markdown fences. No explanation.
 
 === IF BANK STATEMENT ===
-First line must be a METADATA comment line starting with #:
-#BANK_STATEMENT|AccountHolder=<name>|AccountNumber=<number>|IFSC=<code>|BankName=<bank>
+First line must be:
+#BANK_STATEMENT|PageKind=<TRANSACTION or NON_TRANSACTION>|AccountHolder=<name>|AccountNumber=<number>|IFSC=<code>|BankName=<bank>
 
-Then the CSV header and data rows:
-Date,Merchant,Amount,Category,Description
+Then output this CSV header exactly:
+${BANK_STATEMENT_HEADER}
 
-Rules for bank statement extraction:
-- Date: MUST be in YYYY-MM-DD format.
-- For each transaction row, create one CSV line.
-- Merchant: Extract the counterparty name from the remarks/narration.
-  * For UPI like "UPI/519586/DR/ASHUTO/PUNB/964889/Paid v" → Merchant = "ASHUTO"
-  * For NEFT/IMPS like "NEFT/CR/RAHUL/BKID/rahulraj/UPI" → Merchant = "RAHUL"
-  * For SOL/internal transfers → Merchant = "Bank Transfer"
-- Amount: MUST be negative for debits (outflow), positive for credits (inflow).
-- Category: Assign ONE of: Transfer, Cash Withdrawal, Groceries, Food & Dining, Shopping, Transport, Subscriptions, Utilities, Healthcare, Entertainment, Education, Personal Care, Travel, Other.
-  * UPI/NEFT/IMPS payments to people → "Transfer"
-  * ATM withdrawals → "Cash Withdrawal"
-- Description: Include the full narration/remarks text from the statement AND the transaction type (UPI/NEFT/IMPS/RTGS/etc).
+Rules for BANK STATEMENT pages:
+- Extract ONLY transaction-table rows. Ignore welcome pages, account summaries, branch info, profile blocks, ads, totals, cards, charts, and dashboard balances.
+- If this page has no transaction table, set PageKind=NON_TRANSACTION and return only the metadata line plus the header, with no data rows.
+- Copy digits exactly as visible. Do NOT estimate, normalize, sum, or invent numbers. If a number is unclear, leave that field blank.
+- Put money only in Debit or Credit, never both.
+- Preserve the running Balance exactly as shown when present.
+- Keep one CSV row per actual transaction row.
+- If a narration wraps across lines, append it to the same transaction row instead of creating a new one.
+- Date must be DD-MM-YYYY or YYYY-MM-DD.
+- Counterparty should be the extracted payee/payer name when visible, otherwise blank.
+- TransactionType should be one of UPI, NEFT, IMPS, RTGS, ATM, CASH, CHEQUE, OTHER when visible, otherwise blank.
+- ReferenceNumber should contain UTR/ref/id when visible, otherwise blank.
 
 === IF RECEIPT/BILL ===
-Output CSV with header:
-Date,Merchant,Amount,Category,Description
+Output this header exactly:
+${RECEIPT_HEADER}
 
-Rules:
-- Date: MUST be in YYYY-MM-DD format. Assume current year if missing.
-- Merchant: Extract the store or service name.
-- Amount: MUST be negative for expenditures.
-- Category: Assign ONE of: Groceries, Food & Dining, Shopping, Transport, Subscriptions, Utilities, Healthcare, Entertainment, Education, Personal Care, Travel, Other.
-- Description: Brief detail (e.g., "Grocery items", "Monthly Internet"). DO NOT just repeat Merchant name.
+Rules for RECEIPT/BILL:
+- Date must be YYYY-MM-DD.
+- Merchant is the store/service name.
+- Amount must be negative for spend.
+- Category must be one of: Groceries, Food & Dining, Shopping, Transport, Subscriptions, Utilities, Healthcare, Entertainment, Education, Personal Care, Travel, Other.
+- Description should be short and useful.
 
 === IF NOT A FINANCIAL DOCUMENT ===
-Output just the header: Date,Merchant,Amount,Category,Description`
+Return only:
+${RECEIPT_HEADER}`
             },
             {
               type: "image_url",
               image_url: {
-                url: `data:${mimeType};base64,${base64Image}`
-              }
-            }
-          ]
-        }
+                url: `data:${mimeType};base64,${base64Image}`,
+              },
+            },
+          ],
+        },
       ],
       max_tokens: 4096,
-    })
+      temperature: 0.1,
+    }),
   });
-  
+
   if (!response.ok) {
     const errorText = await response.text();
     throw new Error(`OpenRouter Vision API error: ${response.status} - ${errorText}`);
@@ -84,49 +428,24 @@ Output just the header: Date,Merchant,Amount,Category,Description`
 
   const data = await response.json();
   const content = data.choices?.[0]?.message?.content || "";
-  
-  // Clean up content to just be CSV (remove markdown fences if present)
-  let csvContent = content.trim();
-  if (csvContent.startsWith("```")) {
-    csvContent = csvContent.replace(/```(?:csv)?/i, "");
-    csvContent = csvContent.replace(/```$/, "");
-    csvContent = csvContent.trim();
+  let csvContent = cleanModelOutput(content);
+
+  if (!csvContent || csvContent.length < 10) {
+    csvContent = RECEIPT_HEADER;
   }
 
-  // Extract bank statement metadata from the #BANK_STATEMENT comment line
-  let bankMeta: Record<string, string> | null = null;
-  const lines = csvContent.split("\n");
-  const metaLine = lines.find((l: string) => l.startsWith("#BANK_STATEMENT"));
-  if (metaLine) {
-    bankMeta = {};
-    const parts = metaLine.split("|").slice(1); // skip the #BANK_STATEMENT part
-    for (const part of parts) {
-      const [key, ...valueParts] = part.split("=");
-      if (key && valueParts.length > 0) {
-        bankMeta[key.trim()] = valueParts.join("=").trim();
-      }
-    }
-    // Remove the meta line from CSV content
-    csvContent = lines.filter((l: string) => !l.startsWith("#")).join("\n");
+  const { csvContent: bodyContent, bankMeta, pageKind } = extractBankMetadata(csvContent);
+
+  if (bankMeta || bodyContent.includes(BANK_STATEMENT_HEADER)) {
+    return parseBankStatementCsv(bodyContent, bankMeta, pageKind);
   }
-  
-  // If it's an empty output or doesn't have the header, provide a basic structure
-  if (!csvContent || csvContent.length < 15) {
-      csvContent = "Date,Merchant,Amount,Category,Description";
+
+  if (!bodyContent.includes(RECEIPT_HEADER)) {
+    csvContent = RECEIPT_HEADER;
+  } else {
+    csvContent = bodyContent;
   }
 
   const result = parseCSV(csvContent);
-
-  // Attach bank metadata if found
-  if (bankMeta) {
-    result.metadata.bankAccountMeta = {
-      accountHolderName: bankMeta["AccountHolder"] || undefined,
-      accountNumber: bankMeta["AccountNumber"] || undefined,
-      ifscCode: bankMeta["IFSC"] || undefined,
-      bankName: bankMeta["BankName"] || undefined,
-    };
-    result.metadata.bankName = bankMeta["BankName"];
-  }
-
   return result;
 }

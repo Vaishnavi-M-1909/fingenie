@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
+import { extractTransactionBalance, normalizeTransactionSign } from "@/lib/transactions/sign";
 
 export async function GET(request: Request) {
   try {
@@ -54,8 +55,16 @@ export async function GET(request: Request) {
       prisma.transaction.count({ where }),
     ]);
 
+    const normalizedTransactions = transactions.map((tx) => {
+      const normalized = normalizeTransactionSign(tx);
+      return {
+        ...normalized,
+        balance: extractTransactionBalance(normalized),
+      };
+    });
+
     return NextResponse.json({
-      transactions,
+      transactions: normalizedTransactions,
       pagination: {
         page,
         limit,

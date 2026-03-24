@@ -1,5 +1,6 @@
 import type { ParseResult, ParsedTransaction, ParserError, BankAccountMeta } from "./types";
 import { normalizeMerchant, categorizeTransaction } from "./normalizer";
+import { parseImage } from "./image-parser";
 
 const BANK_STATEMENT_PROMPT = `You are a financial document parser. Analyze this bank statement text and extract ALL information into a structured JSON object.
 
@@ -64,6 +65,8 @@ const MONTH_MAP: Record<string, number> = {
 };
 
 const AMOUNT_PATTERN = /[\d,]+\.\d{2}/g;
+const MIN_TEXT_WARNING_THRESHOLD = 20;
+const MAX_PDF_OCR_PAGES = 8;
 
 function parseDateFromLine(line: string): Date | null {
   for (const pattern of DATE_PATTERNS) {
@@ -352,6 +355,111 @@ function regexFallback(pdfText: string): ParseResult {
   };
 }
 
+function mergeBankAccountMeta(
+  current: BankAccountMeta | undefined,
+  next: BankAccountMeta | undefined
+): BankAccountMeta | undefined {
+  if (!current && !next) return undefined;
+
+  return {
+    accountHolderName: current?.accountHolderName || next?.accountHolderName,
+    accountNumber: current?.accountNumber || next?.accountNumber,
+    ifscCode: current?.ifscCode || next?.ifscCode,
+    bankName: current?.bankName || next?.bankName,
+    branch: current?.branch || next?.branch,
+    customerId: current?.customerId || next?.customerId,
+    statementPeriod: current?.statementPeriod || next?.statementPeriod,
+  };
+}
+
+function mergeParseResults(results: Array<{ pageNumber: number; result: ParseResult }>): ParseResult {
+  const transactions: ParsedTransaction[] = [];
+  const errors: ParserError[] = [];
+  let bankName: string | undefined;
+  let bankAccountMeta: BankAccountMeta | undefined;
+  let totalRows = 0;
+  let parsedRows = 0;
+  let failedRows = 0;
+
+  for (const { pageNumber, result } of results) {
+    transactions.push(...result.transactions);
+    totalRows += result.metadata.totalRows;
+    parsedRows += result.metadata.parsedRows;
+    failedRows += result.metadata.failedRows;
+
+    if (!bankName) {
+      bankName = result.metadata.bankName;
+    }
+    bankAccountMeta = mergeBankAccountMeta(bankAccountMeta, result.metadata.bankAccountMeta);
+
+    for (const error of result.errors) {
+      errors.push({
+        ...error,
+        rawText: `[Page ${pageNumber}] ${error.rawText}`,
+      });
+    }
+  }
+
+  return {
+    transactions,
+    errors,
+    metadata: {
+      totalRows,
+      parsedRows,
+      failedRows,
+      bankName,
+      bankAccountMeta,
+    },
+  };
+}
+
+async function parseRenderedPdfPagesWithAI(parser: {
+  getScreenshot: (params?: Record<string, unknown>) => Promise<{
+    total: number;
+    pages: Array<{ pageNumber: number; data: Uint8Array }>;
+  }>;
+}): Promise<ParseResult> {
+  console.log("[PDF Parser] Attempting OCR fallback via rendered PDF pages...");
+
+  const screenshotResult = await parser.getScreenshot({
+    first: MAX_PDF_OCR_PAGES,
+    scale: 2,
+    imageBuffer: true,
+    imageDataUrl: false,
+  });
+
+  if (!screenshotResult.pages || screenshotResult.pages.length === 0) {
+    console.warn("[PDF Parser] OCR fallback could not render any pages");
+    return {
+      transactions: [],
+      errors: [{ line: 0, rawText: "", reason: "Could not render PDF pages for OCR fallback" }],
+      metadata: { totalRows: 0, parsedRows: 0, failedRows: 0 },
+    };
+  }
+
+  if (screenshotResult.total > screenshotResult.pages.length) {
+    console.warn(
+      `[PDF Parser] OCR fallback limited to first ${screenshotResult.pages.length} of ${screenshotResult.total} pages`
+    );
+  }
+
+  const pageResults: Array<{ pageNumber: number; result: ParseResult }> = [];
+
+  for (const page of screenshotResult.pages) {
+    if (!page.data || page.data.length === 0) {
+      continue;
+    }
+
+    console.log(`[PDF Parser] OCR parsing rendered page ${page.pageNumber}...`);
+    const pageResult = await parseImage(Buffer.from(page.data).toString("base64"), "image/png");
+    pageResults.push({ pageNumber: page.pageNumber, result: pageResult });
+  }
+
+  const combined = mergeParseResults(pageResults);
+  console.log(`[PDF Parser] OCR fallback parsed ${combined.transactions.length} transactions`);
+  return combined;
+}
+
 export async function parsePDF(buffer: Buffer): Promise<ParseResult> {
   console.log("[PDF Parser] Starting PDF parsing...");
 
@@ -398,60 +506,105 @@ export async function parsePDF(buffer: Buffer): Promise<ParseResult> {
   }
 
   let pdfText = "";
+  let parserInstance:
+    | {
+        destroy: () => Promise<void>;
+        getText: (params?: Record<string, unknown>) => Promise<{ text: string }>;
+        getScreenshot?: (params?: Record<string, unknown>) => Promise<{
+          total: number;
+          pages: Array<{ pageNumber: number; data: Uint8Array }>;
+        }>;
+      }
+    | undefined;
 
-  // Handle pdf-parse v2 (Class-based API) vs v1 (Function-based API)
-  const PDFParseClass = pdfParseMod.PDFParse || pdfParseMod.default?.PDFParse;
-
-  if (PDFParseClass) {
-    if (typeof PDFParseClass.setWorker === "function" && workerData) {
-      console.log("[PDF Parser] Initializing worker via PDFParse.setWorker(Data URL)");
-      PDFParseClass.setWorker(workerData);
-    }
-    
-    console.log("[PDF Parser] Using Class-based API (v2)");
-    const parser = new PDFParseClass({ data: buffer });
-    const data = await parser.getText();
-    pdfText = data.text;
-    await parser.destroy();
-  } else if (typeof pdfParseMod === "function" || typeof pdfParseMod.default === "function") {
-    console.log("[PDF Parser] Using Function-based API (v1)");
-    const parseFn = typeof pdfParseMod === "function" ? pdfParseMod : pdfParseMod.default;
-    const data = await parseFn(buffer);
-    pdfText = data.text;
-  } else {
-    console.error("[PDF Parser] Export structure:", Object.keys(pdfParseMod));
-    throw new Error("Could not initialize pdf-parse module. Export not recognized.");
-  }
-
-  console.log(`[PDF Parser] Extracted ${pdfText?.length || 0} characters of text`);
-
-  if (!pdfText || pdfText.trim().length < 20) {
-    console.warn("[PDF Parser] No text extracted from PDF");
-    return {
-      transactions: [],
-      errors: [{ line: 0, rawText: "", reason: "No text extracted from PDF" }],
-      metadata: { totalRows: 0, parsedRows: 0, failedRows: 0 },
-    };
-  }
-
-  // Try AI-powered extraction first, fallback to regex
   try {
-    console.log("[PDF Parser] Attempting AI-powered extraction...");
-    const result = await parseWithAI(pdfText);
+    // Handle pdf-parse v2 (Class-based API) vs v1 (Function-based API)
+    const PDFParseClass = pdfParseMod.PDFParse || pdfParseMod.default?.PDFParse;
 
-    // If AI extraction got at least some transactions, use it
-    if (result.transactions.length > 0) {
-      console.log(`[PDF Parser] AI extraction successful: ${result.transactions.length} transactions`);
-      return result;
+    if (PDFParseClass) {
+      if (typeof PDFParseClass.setWorker === "function" && workerData) {
+        console.log("[PDF Parser] Initializing worker via PDFParse.setWorker(Data URL)");
+        PDFParseClass.setWorker(workerData);
+      }
+
+      console.log("[PDF Parser] Using Class-based API (v2)");
+      const classParser = new PDFParseClass({ data: buffer });
+      parserInstance = classParser;
+      const data = await classParser.getText();
+      pdfText = data.text;
+    } else if (typeof pdfParseMod === "function" || typeof pdfParseMod.default === "function") {
+      console.log("[PDF Parser] Using Function-based API (v1)");
+      const parseFn = typeof pdfParseMod === "function" ? pdfParseMod : pdfParseMod.default;
+      const data = await parseFn(buffer);
+      pdfText = data.text;
+    } else {
+      console.error("[PDF Parser] Export structure:", Object.keys(pdfParseMod));
+      throw new Error("Could not initialize pdf-parse module. Export not recognized.");
     }
 
-    // If AI returned 0 transactions, try regex fallback
-    console.log("[PDF Parser] AI returned 0 transactions, falling back to regex...");
-  } catch (aiError) {
-    console.error("[PDF Parser] AI extraction failed, using regex fallback:", aiError);
-  }
+    console.log(`[PDF Parser] Extracted ${pdfText?.length || 0} characters of text`);
 
-  // Regex fallback
-  console.log("[PDF Parser] Using regex fallback parser...");
-  return regexFallback(pdfText);
+    const rawTextLength = pdfText?.length || 0;
+    const normalizedTextLength = pdfText?.replace(/\s+/g, " ").trim().length || 0;
+
+    if (rawTextLength > 0) {
+      if (normalizedTextLength === 0) {
+        console.warn("[PDF Parser] Extracted text is mostly whitespace/control characters, attempting hybrid text parsing first");
+      } else if (normalizedTextLength < MIN_TEXT_WARNING_THRESHOLD) {
+        console.warn("[PDF Parser] Extracted text is short, but attempting hybrid text parsing first");
+      }
+
+      try {
+        console.log("[PDF Parser] Attempting AI-powered extraction...");
+        const result = await parseWithAI(pdfText);
+
+        if (result.transactions.length > 0) {
+          console.log(`[PDF Parser] AI extraction successful: ${result.transactions.length} transactions`);
+          return result;
+        }
+
+        console.log("[PDF Parser] AI returned 0 transactions, falling back to regex...");
+      } catch (aiError) {
+        console.error("[PDF Parser] AI extraction failed, using regex fallback:", aiError);
+      }
+
+      console.log("[PDF Parser] Using regex fallback parser...");
+      const regexResult = regexFallback(pdfText);
+      if (regexResult.transactions.length > 0) {
+        return regexResult;
+      }
+
+      console.log("[PDF Parser] Text extraction produced no transactions, trying OCR fallback...");
+    } else {
+      console.warn("[PDF Parser] No text extracted from PDF, trying OCR fallback...");
+    }
+
+    if (parserInstance?.getScreenshot) {
+      try {
+        const getScreenshot = parserInstance.getScreenshot.bind(parserInstance);
+        const imageResult = await parseRenderedPdfPagesWithAI({
+          getScreenshot,
+        });
+        if (imageResult.transactions.length > 0 || imageResult.metadata.bankAccountMeta) {
+          return imageResult;
+        }
+      } catch (ocrError) {
+        console.error("[PDF Parser] OCR fallback failed:", ocrError);
+      }
+    }
+
+    if (!pdfText || pdfText.trim().length < 20) {
+      console.warn("[PDF Parser] No usable text extracted from PDF");
+      return {
+        transactions: [],
+        errors: [{ line: 0, rawText: "", reason: "No text extracted from PDF and OCR fallback found no transactions" }],
+        metadata: { totalRows: 0, parsedRows: 0, failedRows: 0 },
+      };
+    }
+
+    console.log("[PDF Parser] Returning regex fallback result after OCR fallback produced no transactions...");
+    return regexFallback(pdfText);
+  } finally {
+    await parserInstance?.destroy?.();
+  }
 }

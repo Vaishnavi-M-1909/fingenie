@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import { detectRecurring } from "@/lib/parsers/normalizer";
+import { extractTransactionBalance, isExpenseTransaction, normalizeTransactionSign } from "@/lib/transactions/sign";
 
 export async function GET(request: Request) {
   try {
@@ -33,23 +34,35 @@ export async function GET(request: Request) {
       };
     }
 
-    const transactions = await prisma.transaction.findMany({
-      where,
-      orderBy: { date: "asc" },
-    });
-
-    // Fetch user's bank accounts
-    const bankAccounts = await prisma.bankAccount.findMany({
-      where: { userId: user.id },
-      select: { id: true, bankName: true, accountNumber: true, accountHolderName: true },
-    });
-
-    // Find the latest statement month for auto-navigation
-    const latestTransaction = await prisma.transaction.findFirst({
-      where: { userId: user.id },
-      orderBy: { date: "desc" },
-      select: { date: true },
-    });
+    const [rawTransactions, bankAccounts, latestTransaction, rawBalanceTransactions] = await Promise.all([
+      prisma.transaction.findMany({
+        where,
+        orderBy: { date: "asc" },
+      }),
+      prisma.bankAccount.findMany({
+        where: { userId: user.id },
+        select: { id: true, bankName: true, accountNumber: true, accountHolderName: true },
+      }),
+      prisma.transaction.findFirst({
+        where: { userId: user.id },
+        orderBy: { date: "desc" },
+        select: { date: true },
+      }),
+      prisma.transaction.findMany({
+        where: { userId: user.id },
+        orderBy: { date: "desc" },
+        take: 1000,
+        include: {
+          statement: {
+            select: {
+              bankAccountId: true,
+              uploadedAt: true,
+            },
+          },
+        },
+      }),
+    ]);
+    const transactions = rawTransactions.map((tx) => normalizeTransactionSign(tx));
     const latestStatementMonth = latestTransaction
       ? `${latestTransaction.date.getFullYear()}-${String(latestTransaction.date.getMonth() + 1).padStart(2, "0")}`
       : null;
@@ -65,16 +78,69 @@ export async function GET(request: Request) {
       accountHolderName = bankAccounts[0].accountHolderName;
     }
 
+    const relevantBalanceTransactions = rawBalanceTransactions
+      .map((tx) => normalizeTransactionSign(tx))
+      .filter((tx) => {
+        const linkedBankAccountId = tx.statement?.bankAccountId;
+        if (!linkedBankAccountId) return false;
+        return bankAccountId ? linkedBankAccountId === bankAccountId : true;
+      })
+      .sort((a, b) => {
+        const aUploadedAt = a.statement?.uploadedAt?.getTime() || 0;
+        const bUploadedAt = b.statement?.uploadedAt?.getTime() || 0;
+        if (bUploadedAt !== aUploadedAt) return bUploadedAt - aUploadedAt;
+        return b.date.getTime() - a.date.getTime();
+      });
+
+    const latestBalanceByAccount = new Map<string, number>();
+    for (const tx of relevantBalanceTransactions) {
+      const linkedBankAccountId = tx.statement?.bankAccountId;
+      if (!linkedBankAccountId || latestBalanceByAccount.has(linkedBankAccountId)) continue;
+
+      const balance = extractTransactionBalance(tx);
+      if (balance !== null) {
+        latestBalanceByAccount.set(linkedBankAccountId, balance);
+      }
+    }
+
+    const accountBalances = bankAccounts
+      .filter((account) => (bankAccountId ? account.id === bankAccountId : true))
+      .map((account) => ({
+        bankAccountId: account.id,
+        bankName: account.bankName,
+        accountNumber: account.accountNumber,
+        accountHolderName: account.accountHolderName,
+        currentBalance: latestBalanceByAccount.get(account.id) ?? null,
+      }));
+
+    const totalBankAmount = accountBalances.reduce((sum, account) => sum + (account.currentBalance || 0), 0);
+
+    const recentLedger = [...transactions]
+      .sort((a, b) => b.date.getTime() - a.date.getTime())
+      .slice(0, 8)
+      .map((tx) => ({
+        id: tx.id,
+        date: tx.date,
+        merchant: tx.merchant,
+        amount: tx.amount,
+        category: tx.category,
+        description: tx.description,
+        balance: extractTransactionBalance(tx),
+      }));
+
     if (transactions.length === 0) {
       return NextResponse.json({
         month: targetMonth,
         accountHolderName,
         latestStatementMonth,
         bankAccounts,
+        accountBalances,
+        totalBankAmount,
         totalSpent: 0,
         categoryTotals: {},
         dailyTotals: [],
         topMerchants: [],
+        recentLedger,
         recurring: [],
         healthScore: null,
         transactionCount: 0,
@@ -82,18 +148,7 @@ export async function GET(request: Request) {
     }
 
     // Compute analytics
-    const EXPENSE_CATEGORIES = [
-      "Food & Dining", "Shopping", "Transport", "Subscriptions", "Utilities",
-      "Healthcare", "Education", "Entertainment", "Other", "Uncategorized"
-    ];
-
-    const expenses = transactions.filter((t: { amount: number; category: string | null }) => {
-      // If it's already negative, it's definitely an expense
-      if (t.amount < 0) return true;
-      // If it's positive but in an expense category, treat it as an expense (legacy data or mis-signed)
-      if (t.amount > 0 && t.category && EXPENSE_CATEGORIES.includes(t.category)) return true;
-      return false;
-    });
+    const expenses = transactions.filter((t) => isExpenseTransaction(t));
 
     const totalSpent = expenses.reduce((sum: number, t: { amount: number; category: string | null }) => {
       return sum + Math.abs(t.amount);
@@ -211,10 +266,13 @@ export async function GET(request: Request) {
       accountHolderName,
       latestStatementMonth,
       bankAccounts,
+      accountBalances,
+      totalBankAmount,
       totalSpent,
       categoryTotals,
       dailyTotals,
       topMerchants,
+      recentLedger,
       recurring,
       healthScore: Math.max(0, Math.min(100, healthScore)),
       transactionCount: transactions.length,

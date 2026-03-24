@@ -17,9 +17,8 @@ export default function BankStatementReminder() {
 
   useEffect(() => {
     const today = new Date();
-    // Show only on the 1st of the month
+    // Show only on the 1st of the month 
     if (today.getDate() !== 1) return;
-
     // Check if already dismissed this month
     const key = getDismissKey();
     if (localStorage.getItem(key) === "true") return;
