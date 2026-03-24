@@ -25,6 +25,8 @@ const CATEGORY_COLORS: Record<string, string> = {
   Uncategorized: "#EF4444",
 };
 
+const RUPEE = "\u20B9";
+
 function formatCurrency(amount: number) {
   const sign = amount < 0 ? "-" : "+";
   const color = amount < 0 ? "var(--accent-coral)" : "var(--brand-primary)";
