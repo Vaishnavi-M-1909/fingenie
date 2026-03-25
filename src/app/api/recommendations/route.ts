@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
+import { getOrSyncYouTubeResources } from "@/lib/youtube";
 
 // GET: Fetch recommendations by category or tags
 export async function GET(request: Request) {
@@ -34,6 +35,22 @@ export async function GET(request: Request) {
         },
       },
     });
+
+    // If we have few resources and a category is provided, try fetching from YouTube
+    if (resources.length < 3 && category && type === "VIDEO") {
+      try {
+        const liveResources = await getOrSyncYouTubeResources(prisma, category, category, limit);
+        // We don't bother re-fetching the initial 'resources' if they were few, 
+        // the client can just call again or we can merge. 
+        // For simplicity, we just proceed with whatever we have now + new ones might be in DB for next call.
+        // Actually, let's just use the live ones if they were fetched.
+        if (liveResources.length > 0) {
+          return NextResponse.json({ resources: liveResources });
+        }
+      } catch (err) {
+        console.error("[RECOMMENDATIONS_YOUTUBE_ERROR]", err);
+      }
+    }
 
     // Enrich with user's interaction status
     const enriched = resources.map((r) => ({

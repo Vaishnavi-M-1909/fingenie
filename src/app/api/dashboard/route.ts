@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import { detectRecurring } from "@/lib/parsers/normalizer";
+import { getOrSyncYouTubeResources } from "@/lib/youtube";
 import { extractTransactionBalance, isExpenseTransaction, normalizeTransactionSign } from "@/lib/transactions/sign";
 
 export async function GET(request: Request) {
@@ -216,29 +217,38 @@ export async function GET(request: Request) {
     // Fetch recommendations based on top category or general finance
     const topCategory = Object.keys(categoryTotals)[0] || "Finance";
     
-    // Get watched resources to deprioritize them
-    const watchedIds = await prisma.resourceInteraction.findMany({
-      where: { userId: user.id, type: { in: ["VIEW", "COMPLETE"] } },
-      select: { resourceId: true },
-      distinct: ["resourceId"],
-    });
-    const watchedSet = new Set(watchedIds.map((w: { resourceId: string }) => w.resourceId));
+    // 1. Fetch live YouTube suggestions for the top category
+    let recommendedResources: any[] = [];
+    try {
+      const liveResources = await getOrSyncYouTubeResources(prisma, topCategory, topCategory, 3);
+      
+      // Get watched resources to deprioritize them
+      const watchedIds = await prisma.resourceInteraction.findMany({
+        where: { userId: user.id, type: { in: ["VIEW", "COMPLETE"] } },
+        select: { resourceId: true },
+        distinct: ["resourceId"],
+      });
+      const watchedSet = new Set(watchedIds.map((w: { resourceId: string }) => w.resourceId));
 
-    const resources = await prisma.learningResource.findMany({
-      where: {
-        OR: [
-          { category: topCategory },
-          { category: "Finance" }
-        ]
-      },
-      take: 6,
-      orderBy: { createdAt: "desc" },
-    });
-
-    // Prioritize unwatched
-    const recommendedResources = resources
-      .sort((a, b) => (watchedSet.has(a.id) ? 1 : 0) - (watchedSet.has(b.id) ? 1 : 0))
-      .slice(0, 3);
+      // Prioritize unwatched
+      recommendedResources = liveResources
+        .sort((a: any, b: any) => (watchedSet.has(a.id) ? 1 : 0) - (watchedSet.has(b.id) ? 1 : 0))
+        .slice(0, 3);
+    } catch (err) {
+      console.error("[DASHBOARD_YOUTUBE_RECO_ERROR]", err);
+      // Fallback to existing DB resources
+      const resources = await prisma.learningResource.findMany({
+        where: {
+          OR: [
+            { category: topCategory },
+            { category: "Finance" }
+          ]
+        },
+        take: 3,
+        orderBy: { createdAt: "desc" },
+      });
+      recommendedResources = resources;
+    }
 
     // Fetch user's interaction history (last 6 unique items)
     const interactionHistory = await prisma.resourceInteraction.findMany({

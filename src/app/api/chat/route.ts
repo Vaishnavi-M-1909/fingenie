@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { generateChatResponse } from "@/lib/openrouter";
 import { getUser } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getOrSyncYouTubeResources } from "@/lib/youtube";
 
 export async function GET() {
   try {
@@ -79,44 +80,54 @@ export async function POST(req: NextRequest) {
     };
 
     const categories = [...new Set(detectedFlags.map((f: string) => categoryMap[f] || "Finance"))];
+    const firstCategory = categories[0] || "Finance";
 
     // 3. Query recommendations if @flags detected
     let recommendations: Array<{ id: string; title: string; type: string; url: string; author: string | null; description: string; thumbnailUrl: string | null }> = [];
     let recommendationContext = "";
 
     if (categories.length > 0) {
-      // Get user's watch history to avoid repeats
-      const watchedIds = await prisma.resourceInteraction.findMany({
-        where: { userId: user.id, type: { in: ["VIEW", "COMPLETE"] } },
-        select: { resourceId: true },
-        distinct: ["resourceId"],
-      });
-      const watchedSet = new Set(watchedIds.map((w: { resourceId: string }) => w.resourceId));
+      // 3.1 Fetch fresh YouTube suggestions
+      try {
+        const youtubeResources = await getOrSyncYouTubeResources(prisma, detectedFlags.join(" "), firstCategory, 4);
+        
+        // Get user's watch history to avoid repeats
+        const watchedIds = await prisma.resourceInteraction.findMany({
+          where: { userId: user.id, type: { in: ["VIEW", "COMPLETE"] } },
+          select: { resourceId: true },
+          distinct: ["resourceId"],
+        });
+        const watchedSet = new Set(watchedIds.map((w: { resourceId: string }) => w.resourceId));
 
-      const resources = await prisma.learningResource.findMany({
-        where: {
-          category: { in: categories },
-        },
-        take: 6,
-        orderBy: { createdAt: "desc" },
-      });
+        // Prioritize unwatched content
+        const sorted = youtubeResources.sort((a: any, b: any) => {
+          const aWatched = watchedSet.has(a.id) ? 1 : 0;
+          const bWatched = watchedSet.has(b.id) ? 1 : 0;
+          return aWatched - bWatched;
+        });
 
-      // Prioritize unwatched content
-      const sorted = resources.sort((a, b) => {
-        const aWatched = watchedSet.has(a.id) ? 1 : 0;
-        const bWatched = watchedSet.has(b.id) ? 1 : 0;
-        return aWatched - bWatched;
-      });
-
-      recommendations = sorted.slice(0, 4).map((r) => ({
-        id: r.id,
-        title: r.title,
-        type: r.type,
-        url: r.url,
-        author: r.author,
-        description: r.description,
-        thumbnailUrl: r.thumbnailUrl,
-      }));
+        recommendations = sorted.slice(0, 4).map((r: any) => ({
+          id: r.id,
+          title: r.title,
+          type: r.type,
+          url: r.url,
+          author: r.author,
+          description: r.description,
+          thumbnailUrl: r.thumbnailUrl,
+        }));
+      } catch (err) {
+        console.error("[YOUTUBE_RECO_ERROR]", err);
+        // Fallback to existing DB resources if YouTube fails
+        const resources = await prisma.learningResource.findMany({
+          where: { category: { in: categories } },
+          take: 4,
+          orderBy: { createdAt: "desc" },
+        });
+        recommendations = resources.map(r => ({
+          id: r.id, title: r.title, type: r.type, url: r.url,
+          author: r.author, description: r.description, thumbnailUrl: r.thumbnailUrl
+        }));
+      }
 
       if (recommendations.length > 0) {
         recommendationContext = `\n\n--- Curated Learning Resources (MUST include in your response) ---\nThe user asked about ${categories.join(", ")}. Here are verified resources from our library. You MUST recommend 1-3 of these in your response with their exact titles. Format each recommendation clearly.\n${recommendations.map((r, i) => `${i + 1}. [${r.type}] "${r.title}" by ${r.author || "Unknown"} — ${r.description}`).join("\n")}`;
