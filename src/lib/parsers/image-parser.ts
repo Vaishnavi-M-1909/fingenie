@@ -4,7 +4,7 @@ import type { BankAccountMeta, ParseResult, ParsedTransaction, ParserError } fro
 import { categorizeTransaction, normalizeMerchant } from "./normalizer";
 
 const RECEIPT_HEADER = "Date,Merchant,Amount,Category,Description";
-const BANK_STATEMENT_HEADER = "Date,Description,Debit,Credit,Balance,Counterparty,TransactionType,ReferenceNumber";
+const BANK_STATEMENT_HEADER = "Date,Description,Debit,Credit,Balance,Counterparty,TransactionType,ReferenceNumber,Category";
 const VISION_REQUEST_TIMEOUT_MS = 45_000;
 const VISION_MAX_RETRIES = 2;
 
@@ -281,6 +281,7 @@ function parseBankStatementCsv(
     const counterparty = (row.Counterparty || "").trim();
     const txType = (row.TransactionType || "").trim().toUpperCase();
     const referenceNumber = (row.ReferenceNumber || "").trim();
+    const aiCategory = (row.Category || "").trim();
 
     const debit = parseNumber(row.Debit || "");
     const credit = parseNumber(row.Credit || "");
@@ -314,11 +315,16 @@ function parseBankStatementCsv(
 
     const merchantSeed = counterparty || description || "Unknown";
     const merchant = normalizeMerchant(merchantSeed) || "Unknown";
-    const category =
-      categorizeTransaction(merchant) ||
-      categorizeTransaction(description) ||
-      (txType === "ATM" ? "Cash Withdrawal" : undefined) ||
-      "Uncategorized";
+
+    // Prioritize AI category, fallback to keyword map
+    let category = aiCategory;
+    if (!category || category.toLowerCase() === "other" || category.toLowerCase() === "uncategorized") {
+      category = 
+        categorizeTransaction(merchant) ||
+        categorizeTransaction(description) ||
+        (txType === "ATM" ? "Cash Withdrawal" : undefined) ||
+        "Uncategorized";
+    }
 
     const richDescription = [
       txType && `[${txType}]`,
@@ -396,6 +402,7 @@ Rules for BANK STATEMENT pages:
 - Counterparty should be the extracted payee/payer name when visible, otherwise blank.
 - TransactionType should be one of UPI, NEFT, IMPS, RTGS, ATM, CASH, CHEQUE, OTHER when visible, otherwise blank.
 - ReferenceNumber should contain UTR/ref/id when visible, otherwise blank.
+- Category should be an intelligent guess from: Food & Dining, Shopping, Transport, Subscriptions, Utilities, Healthcare, Entertainment, Education, Investment, Tax, Salary, Transfer, Other.
 
 === IF RECEIPT/BILL ===
 Output this header exactly:
@@ -405,7 +412,7 @@ Rules for RECEIPT/BILL:
 - Date must be YYYY-MM-DD.
 - Merchant is the store/service name.
 - Amount must be negative for spend.
-- Category must be one of: Groceries, Food & Dining, Shopping, Transport, Subscriptions, Utilities, Healthcare, Entertainment, Education, Personal Care, Travel, Other.
+- Category must be an intelligent guess (e.g., Food & Dining, Shopping, Healthcare).
 - Description should be short and useful.
 
 === IF NOT A FINANCIAL DOCUMENT ===

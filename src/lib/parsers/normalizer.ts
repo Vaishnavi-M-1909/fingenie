@@ -100,6 +100,11 @@ const MERCHANT_CATEGORY_MAP: Record<string, string> = {
   imps: "Transfer",
   rtgs: "Transfer",
 
+  // Income & Investments
+  salary: "Salary",
+  "interest credit": "Investment",
+  dividend: "Investment",
+
   // Cash
   atm: "Cash Withdrawal",
   "cash withdrawal": "Cash Withdrawal",

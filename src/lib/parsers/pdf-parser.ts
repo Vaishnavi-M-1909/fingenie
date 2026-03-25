@@ -28,7 +28,8 @@ Expected JSON schema:
       "balance": "number or null (running balance)",
       "counterparty": "extracted person/entity name from description or null",
       "transactionType": "UPI|NEFT|IMPS|RTGS|ATM|CASH|CHEQUE|OTHER",
-      "referenceNumber": "extracted ref/UTR number or null"
+      "referenceNumber": "extracted ref/UTR number or null",
+      "category": "Food & Dining | Shopping | Transport | Subscriptions | Utilities | Healthcare | Education | Entertainment | Investment | Tax | Salary | Transfer | Other"
     }
   ]
 }
@@ -39,7 +40,14 @@ EXTRACTION RULES:
    - counterparty = "ASHUTO" (the person name after DR/ or CR/)
    - transactionType = "UPI"
    - referenceNumber = "519586976126"
-3. For NEFT/IMPS/RTGS, extract counterparty from the narration.
+3. Categorization logic: 
+   - "Food & Dining": Swiggy, Zomato, Restaurants, Cafes.
+   - "Healthcare": Pharmacy, Hospitals, Diagnostic centers (e.g., Apollo, Medplus).
+   - "Shopping": Amazon, Flipkart, Retail stores.
+   - "Transport": Uber, Ola, Petrol/Fuel, Metro.
+   - "Utilities": Electricity, Water, Gas, Mobile/Internet bills.
+   - "Salary": Any incoming salary credit.
+   - "Investment": Mutual funds, Stocks, RD/FD transfers.
 4. Amounts must be plain numbers without commas (e.g., 3200.00 not 3,200.00).
 5. If a row has a debit amount, set debit to that number and credit to null.
 6. If a row has a credit amount, set credit to that number and debit to null.
@@ -399,11 +407,17 @@ async function parseWithAI(pdfText: string): Promise<ParseResult> {
         const description = asOptionalString(tx.description) || asOptionalString(tx.remarks) || "";
         const counterparty = asOptionalString(tx.counterparty) || "";
         const txType = asOptionalString(tx.transactionType) || "";
+        const aiCategory = asOptionalString(tx.category);
 
         // Use counterparty as merchant if available, otherwise normalize description
         const rawMerchant = counterparty || description;
         const merchant = normalizeMerchant(rawMerchant);
-        const category = categorizeTransaction(merchant);
+        
+        // Prioritize AI category, fallback to keyword map
+        let category = aiCategory;
+        if (!category || category === "Other" || category === "Uncategorized") {
+          category = categorizeTransaction(merchant);
+        }
 
         // Build a rich description
         const richDescription = [
