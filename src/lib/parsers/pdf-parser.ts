@@ -160,8 +160,16 @@ function extractJsonPayload(content: string): string {
   return sanitizeJsonCandidate(jsonStr);
 }
 
-function extractJsonSection(source: string, key: string, openChar: "{" | "[", closeChar: "}" | "]"): string | null {
-  const keyIndex = source.indexOf(`"${key}"`);
+function extractJsonSection(
+  source: string,
+  key: string,
+  openChar: "{" | "[",
+  closeChar: "}" | "]",
+  allowUnterminated = false
+): string | null {
+  const keyPattern = new RegExp(`["']?${key}["']?\\s*:`, "i");
+  const keyMatch = keyPattern.exec(source);
+  const keyIndex = keyMatch?.index ?? -1;
   if (keyIndex === -1) return null;
 
   const start = source.indexOf(openChar, keyIndex);
@@ -201,6 +209,10 @@ function extractJsonSection(source: string, key: string, openChar: "{" | "[", cl
         return source.slice(start, i + 1);
       }
     }
+  }
+
+  if (allowUnterminated) {
+    return source.slice(start);
   }
 
   return null;
@@ -252,7 +264,8 @@ function recoverPartialTransactions(arraySource: string | null): Array<Record<st
             recovered.push(parsed as Record<string, unknown>);
           }
         } catch {
-          break;
+          objectStart = -1;
+          continue;
         }
         objectStart = -1;
       }
@@ -264,7 +277,7 @@ function recoverPartialTransactions(arraySource: string | null): Array<Record<st
 
 function recoverPartialAiPayload(jsonStr: string): { accountInfo?: Record<string, unknown>; transactions?: Array<Record<string, unknown>> } | null {
   const accountInfoSource = extractJsonSection(jsonStr, "accountInfo", "{", "}");
-  const transactionsSource = extractJsonSection(jsonStr, "transactions", "[", "]");
+  const transactionsSource = extractJsonSection(jsonStr, "transactions", "[", "]", true);
 
   let accountInfo: Record<string, unknown> | undefined;
   if (accountInfoSource) {
