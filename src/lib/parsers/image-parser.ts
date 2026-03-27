@@ -432,7 +432,7 @@ ${RECEIPT_HEADER}`
     temperature: 0.1,
   });
 
-  let response: Response | null = null;
+  let successfulResponse: Response | null = null;
   let lastError: Error | null = null;
 
   for (let attempt = 0; attempt <= VISION_MAX_RETRIES; attempt++) {
@@ -440,7 +440,7 @@ ${RECEIPT_HEADER}`
     const timeout = setTimeout(() => controller.abort(), VISION_REQUEST_TIMEOUT_MS);
 
     try {
-      response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${apiKey.trim()}`,
@@ -462,9 +462,11 @@ ${RECEIPT_HEADER}`
           await sleep(750 * (attempt + 1));
           continue;
         }
+        lastError = new Error(`OpenRouter Vision API error: ${response.status} - ${errorText}`);
         throw new Error(`OpenRouter Vision API error: ${response.status} - ${errorText}`);
       }
 
+      successfulResponse = response;
       lastError = null;
       break;
     } catch (error) {
@@ -483,11 +485,11 @@ ${RECEIPT_HEADER}`
     }
   }
 
-  if (!response) {
+  if (!successfulResponse) {
     throw lastError || new Error("Vision request failed before receiving a response");
   }
 
-  const data = await response.json();
+  const data = await successfulResponse.json();
   const content = data.choices?.[0]?.message?.content || "";
   let csvContent = cleanModelOutput(content);
 
